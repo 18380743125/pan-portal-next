@@ -1,10 +1,15 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"],
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript"
+  ],
   "env": {
     "es6": true,
     "node": true
   },
-  "plugins": ["prettier"], // 整合配置.prettierrc.js
+  "plugins": [
+    "prettier"
+  ],
   "rules": {
     "prettier/prettier": "error"
   }
