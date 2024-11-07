@@ -21,9 +21,8 @@ export default function Home() {
 
   return (
     <div className={styles.app}>
-      <h1 className={styles.wrapper}>{count}</h1>
       <Button type='primary' onClick={handleClick}>
-        Button
+        Button {count}
       </Button>
     </div>
   )

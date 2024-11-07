@@ -2,6 +2,7 @@ import React from 'react'
 import type { Metadata } from 'next'
 import { ConfigProvider } from 'antd'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
+import 'normalize.css'
 
 import { StoreProvider } from './StoreProvider'
 
