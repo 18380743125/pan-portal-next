@@ -1,4 +1,4 @@
-import { createAppSlice } from '@/lib/store/createAppSlice'
+import { createAppSlice } from '@/store/createAppSlice'
 
 export interface CounterSliceState {
   value: number

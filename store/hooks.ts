@@ -1,5 +1,5 @@
 import { shallowEqual, useDispatch, useSelector, useStore } from 'react-redux'
-import type { AppDispatch, AppStore, RootState } from '.'
+import type { AppDispatch, AppStore, RootState } from './index'
 
 export const useAppStore = useStore.withTypes<AppStore>()
 

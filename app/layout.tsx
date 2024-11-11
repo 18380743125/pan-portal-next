@@ -4,6 +4,8 @@ import { ConfigProvider } from 'antd'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import 'normalize.css'
 
+import '@/styles/common.css'
+
 import { StoreProvider } from './StoreProvider'
 
 export const metadata: Metadata = {

@@ -1,8 +1,8 @@
 'use client'
 
 import { Button } from 'antd'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { increment } from '@/lib/store/features/counterSlice'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/store/hooks'
+import { increment } from '@/store/features/counterSlice'
 import styles from './app.module.scss'
 
 export default function Home() {
