@@ -15,6 +15,7 @@
     align-items: center;
   }
 
+  // 左侧表单区域
   .leftForm {
     height: 100%;
     flex: 1;
@@ -46,28 +47,31 @@
 
       .input {
         width: 100%;
-        padding-bottom: 2px;
+        padding: 6px 0 2px 0;
         font-size: 16px;
         border-bottom: 1px solid rgba(0, 0, 0, 0.4);
         border-radius: 0;
         display: flex;
+        color: #333;
       }
 
       input {
         text-align: center;
       }
 
+      // 忘记密码
       .forgetPass {
         margin-top: 15px;
         text-align: center;
         font-size: 12px;
         color: #cfcfcf;
         margin-bottom: 30px;
+        cursor: pointer;
       }
     }
-
   }
 
+  //右侧注册区域
   .rightRegister {
     position: relative;
     width: 260px;

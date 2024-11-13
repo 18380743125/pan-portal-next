@@ -1,12 +1,13 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, App as AntdApp } from 'antd'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import 'normalize.css'
 
 import '@/styles/common.css'
 
 import { StoreProvider } from './StoreProvider'
+import AntdGlobal from '@/utils/AntdGlobal'
 
 export const metadata: Metadata = {
   title: '我的网盘',
@@ -40,7 +41,10 @@ export default function RootLayout({
               }
             }}
           >
-            <AntdRegistry>{children}</AntdRegistry>
+            <AntdApp>
+              <AntdGlobal />
+              <AntdRegistry>{children}</AntdRegistry>
+            </AntdApp>
           </ConfigProvider>
         </body>
       </html>

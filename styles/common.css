@@ -8,3 +8,7 @@ body {
   height: 100%;
   min-width: 1200px;
 }
+
+.ant-app {
+  height: 100%;
+}

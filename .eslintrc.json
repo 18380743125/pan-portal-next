@@ -11,6 +11,9 @@
     "prettier"
   ],
   "rules": {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "@typescript-eslint/no-explicit-any": "off",
+    "import/no-anonymous-default-export": "off",
+    "@typescript-eslint/no-namespace": "off"
   }
 }
