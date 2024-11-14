@@ -11,11 +11,13 @@ import { validatePassword, validateUsername } from '@/lib/utils/regex.util'
 import { message } from '@/lib/AntdGlobal'
 import { useAppDispatch } from '@/lib/store/hooks'
 import { loginAction } from '@/lib/store/features/userSlice'
+import { DispatchResult } from '@/types/typings'
 
 export default function LoginFC() {
   const router = useRouter()
   const usernameRef = useRef<InputRef | null>(null)
 
+  const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -38,7 +40,11 @@ export default function LoginFC() {
   }
 
   // 监听登录点击
-  const onLogin = () => {
+  const onLogin = async () => {
+    if (loading) {
+      return
+    }
+
     if (!username || !validateUsername(username)) {
       if (!username) return message.warning('请输入用户名')
       return message.warning('请输入6到16位的用户名，其中包含字母和数字')
@@ -51,7 +57,25 @@ export default function LoginFC() {
       return message.warning('密码必须至少8个字符，包含大写字母、小写字母、数字和特殊字符 !@#$%^&*()')
     }
 
-    dispatch(loginAction({ username, password }))
+    setLoading(true)
+
+    const result = await dispatch<DispatchResult>(
+      loginAction({
+        username,
+        password
+      })
+    )
+
+    setLoading(false)
+
+    if (result.error) {
+      return
+    }
+
+    message.success('登录成功')
+    setTimeout(() => {
+      router.push('/')
+    }, 2000)
   }
 
   return (
@@ -93,6 +117,7 @@ export default function LoginFC() {
               shape={'round'}
               style={{ width: 280, position: 'relative', left: 3 }}
               onClick={onLogin}
+              loading={loading}
             >
               登 陆
             </Button>

@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosRequestHeaders, InternalAxiosRequestConfig } from 'axios'
 import type { AxiosInstance } from 'axios'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -8,10 +8,19 @@ import 'nprogress/nprogress.css'
 
 import type { MyRequestConfig } from './type'
 
-class Request {
+class Request<T> {
   instance: AxiosInstance
 
-  constructor(config: Omit<MyRequestConfig, 'headers'>) {
+  constructor(config: {
+    baseURL: string
+    timeout: number
+    interceptors: {
+      requestSuccessFn(config): InternalAxiosRequestConfig<any>
+      responseSuccessFn(res: any): T
+      requestFailFn(err): Promise<never>
+      responseFailFn(err): Promise<never>
+    }
+  }) {
     this.instance = axios.create(config)
 
     // 全局请求拦截器
@@ -43,7 +52,7 @@ class Request {
     this.instance.interceptors.response.use(config.interceptors?.responseSuccessFn, config.interceptors?.responseFailFn)
   }
 
-  request<T = any>(config: Omit<MyRequestConfig<T>, 'headers'>) {
+  request<T = any>(config: MyRequestConfig<T>) {
     // 单次请求拦截处理
     if (config.interceptors?.requestSuccessFn) {
       config = config.interceptors.requestSuccessFn(config)
@@ -63,19 +72,19 @@ class Request {
   }
 
   get<T = any>(config: Omit<MyRequestConfig<T>, 'headers'>) {
-    return this.request({ ...config, method: 'GET' })
+    return this.request({ ...config, method: 'GET', headers: {} as AxiosRequestHeaders })
   }
 
   post<T = any>(config: Omit<MyRequestConfig<T>, 'headers'> & { headers?: { 'Content-Type': string } }) {
-    return this.request({ ...config, method: 'POST' })
+    return this.request({ ...config, method: 'POST', headers: {} as AxiosRequestHeaders })
   }
 
   delete<T = any>(config: Omit<MyRequestConfig<T>, 'headers'>) {
-    return this.request({ ...config, method: 'DELETE' })
+    return this.request({ ...config, method: 'DELETE', headers: {} as AxiosRequestHeaders })
   }
 
   put<T = any>(config: Omit<MyRequestConfig<T>, 'headers'>) {
-    return this.request({ ...config, method: 'PUT' })
+    return this.request({ ...config, method: 'PUT', headers: {} as AxiosRequestHeaders })
   }
 
   patch<T = any>(config: Omit<MyRequestConfig<T>, 'headers'>) {
