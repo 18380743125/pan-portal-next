@@ -7,7 +7,7 @@ import 'normalize.css'
 import '@/styles/common.css'
 
 import { StoreProvider } from './StoreProvider'
-import AntdGlobal from '@/utils/AntdGlobal'
+import AntdGlobal from '@/lib/AntdGlobal'
 
 export const metadata: Metadata = {
   title: '我的网盘',

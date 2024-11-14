@@ -1,11 +1,8 @@
-import CoRequest from './request'
+import Request from './request'
 import { BASE_URL, TIME_OUT } from './config'
-import { message } from '@/utils/AntdGlobal'
-// import { localCache } from '@/utils/cache'
+import { message } from '@/lib/AntdGlobal'
 import type { Result } from '@/types/main'
-
-// import { showLoading, hideLoading } from '@/components/Loading'
-// import { CacheKey } from '@/constants'
+import { Blob } from 'node:buffer'
 
 // 下载文件
 // const download = (res: AxiosResponse, customName?: string) => {
@@ -21,30 +18,20 @@ import type { Result } from '@/types/main'
 // window.URL.revokeObjectURL(url)
 // }
 
-const coRequest = new CoRequest({
+const request = new Request({
   timeout: TIME_OUT,
   baseURL: BASE_URL,
   interceptors: {
     requestSuccessFn(config) {
-      if (config.showLoading) {
-        // showLoading()
-      }
-      // const token = localCache.getCache(CacheKey.TOKEN)
-      // if (token) {
-      //   config.headers['Authorization'] = token
-      // }
       return config
     },
     requestFailFn(err) {
-      // hideLoading()
       return Promise.reject(err)
     },
     responseSuccessFn(res: any) {
-      // hideLoading()
       // 文件流
       if (res.data instanceof Blob) {
-        // const { options } = res.config
-        // download(res, options?.downloadFilename)
+        // download(res)
         return
       }
 
@@ -53,11 +40,10 @@ const coRequest = new CoRequest({
         return result.data
       }
 
-      message.error(result.message).then(null)
+      message.error(result.message).then(() => {})
 
       switch (result.code) {
-        case 10:
-          // localCache.clear()
+        case 10: // 未登录
           location.href = '/login'
           break
       }
@@ -65,10 +51,9 @@ const coRequest = new CoRequest({
       return Promise.reject(result)
     },
     responseFailFn(err) {
-      // hideLoading()
       return Promise.reject(err)
     }
   }
 })
 
-export default coRequest
+export default request

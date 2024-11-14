@@ -45,14 +45,3 @@ export namespace Result {
     data: T[]
   }
 }
-
-/**
- * 用户登录
- */
-export namespace Login {
-  // 登录参数
-  export interface Params {
-    username: string
-    password: string
-  }
-}

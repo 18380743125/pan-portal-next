@@ -1,4 +1,4 @@
-import { isObject } from '@/utils'
+import { isObject } from './base.util'
 
 /**
  * 深拷贝
@@ -42,7 +42,7 @@ export function deepCopy(originValue: any, map = new WeakMap()) {
   for (const key in originValue) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    newObj[key] = deepCopy(originValue[key], map)
+    newObj[key] = deepCopyUtil(originValue[key], map)
   }
   for (const symbolKey of Object.getOwnPropertySymbols(originValue)) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

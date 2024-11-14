@@ -7,8 +7,10 @@ import { useRouter } from 'next/navigation'
 
 import styles from './login.module.scss'
 
-import { validatePassword, validateUsername } from '@/utils/regex.util'
-import { message } from '@/utils/AntdGlobal'
+import { validatePassword, validateUsername } from '@/lib/utils/regex.util'
+import { message } from '@/lib/AntdGlobal'
+import { useAppDispatch } from '@/lib/store/hooks'
+import { loginAction } from '@/lib/store/features/userSlice'
 
 export default function LoginFC() {
   const router = useRouter()
@@ -16,6 +18,8 @@ export default function LoginFC() {
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+
+  const dispatch = useAppDispatch()
 
   // 聚焦输入框
   useEffect(() => {
@@ -46,6 +50,8 @@ export default function LoginFC() {
       }
       return message.warning('密码必须至少8个字符，包含大写字母、小写字母、数字和特殊字符 !@#$%^&*()')
     }
+
+    dispatch(loginAction({ username, password }))
   }
 
   return (
