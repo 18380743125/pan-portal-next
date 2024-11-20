@@ -1,1 +1,1 @@
-npm test
+echo "npx --no --l commitlint -e $HUSKY_GIT_PARAMS" > .husky/commit-msg

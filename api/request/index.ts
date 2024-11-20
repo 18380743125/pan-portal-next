@@ -1,26 +1,15 @@
-import axios, { AxiosRequestHeaders, InternalAxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestHeaders } from 'axios'
 import type { AxiosInstance } from 'axios'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
 import type { MyRequestConfig } from './type'
 
-class Request<T> {
+class Request {
   instance: AxiosInstance
 
-  constructor(config: {
-    baseURL: string
-    timeout: number
-    interceptors: {
-      requestSuccessFn(config): InternalAxiosRequestConfig<any>
-      responseSuccessFn(res: any): T
-      requestFailFn(err): Promise<never>
-      responseFailFn(err): Promise<never>
-    }
-  }) {
+  constructor(config: Omit<MyRequestConfig, "headers">) {
     this.instance = axios.create(config)
 
     // 全局请求拦截器
@@ -60,7 +49,7 @@ class Request<T> {
     return new Promise<T>((resolve, reject) => {
       this.instance
         .request<any, T>(config)
-        .then((res: T | undefined) => {
+        .then((res: T) => {
           // 单次响应成功的拦截器
           if (config.interceptors?.responseSuccessFn) {
             res = config.interceptors?.responseSuccessFn(res)
@@ -88,7 +77,7 @@ class Request<T> {
   }
 
   patch<T = any>(config: Omit<MyRequestConfig<T>, 'headers'>) {
-    return this.request({ ...config, method: 'PATCH' })
+    return this.request({ ...config, method: 'PATCH', headers: {} as AxiosRequestHeaders })
   }
 }
 
