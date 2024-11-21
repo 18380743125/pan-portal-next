@@ -9,7 +9,7 @@ import type { MyRequestConfig } from './type'
 class Request {
   instance: AxiosInstance
 
-  constructor(config: Omit<MyRequestConfig, "headers">) {
+  constructor(config: Omit<MyRequestConfig, 'headers'>) {
     this.instance = axios.create(config)
 
     // 全局请求拦截器

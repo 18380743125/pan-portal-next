@@ -13,7 +13,7 @@ export function deepCopy(originValue: any, map = new WeakMap()) {
 
   // 原始值
   if (!isObject(originValue)) return originValue
-  // 处理函数n
+  // 处理函数
   if (typeof originValue === 'function') return originValue
 
   // 处理 set
@@ -40,13 +40,9 @@ export function deepCopy(originValue: any, map = new WeakMap()) {
   map.set(originValue, newObj)
 
   for (const key in originValue) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    newObj[key] = deepCopyUtil(originValue[key], map)
+    newObj[key] = deepCopy(originValue[key], map)
   }
   for (const symbolKey of Object.getOwnPropertySymbols(originValue)) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     newObj[Symbol(symbolKey.description)] = deepCopy(originValue[symbolKey], map)
   }
   return newObj

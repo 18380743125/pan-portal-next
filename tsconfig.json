@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "es2015",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -10,9 +11,9 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "noImplicitAny": false,
     "jsx": "preserve",
     "incremental": true,
-    "noImplicitAny": false,
     "plugins": [
       {
         "name": "next"

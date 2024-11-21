@@ -25,6 +25,8 @@ export default function throttle(fn: (...arg: any[]) => unknown, config: Config)
         const waitTime = interval - (nowTime - startTime)
         if (waitTime <= 0) {
           if (timer) clearTimeout(timer)
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
           const res = fn.apply(this, args)
           resolve(res)
           startTime = nowTime
@@ -35,6 +37,8 @@ export default function throttle(fn: (...arg: any[]) => unknown, config: Config)
         // 尾部执行控制
         if (trailing && !timer) {
           timer = setTimeout(() => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
             const res = fn.apply(this, args)
             resolve(res)
             timer = null

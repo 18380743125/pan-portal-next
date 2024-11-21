@@ -1,18 +1,17 @@
 /**
- * 用户名格式验证
+ * 用户名格式校验
  * @param str
  */
 export const validateUsername = (str: string) => {
-  const reg = /^[A-Za-z0-9]{6,16}$/
-  return reg.test(str)
+  const regexp = /^[A-Za-z0-9]{6,16}$/
+  return regexp.test(str)
 }
 
 /**
- * 密码格式验证
+ * 密码格式校验
  * @param str
  */
 export const validatePassword = (str: string) => {
-  // const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()]).{8,16}$/
-  const passwordRegex = /^[A-Za-z0-9]{6,16}$/
+  const passwordRegex = /^(?=.*[0-9])(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*()+-]{6,}$/
   return passwordRegex.test(str)
 }

@@ -7,11 +7,10 @@ import { useRouter } from 'next/navigation'
 
 import styles from './login.module.scss'
 
-import { validatePassword, validateUsername } from '@/lib/utils/regex.util'
 import { message } from '@/lib/AntdGlobal'
 import { useAppDispatch } from '@/lib/store/hooks'
 import { loginAction } from '@/lib/store/features/userSlice'
-import { DispatchResult } from '@/types/typings'
+import { validateUsernameAndPassword } from '@/lib/form-validate'
 
 export default function LoginFC() {
   const router = useRouter()
@@ -45,21 +44,13 @@ export default function LoginFC() {
       return
     }
 
-    if (!username || !validateUsername(username)) {
-      if (!username) return message.warning('请输入用户名')
-      return message.warning('请输入6到16位的用户名，其中包含字母和数字')
-    }
-
-    if (!password || !validatePassword(password)) {
-      if (!password) {
-        return message.warning('请输入密码')
-      }
-      return message.warning('密码必须至少8个字符，包含大写字母、小写字母、数字和特殊字符 !@#$%^&*()')
+    if (!validateUsernameAndPassword(username, password)) {
+      return
     }
 
     setLoading(true)
 
-    const result = await dispatch<DispatchResult>(
+    const result = await dispatch(
       loginAction({
         username,
         password
@@ -68,14 +59,14 @@ export default function LoginFC() {
 
     setLoading(false)
 
-    if (result.error) {
+    if (result.meta.requestStatus === 'rejected') {
       return
     }
 
     message.success('登录成功')
     setTimeout(() => {
       router.push('/')
-    }, 2000)
+    }, 1500)
   }
 
   return (
