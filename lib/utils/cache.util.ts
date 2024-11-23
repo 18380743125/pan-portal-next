@@ -4,31 +4,33 @@ enum CacheType {
 }
 
 class Cache {
-  storage: Storage
+  storage: Storage | null = null
 
   constructor(type: CacheType) {
-    this.storage = type === CacheType.Local ? localStorage : sessionStorage
+    if (typeof window !== 'undefined') {
+      this.storage = type === CacheType.Local ? window.localStorage : window.sessionStorage
+    }
   }
 
   setCache(key: string, value: unknown) {
     if (value) {
-      this.storage.setItem(key, JSON.stringify(value))
+      this.storage?.setItem(key, JSON.stringify(value))
     }
   }
 
   getCache(key: string) {
-    const value = this.storage.getItem(key)
+    const value = this.storage?.getItem(key)
     if (value) {
       return JSON.parse(value)
     }
   }
 
   removeCache(key: string) {
-    this.storage.removeItem(key)
+    this.storage?.removeItem(key)
   }
 
   clear() {
-    this.storage.clear()
+    this.storage?.clear()
   }
 }
 

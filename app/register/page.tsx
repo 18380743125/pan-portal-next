@@ -11,7 +11,7 @@ import { message } from '@/lib/AntdGlobal'
 import { validateUsernameAndPassword } from '@/lib/form-validate'
 import { registerApi } from '@/api/modules/user'
 
-export default function LoginFC() {
+export default function RegisterFC() {
   const router = useRouter()
   const usernameRef = useRef<InputRef | null>(null)
 
@@ -51,11 +51,11 @@ export default function LoginFC() {
     }
 
     if (!question) {
-      return message.warning('请填写密码问题')
+      return message.warning('请填写密保问题')
     }
 
     if (!answer) {
-      return message.warning('请填写密码答案')
+      return message.warning('请填写密保答案')
     }
 
     setLoading(true)
@@ -79,7 +79,7 @@ export default function LoginFC() {
     <main className={styles.root}>
       <article className={styles.content}>
         {/* 去登陆 */}
-        <section className={styles.leftLogin}>
+        <section className={styles.leftRegister}>
           <div className={styles.title}>
             <h2>已有账户？</h2>
             <div>有账号就登陆吧，好久不见啦！</div>

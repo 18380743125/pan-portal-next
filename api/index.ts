@@ -3,12 +3,18 @@ import { BASE_URL, TIME_OUT } from './config'
 
 import type { Result } from '@/types/base'
 import { message } from '@/lib/AntdGlobal'
+import { localCache } from '@/lib/utils/cache.util'
+import { CacheEnum } from '@/lib/constants'
 
 const request = new Request({
   timeout: TIME_OUT,
   baseURL: BASE_URL,
   interceptors: {
     requestSuccessFn(config) {
+      const token = localCache.getCache(CacheEnum.USER_TOKEN)
+      if (token) {
+        config.headers['Authorization'] = token
+      }
       return config
     },
     requestFailFn(err) {

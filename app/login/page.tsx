@@ -4,13 +4,15 @@ import { useEffect, useRef, useState } from 'react'
 import { Button, Input } from 'antd'
 import type { InputRef } from 'antd'
 import { useRouter } from 'next/navigation'
+import { ExclamationCircleFilled } from '@ant-design/icons'
 
 import styles from './login.module.scss'
 
-import { message } from '@/lib/AntdGlobal'
-import { useAppDispatch } from '@/lib/store/hooks'
+import { message, modal } from '@/lib/AntdGlobal'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { loginAction } from '@/lib/store/features/userSlice'
 import { validateUsernameAndPassword } from '@/lib/form-validate'
+import { localCache } from '@/lib/utils/cache.util'
 
 export default function LoginFC() {
   const router = useRouter()
@@ -20,12 +22,32 @@ export default function LoginFC() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
+  const { token } = useAppSelector(
+    state => ({
+      token: state.user.token
+    }),
+    shallowEqualApp
+  )
   const dispatch = useAppDispatch()
 
   // 聚焦输入框
   useEffect(() => {
     const usernameEl = usernameRef.current as any
-    usernameEl.focus()
+    if (token) {
+      modal.confirm({
+        title: '当前您已登陆，您确定要重新登陆吗?',
+        icon: <ExclamationCircleFilled />,
+        onOk() {
+          usernameEl.focus()
+          localCache.clear()
+        },
+        onCancel() {
+          router.back()
+        }
+      })
+    } else {
+      usernameEl.focus()
+    }
   }, [])
 
   // 跳转到忘记密码页面

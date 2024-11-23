@@ -16,7 +16,7 @@
   }
 
   // 左侧去登陆
-  .leftLogin {
+  .leftRegister {
     position: relative;
     width: 260px;
     height: 100%;
@@ -50,7 +50,7 @@
     }
   }
 
-  .leftLogin::before {
+  .leftRegister::before {
     content: '';
     position: absolute;
     width: 100%;

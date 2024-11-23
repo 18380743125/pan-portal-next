@@ -1,7 +1,14 @@
 'use client'
 
-import styles from './app.module.scss'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function Home() {
-  return <div className={styles.app}></div>
+  const router = useRouter()
+
+  useEffect(() => {
+    router.replace('/list-page/files')
+  }, [])
+
+  return <></>
 }
