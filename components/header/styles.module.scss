@@ -1,0 +1,21 @@
+.root {
+  height: 66px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 30px;
+  box-sizing: border-box;
+
+  .left {
+    color: #5794f7;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .right {
+    display: flex;
+    gap: 30px;
+    margin-right: 30px;
+  }
+}

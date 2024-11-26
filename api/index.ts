@@ -26,12 +26,16 @@ const request = new Request({
         return result.data
       }
 
-      message.error(result.message).then(() => {})
-
       switch (result.code) {
         case 10: // 未登录
-          location.href = '/login'
+          localCache.clear()
+          message.error('请先登陆').then(() => {})
+          setTimeout(() => {
+            location.href = '/login'
+          }, 2000)
           break
+        default:
+          message.error(result.message).then(() => {})
       }
       // 处理失败
       return Promise.reject(result)
