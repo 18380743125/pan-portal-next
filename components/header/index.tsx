@@ -1,5 +1,3 @@
-'use client'
-
 import TaskList from '@/components/task-list'
 import UserInfo from '@/components/user-info'
 

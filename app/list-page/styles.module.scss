@@ -1,0 +1,14 @@
+.root {
+  display: flex;
+  height: calc(100% - 70px);
+
+  .left {
+    width: 200px;
+    background-color: #f7f7f7;
+  }
+
+  .right {
+    flex: 1;
+    background-color: #ffffff;
+  }
+}

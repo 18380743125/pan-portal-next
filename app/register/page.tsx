@@ -5,7 +5,7 @@ import { Button, Input } from 'antd'
 import type { InputRef } from 'antd'
 import { useRouter } from 'next/navigation'
 
-import styles from './register.module.scss'
+import styles from './styles.module.scss'
 
 import { message } from '@/lib/AntdGlobal'
 import { validateUsernameAndPassword } from '@/lib/form-validate'

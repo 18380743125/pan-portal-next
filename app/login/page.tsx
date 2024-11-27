@@ -6,7 +6,7 @@ import type { InputRef } from 'antd'
 import { useRouter } from 'next/navigation'
 import { ExclamationCircleFilled } from '@ant-design/icons'
 
-import styles from './login.module.scss'
+import styles from './styles.module.scss'
 
 import { message, modal } from '@/lib/AntdGlobal'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'

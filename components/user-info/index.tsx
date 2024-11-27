@@ -1,13 +1,16 @@
-import { DownOutlined } from '@ant-design/icons'
-import type { MenuProps } from 'antd'
+'use client'
+
+import { useEffect, useState } from 'react'
 import { Dropdown } from 'antd'
+import type { MenuProps } from 'antd'
+import { DownOutlined } from '@ant-design/icons'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { useEffect } from 'react'
 import { getUserAction } from '@/lib/store/features/userSlice'
 
 import styles from './styles.module.scss'
 
-const Breadcrumb = () => {
+const UserInfoFC = () => {
+  const [isClient, setIsClient] = useState(false)
   const { userInfo } = useAppSelector(
     state => ({
       userInfo: state.user.userInfo
@@ -19,6 +22,7 @@ const Breadcrumb = () => {
 
   useEffect(() => {
     dispatch(getUserAction())
+    setIsClient(true)
   }, [])
 
   const items: MenuProps['items'] = [
@@ -34,12 +38,14 @@ const Breadcrumb = () => {
 
   return (
     <Dropdown menu={{ items }} className={styles.root}>
-      <a onClick={e => e.preventDefault()}>
-        <span className={styles.username}>{userInfo?.username}</span>
-        <DownOutlined />
+      <a>
+        <span className={styles.username} suppressHydrationWarning={true}>
+          {isClient ? userInfo?.username : '-'}
+        </span>
+        <DownOutlined style={{ position: 'relative', top: 1 }} />
       </a>
     </Dropdown>
   )
 }
 
-export default Breadcrumb
+export default UserInfoFC

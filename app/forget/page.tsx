@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { Button, Input, Steps } from 'antd'
 import { useRouter } from 'next/navigation'
 
-import styles from './forget.module.scss'
+import styles from './styles.module.scss'
 
 import { checkAnswerApi, checkUsernameApi, resetPasswordApi } from '@/api/modules/user'
 

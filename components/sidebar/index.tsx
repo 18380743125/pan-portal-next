@@ -1,5 +1,5 @@
-const Breadcrumb = () => {
+const Sidebar = () => {
   return <div>hello</div>
 }
 
-export default Breadcrumb
+export default Sidebar

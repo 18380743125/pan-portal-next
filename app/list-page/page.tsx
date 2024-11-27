@@ -1,9 +1,14 @@
-import { Button } from 'antd'
+'use client'
 
-export default function Home() {
-  return (
-    <div>
-      <Button type='primary'>list-page</Button>
-    </div>
-  )
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+
+export default function ListPageFc() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.replace('/list-page/files')
+  }, [])
+
+  return <></>
 }

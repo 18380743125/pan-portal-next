@@ -5,8 +5,17 @@ import { AntdRegistry } from '@ant-design/nextjs-registry'
 import 'normalize.css'
 import zhCN from 'antd/locale/zh_CN'
 
+// fontawesome
+import { config, library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+
+library.add(fas)
+config.autoAddCss = false
+
+import '@fortawesome/fontawesome-svg-core/styles.css'
 import '@/styles/common.css'
 
+// redux store
 import { StoreProvider } from './StoreProvider'
 import AntdGlobal from '@/lib/AntdGlobal'
 

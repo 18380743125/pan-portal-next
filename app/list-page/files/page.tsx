@@ -1,16 +1,27 @@
 'use client'
 
 import { Button } from 'antd'
-import { useRouter } from 'next/navigation'
+import Breadcrumb from '@/components/breadcrumb'
+import FileTable from '@/components/file-table'
+
+import styles from './styles.module.scss'
 
 export default function Home() {
-  const router = useRouter()
-
   return (
-    <div>
-      <Button type='primary' onClick={() => router.push('/list-page/docs')}>
-        files
-      </Button>
-    </div>
+    <main className={styles.root}>
+      <section className={styles.topButtonGroup}>
+        <Button type={'primary'} shape={'round'}>
+          上传
+        </Button>
+      </section>
+
+      <section className={styles.breadcrumb}>
+        <Breadcrumb />
+      </section>
+
+      <section className={styles.fileList}>
+        <FileTable />
+      </section>
+    </main>
   )
 }
