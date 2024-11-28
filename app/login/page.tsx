@@ -35,7 +35,8 @@ export default function LoginFC() {
     const usernameEl = usernameRef.current as any
     if (token) {
       modal.confirm({
-        title: '当前您已登陆，您确定要重新登陆吗?',
+        title: '提示',
+        content: '当前您已登陆，您确定要重新登陆吗? ',
         icon: <ExclamationCircleFilled />,
         onOk() {
           usernameEl.focus()

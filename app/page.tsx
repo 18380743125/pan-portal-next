@@ -1,13 +1,16 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 
 export default function AppFC() {
   const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
-    router.replace('/list-page/files')
+    if (pathname === '/') {
+      router.replace('/list-page/files')
+    }
   }, [])
 
   return <></>

@@ -41,10 +41,17 @@ const userSlice = createAppSlice({
     getUserAction: create.asyncThunk(async (_, { dispatch }) => {
       const result = await getUserInfoApi()
       dispatch(setUserInfo(result))
+    }),
+
+    // 清除redux数据
+    clearUserAction: create.reducer(state => {
+      state.userInfo = {}
+      state.token = ''
+      localCache.clear()
     })
   })
 })
 
-export const { setToken, setUserInfo, loginAction, getUserAction } = userSlice.actions
+export const { setToken, setUserInfo, loginAction, getUserAction, clearUserAction } = userSlice.actions
 
 export default userSlice

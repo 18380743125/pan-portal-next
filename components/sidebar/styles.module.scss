@@ -1,0 +1,30 @@
+.root {
+  height: 100%;
+
+  .nav {
+    color: #333;
+    font-weight: bold;
+  }
+
+  .navItem {
+    height: 38px;
+    padding-left: 56px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    font-size: 14px;
+
+    .icon {
+      font-size: 18px;
+      position: absolute;
+      left: 30px;
+    }
+  }
+
+  .navItem.active {
+    background-color: #eaeaea;
+    color: #5794f7;
+  }
+}

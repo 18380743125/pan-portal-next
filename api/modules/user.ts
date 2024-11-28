@@ -59,3 +59,22 @@ export const getUserInfoApi = () => {
     url: '/user/'
   })
 }
+
+/**
+ * 退出登陆
+ */
+export const logoutApi = () => {
+  return request.post({
+    url: '/user/exit'
+  })
+}
+
+/**
+ * 修改密码
+ */
+export const updatePasswordApi = (data: Record<string, any>) => {
+  return request.post({
+    url: '/user/password/change',
+    data
+  })
+}
