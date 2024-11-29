@@ -1,10 +1,13 @@
 .root {
   .topButtonGroup {
-    padding: 14px;
+    padding: 12px 30px 12px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .breadcrumb {
-    padding: 14px;
+    padding: 12px;
   }
 
   .fileList {
