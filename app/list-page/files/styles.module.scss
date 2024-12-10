@@ -1,4 +1,6 @@
 .root {
+  height: 100%;
+
   .topButtonGroup {
     padding: 12px 30px 12px 12px;
     display: flex;
@@ -7,7 +9,7 @@
   }
 
   .breadcrumb {
-    padding: 12px;
+    padding: 8px 12px;
   }
 
   .fileList {

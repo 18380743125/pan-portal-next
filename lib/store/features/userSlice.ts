@@ -6,7 +6,7 @@ import { localCache } from '@/lib/utils/cache.util'
 import { CacheEnum } from '@/lib/constants'
 import { User } from '@/types/user'
 
-export interface IState {
+interface IState {
   token: string
   userInfo: Record<string, any>
 }

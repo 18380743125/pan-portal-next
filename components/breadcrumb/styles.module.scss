@@ -1,0 +1,49 @@
+.root {
+  display: flex;
+  align-items: center;
+
+  .backBtn {
+    padding: 0 4px;
+  }
+
+  .divider {
+    background: #ddd
+  }
+
+  .list {
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+
+    .item {
+      position: relative;
+      vertical-align: top;
+
+      .text {
+        color: #5794f7;
+      }
+
+      .text:hover {
+        filter: brightness(1.18);
+      }
+    }
+
+    .item:not(:last-child) {
+      margin-right: 27px;
+    }
+
+    .item:not(:last-child).item::after {
+      position: absolute;
+      top: 7px;
+      right: -28px;
+      content: '';
+      display: inline-block;
+      margin: 0 12px 0 8px;
+      width: 7px;
+      height: 7px;
+      border-top: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+      transform: rotate(45deg);
+    }
+  }
+}
