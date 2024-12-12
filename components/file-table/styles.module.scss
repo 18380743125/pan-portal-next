@@ -4,5 +4,70 @@
   .rowClass {
     color: #666;
     height: 28px;
+
+    &:hover .btnGroup {
+      opacity: 1;
+    }
+  }
+
+  .filename {
+    cursor: pointer;
+    display: inline-block;
+
+    .text {
+      margin-left: 8px;
+    }
+  }
+
+  .btnGroup {
+    opacity: 0;
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+
+    .downloadBtn {
+      background-color: #909399 !important;
+    }
+
+    .downloadBtn:hover {
+      filter: brightness(1.09);
+    }
+
+    .renameBtn {
+      background-color: #e6a23c !important;
+    }
+
+    .renameBtn:hover {
+      filter: brightness(1.09);
+    }
+
+    .deleteBtn {
+      background-color: #f56c6c !important;
+    }
+
+    .deleteBtn:hover {
+      filter: brightness(1.09);
+    }
+
+    .shareBtn {
+      background-color: #f2f6fc !important;
+      color: #333 !important;
+      border-color: #e1e4eb !important;
+    }
+
+    .shareBtn:hover {
+      filter: brightness(1.09);
+      border-color: #aaa !important;
+    }
+
+    .copyBtn {
+      background-color: #eff0fd !important;
+      color: #626aef !important;
+      border-color: #626aef !important;
+    }
+
+    .copyBtn:hover {
+      filter: brightness(1.09);
+    }
   }
 }

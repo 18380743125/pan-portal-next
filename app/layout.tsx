@@ -8,11 +8,11 @@ import zhCN from 'antd/locale/zh_CN'
 // fontawesome
 import { config, library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
+import '@fortawesome/fontawesome-svg-core/styles.css'
 
 library.add(fas)
 config.autoAddCss = false
 
-import '@fortawesome/fontawesome-svg-core/styles.css'
 import '@/styles/common.css'
 
 // redux store
@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   const theme = {
     token: {
-      colorPrimary: '#4096ff'
+      colorPrimary: '#4096ff',
     },
     components: {
       Menu: {
@@ -58,6 +58,6 @@ export default function RootLayout({
 }
 
 export const metadata: Metadata = {
-  title: '我的网盘',
-  description: '个人云盘'
+  title: '小浪网盘',
+  description: '私人云盘'
 }

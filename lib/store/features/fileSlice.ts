@@ -1,7 +1,7 @@
 import { PayloadAction } from '@reduxjs/toolkit'
 import { createAppSlice } from '@/lib/store/createAppSlice'
 import { FileTypeEnum } from '@/lib/constants'
-import { getFileListApi } from '@/api/modules/file'
+import { getBreadcrumbListApi, getFileListApi } from '@/api/modules/file'
 
 interface IState {
   fileTypes: string
@@ -11,7 +11,7 @@ interface IState {
 
 const initialState: IState = {
   fileTypes: FileTypeEnum.ALL_FILE,
-  breadcrumbList: [{ name: '全部文件' }, { name: '简历' }, { name: '2024' }],
+  breadcrumbList: [],
   fileList: []
 } as IState
 
@@ -30,9 +30,9 @@ const fileSlice = createAppSlice({
     }),
 
     // 获取文件面包屑列表
-    getBreadcrumbListAction: create.asyncThunk((fileId: string, { dispatch }) => {
-      console.log('getBreadcrumbList', fileId)
-      console.log(dispatch)
+    getBreadcrumbListAction: create.asyncThunk(async (fileId: string, { dispatch }) => {
+      const result = await getBreadcrumbListApi(fileId)
+      dispatch(setBreadcrumbList(result))
     }),
 
     // 获取文件列表

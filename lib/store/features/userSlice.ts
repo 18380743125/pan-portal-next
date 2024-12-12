@@ -5,6 +5,7 @@ import { createAppSlice } from '@/lib/store/createAppSlice'
 import { localCache } from '@/lib/utils/cache.util'
 import { CacheEnum } from '@/lib/constants'
 import { User } from '@/types/user'
+import { setBreadcrumbList } from '@/lib/store/features/fileSlice'
 
 interface IState {
   token: string
@@ -40,6 +41,14 @@ const userSlice = createAppSlice({
     // 获取用户信息action
     getUserAction: create.asyncThunk(async (_, { dispatch }) => {
       const result = await getUserInfoApi()
+      const initBreadcrumbList = [
+        {
+          id: '',
+          name: result.rootFilename,
+          parentId: result.rootFileId
+        }
+      ]
+      dispatch(setBreadcrumbList(initBreadcrumbList))
       dispatch(setUserInfo(result))
     }),
 
