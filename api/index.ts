@@ -4,7 +4,7 @@ import { BASE_URL, TIME_OUT } from './config'
 import type { Result } from '@/types/base'
 import { message } from '@/lib/AntdGlobal'
 import { localCache } from '@/lib/utils/cache.util'
-import { CacheEnum } from '@/lib/constants'
+import { CacheEnum, ContentTypeEnum } from '@/lib/constants'
 
 const request = new Request({
   timeout: TIME_OUT,
@@ -24,6 +24,11 @@ const request = new Request({
       const result = res.data as Result.BaseResult
       if (result.code === 0) {
         return result.data
+      }
+
+      const contentType = res.headers['content-type']
+      if (contentType === ContentTypeEnum.APPLICATION_OCTET_STREAM) {
+        return res
       }
 
       switch (result.code) {

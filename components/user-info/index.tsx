@@ -12,7 +12,7 @@ import UpdatePasswordFC from '@/components/user-info/update-password'
 import styles from './styles.module.scss'
 
 import { modal } from '@/lib/AntdGlobal'
-import { logoutApi } from '@/api/modules/user'
+import { logoutApi } from '@/api/features/user'
 
 const UserInfoFC = () => {
   const router = useRouter()

@@ -32,3 +32,18 @@ export enum FileTypeEnum {
   SOURCE_CODE_FILE = '11', // 源代码
   CSV_FILE = '12' // csv
 }
+
+/**
+ * 公用常量
+ */
+export enum PanEnum {
+  FOLDER_FLAG = 1,
+  COMMON_SEPARATOR = '__,__'
+}
+
+/**
+ * Content-Type
+ */
+export enum ContentTypeEnum {
+  APPLICATION_OCTET_STREAM = 'application/octet-stream'
+}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useRef } from 'react'
 import { Button, Table, TableColumnsType, Tooltip } from 'antd'
 import {
   CopyOutlined,
@@ -16,9 +16,10 @@ import { getFileFontElement } from '@/lib/utils/file.util'
 
 import type { FileItem } from '@/types/file'
 import styles from './styles.module.scss'
-import { getBreadcrumbListAction, getFileAction } from '@/lib/store/features/fileSlice'
-import { FileTypeEnum } from '@/lib/constants'
+import { getBreadcrumbListAction, getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
+import { FileTypeEnum, PanEnum } from '@/lib/constants'
 import useFileHandler from '@/hooks/useFileHandler'
+import RenameFC from '@/components/button-list/rename-button/rename'
 
 const Breadcrumb = () => {
   const dispatch = useAppDispatch()
@@ -30,23 +31,27 @@ const Breadcrumb = () => {
     shallowEqualApp
   )
 
-  const [selectRows, setSelectRows] = useState<FileItem[]>([])
+  const renameRef = useRef<{ open: (row?: FileItem) => void }>(null)
 
-  const { onDownload, onRename, onDelete, onShare, onCopy, onMove } = useFileHandler()
+  const { onDownload, onDelete, onShare, onCopy, onMove } = useFileHandler()
 
   const onSelectChange = (selectedRowKeys: React.Key[], rows: FileItem[]) => {
-    setSelectRows(rows)
-    console.log(selectRows)
+    dispatch(setSelectFileList(rows))
   }
 
   const onFileNameClick = (row: FileItem) => {
     // 下一级目录
-    if (row.folderFlag === 1) {
+    if (row.folderFlag === PanEnum.FOLDER_FLAG) {
       dispatch(getBreadcrumbListAction(row.fileId))
       dispatch(getFileAction({ parentId: row.fileId, fileType: FileTypeEnum.ALL_FILE }))
     } else {
       // 文件预览
     }
+  }
+
+  // 重命名文件
+  const onRename = (item: FileItem) => {
+    renameRef.current?.open(item)
   }
 
   const columns: TableColumnsType<FileItem> = [
@@ -155,6 +160,8 @@ const Breadcrumb = () => {
 
   return (
     <section className={styles.root}>
+      <RenameFC ref={renameRef} />
+
       <Table<FileItem>
         rowKey='fileId'
         pagination={false}

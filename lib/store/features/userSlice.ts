@@ -1,6 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit'
 
-import { getUserInfoApi, loginApi } from '@/api/modules/user'
+import { getUserInfoApi, loginApi } from '@/api/features/user'
 import { createAppSlice } from '@/lib/store/createAppSlice'
 import { localCache } from '@/lib/utils/cache.util'
 import { CacheEnum } from '@/lib/constants'

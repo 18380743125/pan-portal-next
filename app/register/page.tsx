@@ -9,7 +9,7 @@ import styles from './styles.module.scss'
 
 import { message } from '@/lib/AntdGlobal'
 import { validateUsernameAndPassword } from '@/lib/form-validate'
-import { registerApi } from '@/api/modules/user'
+import { registerApi } from '@/api/features/user'
 
 export default function RegisterFC() {
   const router = useRouter()

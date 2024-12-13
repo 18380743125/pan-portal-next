@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useState } from 'react'
 import { Form, Modal, Input } from 'antd'
 import { useRouter } from 'next/navigation'
 
-import { updatePasswordApi } from '@/api/modules/user'
+import { updatePasswordApi } from '@/api/features/user'
 import { message } from '@/lib/AntdGlobal'
 import { useAppDispatch } from '@/lib/store/hooks'
 import { validatePassword } from '@/lib/form-validate'

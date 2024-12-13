@@ -1,18 +1,21 @@
 import { PayloadAction } from '@reduxjs/toolkit'
 import { createAppSlice } from '@/lib/store/createAppSlice'
 import { FileTypeEnum } from '@/lib/constants'
-import { getBreadcrumbListApi, getFileListApi } from '@/api/modules/file'
+import { getBreadcrumbListApi, getFileListApi } from '@/api/features/file'
+import { FileItem } from '@/types/file'
 
 interface IState {
-  fileTypes: string
+  fileType: string
   breadcrumbList: Record<string, any>[]
-  fileList: Record<string, any>[]
+  fileList: FileItem[]
+  selectFileList: FileItem[]
 }
 
 const initialState: IState = {
-  fileTypes: FileTypeEnum.ALL_FILE,
+  fileType: FileTypeEnum.ALL_FILE,
   breadcrumbList: [],
-  fileList: []
+  fileList: [],
+  selectFileList: []
 } as IState
 
 const fileSlice = createAppSlice({
@@ -25,8 +28,13 @@ const fileSlice = createAppSlice({
     }),
 
     // 修改文件列表
-    setFileList: create.reducer((state, action: PayloadAction<Record<string, any>[]>) => {
+    setFileList: create.reducer((state, action: PayloadAction<FileItem[]>) => {
       state.fileList = action.payload
+    }),
+
+    // 修改已选择的文件
+    setSelectFileList: create.reducer((state, action: PayloadAction<FileItem[]>) => {
+      state.selectFileList = action.payload
     }),
 
     // 获取文件面包屑列表
@@ -44,6 +52,6 @@ const fileSlice = createAppSlice({
   })
 })
 
-export const { setBreadcrumbList, setFileList, getBreadcrumbListAction, getFileAction } = fileSlice.actions
+export const { setBreadcrumbList, setFileList, setSelectFileList, getBreadcrumbListAction, getFileAction } = fileSlice.actions
 
 export default fileSlice
