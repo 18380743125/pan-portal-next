@@ -8,3 +8,35 @@
   filter: brightness(1.09);
   border-color: #aaa !important;
 }
+
+.title {
+  text-align: center;
+  font-size: 16px;
+  color: #333;
+}
+
+.link {
+  color: #666;
+  margin-top: 36px;
+  font-size: 14px;
+
+  .value {
+    color: #5794f7;
+    cursor: pointer;
+  }
+}
+
+.code {
+  color: #666;
+  margin-top: 36px;
+  font-size: 14px;
+
+  .value {
+    color: #7ec050;
+  }
+}
+
+.copyBtn {
+  margin: 40px 0 30px;
+  text-align: right;
+}

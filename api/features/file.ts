@@ -74,3 +74,13 @@ export const renameApi = (fileId: string, newFilename: string) => {
     }
   })
 }
+
+/**
+ * 分享文件
+ */
+export const shareApi = (data: Record<string, any>) => {
+  return request.post({
+    url: '/share',
+    data
+  })
+}

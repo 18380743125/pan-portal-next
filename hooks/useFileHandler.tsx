@@ -7,7 +7,7 @@ import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hoo
 import { message, modal } from '@/lib/AntdGlobal'
 import { PanEnum } from '@/lib/constants'
 import { download } from '@/lib/utils/base.util'
-import { getFileAction } from '@/lib/store/features/fileSlice'
+import { getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
 
 const useFileHandler = () => {
   const dispatch = useAppDispatch()
@@ -70,6 +70,9 @@ const useFileHandler = () => {
         message.success('删除成功')
         const current = pathList[pathList.length - 1]
         dispatch(getFileAction({ parentId: current.parentId, fileType }))
+        // 取消勾选已删除的文件
+        const newSelectFileList = selectFileList.filter(item => !fileIds.includes(item.fileId))
+        dispatch(setSelectFileList(newSelectFileList))
       }
     })
   }

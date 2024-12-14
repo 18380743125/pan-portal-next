@@ -16,7 +16,7 @@ export default function Home() {
 
   const { userInfo, fileTypes } = useAppSelector(
     state => ({
-      fileTypes: state.file.fileTypes,
+      fileTypes: state.file.fileType,
       userInfo: state.user.userInfo
     }),
     shallowEqualApp

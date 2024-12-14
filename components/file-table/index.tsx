@@ -11,15 +11,17 @@ import {
   ShareAltOutlined
 } from '@ant-design/icons'
 
+import RenameFC from '@/components/button-list/rename-button/rename'
+import ShareFC from '@/components/button-list/share-button/share'
+
+import { getBreadcrumbListAction, getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { getFileFontElement } from '@/lib/utils/file.util'
-
-import type { FileItem } from '@/types/file'
-import styles from './styles.module.scss'
-import { getBreadcrumbListAction, getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
 import { FileTypeEnum, PanEnum } from '@/lib/constants'
 import useFileHandler from '@/hooks/useFileHandler'
-import RenameFC from '@/components/button-list/rename-button/rename'
+import type { FileItem } from '@/types/file'
+
+import styles from './styles.module.scss'
 
 const Breadcrumb = () => {
   const dispatch = useAppDispatch()
@@ -32,8 +34,9 @@ const Breadcrumb = () => {
   )
 
   const renameRef = useRef<{ open: (row?: FileItem) => void }>(null)
+  const shareRef = useRef<{ open: (row?: FileItem[]) => void }>(null)
 
-  const { onDownload, onDelete, onShare, onCopy, onMove } = useFileHandler()
+  const { onDownload, onDelete } = useFileHandler()
 
   const onSelectChange = (selectedRowKeys: React.Key[], rows: FileItem[]) => {
     dispatch(setSelectFileList(rows))
@@ -53,6 +56,17 @@ const Breadcrumb = () => {
   const onRename = (item: FileItem) => {
     renameRef.current?.open(item)
   }
+
+  // 分享文件
+  const onShare = (row: FileItem) => {
+    shareRef.current?.open([row])
+  }
+
+  // 复制文件
+  const onCopy = (row: FileItem) => {}
+
+  // 移动文件
+  const onMove = (row: FileItem) => {}
 
   const columns: TableColumnsType<FileItem> = [
     {
@@ -160,7 +174,11 @@ const Breadcrumb = () => {
 
   return (
     <section className={styles.root}>
+      {/* 重命名文件 */}
       <RenameFC ref={renameRef} />
+
+      {/* 分享文件 */}
+      <ShareFC ref={shareRef} />
 
       <Table<FileItem>
         rowKey='fileId'
