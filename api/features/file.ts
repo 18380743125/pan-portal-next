@@ -84,3 +84,38 @@ export const shareApi = (data: Record<string, any>) => {
     data
   })
 }
+
+/**
+ * 查询文件夹树
+ */
+export const getFolderTreeApi = () => {
+  return request.get({
+    url: '/file/folder/tree'
+  })
+}
+
+/**
+ * 复制文件到
+ */
+export const copyFileApi = (targetParentId: string, fileIds: string) => {
+  return request.post({
+    url: '/file/copy',
+    data: {
+      targetParentId,
+      fileIds
+    }
+  })
+}
+
+/**
+ * 移动文件到
+ */
+export const transferFileApi = (targetParentId: string, fileIds: string) => {
+  return request.post({
+    url: '/file/transfer',
+    data: {
+      targetParentId,
+      fileIds
+    }
+  })
+}

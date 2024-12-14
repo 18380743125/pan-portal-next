@@ -22,6 +22,9 @@ import useFileHandler from '@/hooks/useFileHandler'
 import type { FileItem } from '@/types/file'
 
 import styles from './styles.module.scss'
+import CopyFC from '@/components/button-list/copy-button/copy'
+import TransferFC from '@/components/button-list/transfer-button/transfer'
+import useTableScrollHeight from '@/hooks/useTableScrollHeight'
 
 const Breadcrumb = () => {
   const dispatch = useAppDispatch()
@@ -34,7 +37,12 @@ const Breadcrumb = () => {
   )
 
   const renameRef = useRef<{ open: (row?: FileItem) => void }>(null)
-  const shareRef = useRef<{ open: (row?: FileItem[]) => void }>(null)
+  const shareRef = useRef<{ open: (rows?: FileItem[]) => void }>(null)
+  const copyRef = useRef<{ open: (rows?: FileItem[]) => void }>(null)
+  const moveRef = useRef<{ open: (rows?: FileItem[]) => void }>(null)
+  const tableRef = useRef<HTMLDivElement>(null)
+  const [tableScrollY] = useTableScrollHeight(tableRef)
+  console.log(tableScrollY)
 
   const { onDownload, onDelete } = useFileHandler()
 
@@ -63,17 +71,21 @@ const Breadcrumb = () => {
   }
 
   // 复制文件
-  const onCopy = (row: FileItem) => {}
+  const onCopy = (row: FileItem) => {
+    copyRef.current?.open([row])
+  }
 
   // 移动文件
-  const onMove = (row: FileItem) => {}
+  const onMove = (row: FileItem) => {
+    moveRef.current?.open([row])
+  }
 
   const columns: TableColumnsType<FileItem> = [
     {
       title: '文件名',
       dataIndex: 'filename',
       width: 360,
-      sorter: (a, b) => a.filename.localeCompare(b.filename),
+      // sorter: (a, b) => a.filename.localeCompare(b.filename),
       render: (text: string, row) => (
         <div className={styles.filename} onClick={() => onFileNameClick(row)}>
           <span>{getFileFontElement(row)}</span>
@@ -180,14 +192,23 @@ const Breadcrumb = () => {
       {/* 分享文件 */}
       <ShareFC ref={shareRef} />
 
-      <Table<FileItem>
-        rowKey='fileId'
-        pagination={false}
-        columns={columns}
-        dataSource={fileList as FileItem[]}
-        rowClassName={styles.rowClass}
-        rowSelection={{ type: 'checkbox', onChange: onSelectChange }}
-      />
+      {/* 复制文件 */}
+      <CopyFC ref={copyRef} />
+
+      {/* 移动文件 */}
+      <TransferFC ref={moveRef} />
+
+      <section ref={tableRef}>
+        <Table<FileItem>
+          scroll={{ y: tableScrollY, scrollToFirstRowOnChange: true }}
+          rowKey='fileId'
+          pagination={false}
+          columns={columns}
+          dataSource={fileList as FileItem[]}
+          rowClassName={styles.rowClass}
+          rowSelection={{ type: 'checkbox', onChange: onSelectChange }}
+        />
+      </section>
     </section>
   )
 }

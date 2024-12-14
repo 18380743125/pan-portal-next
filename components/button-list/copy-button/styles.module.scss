@@ -7,3 +7,12 @@
 .button:hover {
   filter: brightness(1.09);
 }
+
+.root {
+  padding: 16px 0;
+}
+
+.tree {
+  height: 420px;
+  overflow: auto;
+}
