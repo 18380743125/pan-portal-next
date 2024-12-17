@@ -69,7 +69,10 @@ const useFileHandler = () => {
         await deleteFileApi(fileIds)
         message.success('删除成功')
         const current = pathList[pathList.length - 1]
-        dispatch(getFileAction({ parentId: current.parentId, fileType }))
+
+        // 刷新文件列表
+        dispatch(getFileAction({ parentId: current.id, fileType }))
+
         // 取消勾选已删除的文件
         const newSelectFileList = selectFileList.filter(item => !fileIds.includes(item.fileId))
         dispatch(setSelectFileList(newSelectFileList))

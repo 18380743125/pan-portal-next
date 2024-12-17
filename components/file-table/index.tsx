@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 import { Button, Table, TableColumnsType, Tooltip } from 'antd'
 import {
   CopyOutlined,
@@ -29,9 +29,10 @@ import useTableScrollHeight from '@/hooks/useTableScrollHeight'
 const Breadcrumb = () => {
   const dispatch = useAppDispatch()
 
-  const { fileList } = useAppSelector(
+  const { fileList, selectFileList } = useAppSelector(
     state => ({
-      fileList: state.file.fileList
+      fileList: state.file.fileList,
+      selectFileList: state.file.selectFileList
     }),
     shallowEqualApp
   )
@@ -42,7 +43,10 @@ const Breadcrumb = () => {
   const moveRef = useRef<{ open: (rows?: FileItem[]) => void }>(null)
   const tableRef = useRef<HTMLDivElement>(null)
   const [tableScrollY] = useTableScrollHeight(tableRef)
-  console.log(tableScrollY)
+
+  const selectedRowKeys = useMemo(() => {
+    return selectFileList.map(file => file.fileId)
+  }, [selectFileList])
 
   const { onDownload, onDelete } = useFileHandler()
 
@@ -55,6 +59,7 @@ const Breadcrumb = () => {
     if (row.folderFlag === PanEnum.FOLDER_FLAG) {
       dispatch(getBreadcrumbListAction(row.fileId))
       dispatch(getFileAction({ parentId: row.fileId, fileType: FileTypeEnum.ALL_FILE }))
+      dispatch(setSelectFileList([]))
     } else {
       // 文件预览
     }
@@ -200,13 +205,13 @@ const Breadcrumb = () => {
 
       <section ref={tableRef}>
         <Table<FileItem>
-          scroll={{ y: tableScrollY, scrollToFirstRowOnChange: true }}
+          scroll={{ y: tableScrollY, x: 'max-content' }}
           rowKey='fileId'
           pagination={false}
           columns={columns}
           dataSource={fileList as FileItem[]}
           rowClassName={styles.rowClass}
-          rowSelection={{ type: 'checkbox', onChange: onSelectChange }}
+          rowSelection={{ type: 'checkbox', selectedRowKeys, onChange: onSelectChange }}
         />
       </section>
     </section>

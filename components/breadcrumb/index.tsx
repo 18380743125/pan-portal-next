@@ -27,7 +27,7 @@ const BreadcrumbFC = () => {
 
       // 更新面包屑
       const newBreadcrumbList = [...breadcrumbList.slice(0, size - 1)]
-      dispatch(setBreadcrumbList(newBreadcrumbList))
+      dispatch(setBreadcrumbList({ list: newBreadcrumbList }))
     }
   }
 
@@ -48,7 +48,7 @@ const BreadcrumbFC = () => {
     }
     const last = newBreadcrumbList[newBreadcrumbList.length - 1]
     dispatch(getFileAction({ parentId: last.id, fileType: FileTypeEnum.ALL_FILE }))
-    dispatch(setBreadcrumbList(newBreadcrumbList))
+    dispatch(setBreadcrumbList({ list: newBreadcrumbList }))
   }
 
   return (

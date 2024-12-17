@@ -80,7 +80,9 @@ const CopyFC = forwardRef((_, ref) => {
     message.success('复制成功')
     // 刷新文件列表
     const current = pathList[pathList.length - 1]
-    dispatch(getFileAction({ parentId: current.parentId, fileType }))
+
+    // 刷新文件列表
+    dispatch(getFileAction({ parentId: current.id, fileType }))
     close()
   }
 

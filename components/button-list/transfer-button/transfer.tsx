@@ -74,9 +74,10 @@ const TransferFC = forwardRef((_, ref) => {
     const fileIds = rows?.map(row => row.fileId).join(PanEnum.COMMON_SEPARATOR)
     await transferFileApi(targetParentId, fileIds as string)
     message.success('移动成功')
+
     // 刷新文件列表
     const current = pathList[pathList.length - 1]
-    dispatch(getFileAction({ parentId: current.parentId, fileType }))
+    dispatch(getFileAction({ parentId: current.id, fileType }))
     close()
   }
 

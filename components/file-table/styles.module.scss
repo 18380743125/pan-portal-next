@@ -1,5 +1,7 @@
 .root {
   padding: 12px;
+  width: calc(100% - 30px);
+  height: calc(100vh - 204px);
 
   .rowClass {
     color: #666;

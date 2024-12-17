@@ -44,9 +44,9 @@ const CreateFolder = forwardRef((_, ref) => {
     await form.validateFields()
     const data = form.getFieldsValue()
     const current = pathList[pathList.length - 1]
-    await createFolderApi(current.parentId, data.folderName)
+    await createFolderApi(current.id, data.folderName)
     message.success('新建成功')
-    dispatch(getFileAction({ parentId: current.parentId, fileType }))
+    dispatch(getFileAction({ parentId: current.id, fileType }))
     close()
   }
 

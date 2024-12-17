@@ -23,8 +23,9 @@ const fileSlice = createAppSlice({
   initialState,
   reducers: create => ({
     // 修改面包屑
-    setBreadcrumbList: create.reducer((state, action: PayloadAction<Record<string, any>[]>) => {
-      state.breadcrumbList = action.payload
+    setBreadcrumbList: create.reducer((state, action: PayloadAction<Record<string, any>>) => {
+      const { list } = action.payload
+      state.breadcrumbList = list
     }),
 
     // 修改文件列表
@@ -40,7 +41,7 @@ const fileSlice = createAppSlice({
     // 获取文件面包屑列表
     getBreadcrumbListAction: create.asyncThunk(async (fileId: string, { dispatch }) => {
       const result = await getBreadcrumbListApi(fileId)
-      dispatch(setBreadcrumbList(result))
+      dispatch(setBreadcrumbList({ list: result }))
     }),
 
     // 获取文件列表
@@ -52,6 +53,7 @@ const fileSlice = createAppSlice({
   })
 })
 
-export const { setBreadcrumbList, setFileList, setSelectFileList, getBreadcrumbListAction, getFileAction } = fileSlice.actions
+export const { setBreadcrumbList, setFileList, setSelectFileList, getBreadcrumbListAction, getFileAction } =
+  fileSlice.actions
 
 export default fileSlice

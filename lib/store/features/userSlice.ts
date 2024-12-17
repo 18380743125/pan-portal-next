@@ -43,12 +43,12 @@ const userSlice = createAppSlice({
       const result = await getUserInfoApi()
       const initBreadcrumbList = [
         {
-          id: '',
+          id: result.rootFileId,
           name: result.rootFilename,
           parentId: result.rootFileId
         }
       ]
-      dispatch(setBreadcrumbList(initBreadcrumbList))
+      dispatch(setBreadcrumbList({ list: initBreadcrumbList, flag: 'init' }))
       dispatch(setUserInfo(result))
     }),
 
