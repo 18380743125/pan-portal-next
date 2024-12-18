@@ -90,6 +90,7 @@ const Breadcrumb = () => {
       title: '文件名',
       dataIndex: 'filename',
       width: 360,
+      align: 'left',
       // sorter: (a, b) => a.filename.localeCompare(b.filename),
       render: (text: string, row) => (
         <div className={styles.filename} onClick={() => onFileNameClick(row)}>
@@ -180,12 +181,14 @@ const Breadcrumb = () => {
     {
       title: '大小',
       dataIndex: 'fileSizeDesc',
-      width: 200
+      width: 200,
+      align: 'left'
     },
     {
       title: '修改日期',
       dataIndex: 'updateTime',
-      width: 280
+      width: 280,
+      align: 'left'
     }
   ]
 
@@ -205,7 +208,7 @@ const Breadcrumb = () => {
 
       <section ref={tableRef}>
         <Table<FileItem>
-          scroll={{ y: tableScrollY, x: 'max-content' }}
+          scroll={{ y: tableScrollY, scrollToFirstRowOnChange: true }}
           rowKey='fileId'
           pagination={false}
           columns={columns}

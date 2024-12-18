@@ -11,7 +11,7 @@ import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hoo
 import { getFileAction } from '@/lib/store/features/fileSlice'
 import styles from './styles.module.scss'
 
-export default function Home() {
+export default function FilesFC() {
   const dispatch = useAppDispatch()
 
   const { userInfo, fileTypes } = useAppSelector(

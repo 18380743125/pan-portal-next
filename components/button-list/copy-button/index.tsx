@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from 'antd'
 import { CopyOutlined } from '@ant-design/icons'
 
