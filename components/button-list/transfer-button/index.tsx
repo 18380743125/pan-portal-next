@@ -1,6 +1,8 @@
+'use client'
+
 import { Button } from 'antd'
 import { SendOutlined } from '@ant-design/icons'
-import { useMemo, useRef } from "react";
+import { useRef } from 'react'
 
 import TransferFC from '@/components/button-list/transfer-button/transfer'
 import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'

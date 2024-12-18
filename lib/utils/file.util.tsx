@@ -1,6 +1,6 @@
 import { FileItem } from '@/types/file'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFolder, faFileText, faFileCode, faFilePdf } from '@fortawesome/free-regular-svg-icons'
+import { faFolder, faFileText, faFileCode } from '@fortawesome/free-regular-svg-icons'
 import {
   faFile,
   faFileImage,
@@ -9,6 +9,7 @@ import {
   faFileArchive,
   faFileExcel,
   faFileWord,
+  faFilePdf,
   faFilePowerpoint
 } from '@fortawesome/free-solid-svg-icons'
 

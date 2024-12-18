@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 

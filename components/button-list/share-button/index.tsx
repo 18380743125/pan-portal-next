@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from 'antd'
 import { ShareAltOutlined } from '@ant-design/icons'
 

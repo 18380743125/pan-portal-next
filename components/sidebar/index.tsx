@@ -1,16 +1,19 @@
 'use client'
 
+import { useAppDispatch } from '@/lib/store/hooks'
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import classNames from 'classnames'
-import { FolderOutlined, ShareAltOutlined, DeleteOutlined } from '@ant-design/icons'
+import { DeleteOutlined, FolderOutlined, ShareAltOutlined } from '@ant-design/icons'
 
 import styles from './styles.module.scss'
+import { setFileList } from '@/lib/store/features/fileSlice'
 
 const Sidebar = () => {
   const [activeIndex, setActiveIndex] = useState(-1)
   const router = useRouter()
   const pathname = usePathname()
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     const index = navList.findIndex(item => item.path === pathname)
@@ -57,6 +60,7 @@ const Sidebar = () => {
 
   const onNavItemClick = (index: number, path: string) => {
     setActiveIndex(index)
+    dispatch(setFileList([]))
     router.push(path)
   }
 

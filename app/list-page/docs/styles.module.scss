@@ -1,0 +1,14 @@
+.root {
+  height: 100%;
+
+  .topButtonGroup {
+    padding: 12px 30px 12px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .fileList {
+    width: calc(100% - 18px);
+  }
+}
