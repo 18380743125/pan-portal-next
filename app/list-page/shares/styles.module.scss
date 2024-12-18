@@ -1,0 +1,41 @@
+.root {
+  .topButton {
+    padding: 16px;
+  }
+
+  .shareList {
+
+  }
+
+  .rowClass {
+    color: #666;
+    height: 28px;
+
+    &:hover .btnGroup {
+      opacity: 1;
+    }
+  }
+
+  .btnGroup {
+    opacity: 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+
+    .copyBtn {
+      background-color: #67c23a !important;
+    }
+
+    .copyBtn:hover {
+      filter: brightness(1.09);
+    }
+  }
+}
+
+.cancelBtn {
+  background-color: #f56c6c !important;
+}
+
+.cancelBtn:hover {
+  filter: brightness(1.09);
+}

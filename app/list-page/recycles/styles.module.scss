@@ -1,0 +1,43 @@
+.root {
+  .topButton {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .shareList {
+
+  }
+
+  .rowClass {
+    color: #666;
+    height: 28px;
+
+    &:hover .btnGroup {
+      opacity: 1;
+    }
+  }
+
+  .btnGroup {
+    opacity: 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+}
+
+.restoreBtn {
+  background-color: #67c23a !important;
+}
+
+.restoreBtn:hover {
+  filter: brightness(1.09);
+}
+
+.deleteBtn {
+  background-color: #f56c6c !important;
+}
+
+.deleteBtn:hover {
+  filter: brightness(1.09);
+}
