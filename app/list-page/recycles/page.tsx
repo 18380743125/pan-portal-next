@@ -1,17 +1,21 @@
 'use client'
 
 import { Button, Table, TableColumnsType, Tooltip } from 'antd'
-import { DeleteOutlined, PoweroffOutlined, UndoOutlined } from '@ant-design/icons'
+import { DeleteOutlined, UndoOutlined } from '@ant-design/icons'
 
 import styles from './styles.module.scss'
 import React, { useEffect, useRef, useState } from 'react'
 import useTableScrollHeight from '@/hooks/useTableScrollHeight'
-import { getRecycleListApi } from '@/api/features/recycle'
+import { deleteRecycleApi, getRecycleListApi, restoreRecycleApi } from '@/api/features/recycle'
+import { getFileFontElement } from '@/lib/utils/file.util'
+import { FileItem } from '@/types/file'
+import { message, modal } from '@/lib/AntdGlobal'
+import { PanEnum } from '@/lib/constants'
 
 export default function RecyclesFC() {
   const tableRef = useRef<HTMLDivElement>(null)
   const [tableScrollY] = useTableScrollHeight(tableRef)
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>()
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([])
   const [cycleList, setCycleList] = useState<Record<string, any>[]>()
 
   const loadData = async () => {
@@ -27,20 +31,75 @@ export default function RecyclesFC() {
     setSelectedRowKeys(selectedRowKeys as string[])
   }
 
-  // 复制链接
-  const onRestore = row => {
-    console.log(row)
+  // 还原
+  const onRestore = async (row?: FileItem) => {
+    if (!row && selectedRowKeys?.length === 0) {
+      return message.warning('请选择要还原的文件')
+    }
+    let fileIds = row?.fileId
+    if (selectedRowKeys?.length > 0) {
+      fileIds = selectedRowKeys.join(PanEnum.COMMON_SEPARATOR)
+    }
+    const newKeys = [] as string[]
+    for (const key of selectedRowKeys) {
+      if (!fileIds?.includes(key)) {
+        newKeys.push(key)
+      }
+    }
+    setSelectedRowKeys(newKeys)
+    await restoreRecycleApi(fileIds)
+    loadData()
   }
 
-  // 取消分享
+  // 彻底删除
   const onDelete = row => {
-    console.log(row)
+    modal.confirm({
+      title: '提示',
+      cancelText: '取消',
+      okText: '确定',
+      closable: true,
+      content: <div style={{ marginBottom: 10 }}>{`文件删除后将不可恢复，您确定这样做吗？`}</div>,
+      async onOk() {
+        await deleteRecycleApi(row.fileId)
+        const newKey = selectedRowKeys.filter(item => item !== row.fileId)
+        setSelectedRowKeys(newKey)
+        message.success('删除成功')
+        loadData()
+      }
+    })
+  }
+
+  // 清空回收站
+  const onClear = async () => {
+    if (cycleList?.length === 0) {
+      return
+    }
+    const fileIds = cycleList?.map(item => item.fileId) as string[]
+    modal.confirm({
+      title: '提示',
+      cancelText: '取消',
+      okText: '确定',
+      closable: true,
+      content: <div style={{ marginBottom: 10 }}>{`文件删除后将不可恢复，您确定这样做吗？`}</div>,
+      async onOk() {
+        await deleteRecycleApi(fileIds.join(PanEnum.COMMON_SEPARATOR))
+        setSelectedRowKeys([])
+        loadData()
+      }
+    })
   }
 
   const columns: TableColumnsType = [
     {
       title: '文件名',
-      dataIndex: 'filename'
+      dataIndex: 'filename',
+      minWidth: 360,
+      render: (text: string, row) => (
+        <div className={styles.filename}>
+          <span>{getFileFontElement(row as FileItem)}</span>
+          <span className={styles.text}>{text}</span>
+        </div>
+      )
     },
     {
       dataIndex: 'operator',
@@ -55,7 +114,7 @@ export default function RecyclesFC() {
                 type={'primary'}
                 shape={'circle'}
                 icon={<UndoOutlined />}
-                onClick={() => onRestore(row)}
+                onClick={() => onRestore(row as FileItem)}
               />
             </Tooltip>
 
@@ -85,7 +144,8 @@ export default function RecyclesFC() {
     },
     {
       title: '删除日期',
-      dataIndex: 'updateTime'
+      dataIndex: 'updateTime',
+      width: 220
     }
   ]
 
@@ -98,7 +158,7 @@ export default function RecyclesFC() {
           type={'primary'}
           shape={'round'}
           icon={<UndoOutlined />}
-          onClick={onRestore}
+          onClick={() => onRestore()}
         >
           还原
         </Button>
@@ -108,7 +168,7 @@ export default function RecyclesFC() {
           type={'primary'}
           shape={'round'}
           icon={<DeleteOutlined />}
-          onClick={onRestore}
+          onClick={onClear}
         >
           清空回收站
         </Button>

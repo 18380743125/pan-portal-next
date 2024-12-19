@@ -10,6 +10,7 @@
   }
 
   .right {
+    width: calc(100% - 200px);
     flex: 1;
     background-color: #ffffff;
   }

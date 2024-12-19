@@ -1,15 +1,18 @@
 .root {
+  height: 100%;
+
   .topButton {
     padding: 16px;
   }
 
   .shareList {
-
+    padding: 0 12px;
   }
 
   .rowClass {
     color: #666;
     height: 28px;
+    font-size: 14px;
 
     &:hover .btnGroup {
       opacity: 1;

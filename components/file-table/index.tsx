@@ -90,7 +90,6 @@ const Breadcrumb = () => {
       title: '文件名',
       dataIndex: 'filename',
       width: 360,
-      align: 'left',
       // sorter: (a, b) => a.filename.localeCompare(b.filename),
       render: (text: string, row) => (
         <div className={styles.filename} onClick={() => onFileNameClick(row)}>

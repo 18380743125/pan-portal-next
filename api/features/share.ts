@@ -8,3 +8,15 @@ export const getShareListApi = () => {
     url: '/shares'
   })
 }
+
+/**
+ * 取消分享
+ */
+export const cancelShareApi = (shareIds: string) => {
+  return request.delete({
+    url: '/share',
+    data: {
+      shareIds
+    }
+  })
+}

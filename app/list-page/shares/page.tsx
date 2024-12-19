@@ -6,12 +6,15 @@ import { LinkOutlined, PoweroffOutlined } from '@ant-design/icons'
 import styles from './styles.module.scss'
 import React, { useEffect, useRef, useState } from 'react'
 import useTableScrollHeight from '@/hooks/useTableScrollHeight'
-import { getShareListApi } from '@/api/features/share'
+import { cancelShareApi, getShareListApi } from '@/api/features/share'
+import { copyText2Clipboard } from '@/lib/utils/base.util'
+import { message, modal } from '@/lib/AntdGlobal'
+import { PanEnum } from '@/lib/constants'
 
 export default function ShareFC() {
   const tableRef = useRef<HTMLDivElement>(null)
   const [tableScrollY] = useTableScrollHeight(tableRef)
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>()
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([])
   const [shareList, setShareList] = useState<Record<string, any>[]>()
 
   const loadData = async () => {
@@ -28,22 +31,48 @@ export default function ShareFC() {
   }
 
   // 复制链接
-  const onCopyLink = row => {
-    console.log(row)
+  const onCopyLink = (e, row) => {
+    e.preventDefault()
+    const text = `链接：${row?.shareUrl}  提取码：${row?.shareCode}  赶快分享给小伙伴吧！`
+    copyText2Clipboard(text)
+    message.info('已复制').then(() => {})
   }
 
   // 取消分享
-  const onCancelShare = row => {
-    console.log(row)
+  const onCancelShare = (row?: Record<string, any>) => {
+    if (!row && selectedRowKeys?.length === 0) {
+      return message.warning('请选择要取消的分享')
+    }
+    let shareIds = row?.shareId
+    if (selectedRowKeys?.length > 0) {
+      shareIds = selectedRowKeys.join(PanEnum.COMMON_SEPARATOR)
+    }
+
+    modal.confirm({
+      title: '提示',
+      cancelText: '取消',
+      okText: '确定',
+      closable: true,
+      content: <div style={{ marginBottom: 10 }}>{`分享取消后将不可恢复，您确定这样做吗？`}</div>,
+      async onOk() {
+        await cancelShareApi(shareIds)
+        message.success('取消分享成功')
+        setSelectedRowKeys([])
+        loadData()
+      }
+    })
   }
 
   const columns: TableColumnsType = [
     {
       title: '分享名称',
-      dataIndex: 'shareName'
+      dataIndex: 'shareName',
+      fixed: 'left',
+      minWidth: 360
     },
     {
       dataIndex: 'operator',
+      width: 300,
       render: (_, row) => (
         <section>
           <div className={styles.btnGroup}>
@@ -60,7 +89,7 @@ export default function ShareFC() {
                 type={'primary'}
                 shape={'circle'}
                 icon={<LinkOutlined />}
-                onClick={() => onCopyLink(row)}
+                onClick={e => onCopyLink(e, row)}
               />
             </Tooltip>
 
@@ -86,19 +115,28 @@ export default function ShareFC() {
     },
     {
       title: '分享链接',
-      dataIndex: 'shareUrl'
+      dataIndex: 'shareUrl',
+      width: 220,
+      render: value => (
+        <a target={'_blank'} href={value}>
+          {value.slice(0, 30)}...
+        </a>
+      )
     },
     {
       title: '提取码',
-      dataIndex: 'shareCode'
+      dataIndex: 'shareCode',
+      width: 160
     },
     {
       title: '分享时间',
-      dataIndex: 'createTime'
+      dataIndex: 'createTime',
+      width: 220
     },
     {
       title: '分享状态',
       dataIndex: 'shareEndTime',
+      width: 240,
       render: (value: string) => <div>{value} 到期</div>
     }
   ]
@@ -112,7 +150,7 @@ export default function ShareFC() {
           type={'primary'}
           shape={'round'}
           icon={<PoweroffOutlined />}
-          onClick={onCancelShare}
+          onClick={() => onCancelShare()}
         >
           取消分享
         </Button>
