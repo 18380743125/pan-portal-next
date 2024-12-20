@@ -3,13 +3,14 @@
 import { Button, Table, TableColumnsType, Tooltip } from 'antd'
 import { LinkOutlined, PoweroffOutlined } from '@ant-design/icons'
 
-import styles from './styles.module.scss'
 import React, { useEffect, useRef, useState } from 'react'
 import useTableScrollHeight from '@/hooks/useTableScrollHeight'
 import { cancelShareApi, getShareListApi } from '@/api/features/share'
 import { copyText2Clipboard } from '@/lib/utils/base.util'
 import { message, modal } from '@/lib/AntdGlobal'
 import { PanEnum } from '@/lib/constants'
+
+import styles from './styles.module.scss'
 
 export default function ShareFC() {
   const tableRef = useRef<HTMLDivElement>(null)
@@ -44,7 +45,11 @@ export default function ShareFC() {
       return message.warning('请选择要取消的分享')
     }
     let shareIds = row?.shareId
-    if (selectedRowKeys?.length > 0) {
+    let newKeys = [] as string[]
+
+    if (row) {
+      newKeys = selectedRowKeys.filter(item => item !== row.shareId)
+    } else {
       shareIds = selectedRowKeys.join(PanEnum.COMMON_SEPARATOR)
     }
 
@@ -57,7 +62,7 @@ export default function ShareFC() {
       async onOk() {
         await cancelShareApi(shareIds)
         message.success('取消分享成功')
-        setSelectedRowKeys([])
+        setSelectedRowKeys(newKeys)
         loadData()
       }
     })
