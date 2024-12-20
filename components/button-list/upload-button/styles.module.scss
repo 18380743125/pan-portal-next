@@ -1,0 +1,30 @@
+.root {
+  padding: 30px 66px 60px;
+
+  .uploadContent {
+    border: 3px #dcdfe6 dashed;
+    border-radius: 16px;
+    height: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 44px;
+    cursor: pointer;
+    user-select: none;
+
+    .topIcon {
+      font-size: 80px;
+      color: #dcdfe6;
+    }
+
+    .tips {
+      color: #666;
+      font-size: 15px;
+    }
+  }
+
+  .uploadContent:hover {
+    border-color: #4096ff;
+    transition: border-color .15s;
+  }
+}
