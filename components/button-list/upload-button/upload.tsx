@@ -247,7 +247,7 @@ const UploadFC = forwardRef((_, ref) => {
         totalSize: taskItem?.target.size
       })
       message.success('文件：' + file.name + ' 上传完成')
-      uploader.removeFile(file)
+      uploader?.removeFile(file)
       // 刷新文件列表
       // fileStore.loadFileList()
       dispatch(
@@ -277,9 +277,8 @@ const UploadFC = forwardRef((_, ref) => {
     let res = {} as any
     try {
       res = JSON.parse(message)
-    } catch (e) {
-      console.log(e)
-    }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {}
     if (res.code === 0) {
       if (res.data) {
         if (res.data.mergeFlag) {

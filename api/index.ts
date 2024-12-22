@@ -26,15 +26,15 @@ const request = new Request({
         return result.data
       }
 
+      const contentType = res.headers['content-type']
+      if (contentType === ContentTypeEnum.APPLICATION_OCTET_STREAM) {
+        return res
+      }
+
       const config = res.config
       const data = JSON.parse(config.data)
       if (data.hideMessageTip && result.code !== 0) {
         return Promise.reject(res)
-      }
-
-      const contentType = res.headers['content-type']
-      if (contentType === ContentTypeEnum.APPLICATION_OCTET_STREAM) {
-        return res
       }
 
       switch (result.code) {

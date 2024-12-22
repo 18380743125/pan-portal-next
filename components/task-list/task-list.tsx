@@ -26,8 +26,6 @@ const TaskListFC = () => {
     shallowEqualApp
   )
 
-  console.log(taskList)
-
   const columns: TableColumnsType = [
     {
       title: '文件名称',
@@ -96,7 +94,7 @@ const TaskListFC = () => {
               </div>
             }
           >
-            <Progress strokeWidth={8} percent={row.percentage} size='small' />
+            <Progress percent={row.percentage} size='small' />
           </Popover>
         )
       }
@@ -128,10 +126,9 @@ const TaskListFC = () => {
   return (
     <main className={styles.taskList}>
       <Table
-        key={'filename'}
         style={{ width: 600 }}
         scroll={{ y: 300 }}
-        rowKey='fileId'
+        rowKey='filename'
         pagination={false}
         columns={columns}
         dataSource={taskList}
