@@ -119,3 +119,36 @@ export const transferFileApi = (targetParentId: string, fileIds: string) => {
     }
   })
 }
+
+/**
+ * 上传文件
+ */
+export const uploadFileApi = data => {
+  return request.post({
+    url: '/file',
+    data
+  })
+}
+
+/**
+ * 秒传
+ */
+export const secUploadFileApi = data => {
+  return request.post({
+    url: '/file/sec-upload',
+    data: {
+      ...data,
+      hideMessageTip: true
+    }
+  })
+}
+
+/**
+ * 合并文件
+ */
+export const mergeFileApi = data => {
+  return request.post({
+    url: '/file/merge',
+    data
+  })
+}

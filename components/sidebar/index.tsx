@@ -7,7 +7,8 @@ import classNames from 'classnames'
 import { DeleteOutlined, FolderOutlined, ShareAltOutlined } from '@ant-design/icons'
 
 import styles from './styles.module.scss'
-import { setFileList } from '@/lib/store/features/fileSlice'
+import { setFileList, setFileTypes } from '@/lib/store/features/fileSlice'
+import { FileTypeEnum, PanEnum } from '@/lib/constants'
 
 const Sidebar = () => {
   const [activeIndex, setActiveIndex] = useState(-1)
@@ -62,6 +63,31 @@ const Sidebar = () => {
     setActiveIndex(index)
     dispatch(setFileList([]))
     router.push(path)
+    let fileTypes: FileTypeEnum | string = FileTypeEnum.ALL_FILE
+    switch (index) {
+      case 1:
+        fileTypes = [FileTypeEnum.IMAGE_FILE].join(PanEnum.COMMON_SEPARATOR)
+        break
+      case 2:
+        fileTypes = [
+          FileTypeEnum.WORD_FILE,
+          FileTypeEnum.EXCEL_FILE,
+          FileTypeEnum.POWER_POINT_FILE,
+          FileTypeEnum.PDF_FILE,
+          FileTypeEnum.TXT_FILE,
+          FileTypeEnum.SOURCE_CODE_FILE
+        ].join(PanEnum.COMMON_SEPARATOR)
+        break
+      case 3:
+        fileTypes = [FileTypeEnum.VIDEO_FILE].join(PanEnum.COMMON_SEPARATOR)
+        break
+      case 4:
+        fileTypes = [FileTypeEnum.AUDIO_FILE].join(PanEnum.COMMON_SEPARATOR)
+        break
+      default:
+        break
+    }
+    dispatch(setFileTypes(fileTypes))
   }
 
   return (

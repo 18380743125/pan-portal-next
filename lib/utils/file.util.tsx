@@ -1,4 +1,3 @@
-import { FileItem } from '@/types/file'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolder, faFileText, faFileCode } from '@fortawesome/free-regular-svg-icons'
 import {
@@ -13,6 +12,13 @@ import {
   faFilePowerpoint
 } from '@fortawesome/free-solid-svg-icons'
 
+import { CacheEnum, config } from '@/lib/constants'
+import { localCache } from '@/lib/utils/cache.util'
+import { FileItem } from '@/types/file'
+
+/**
+ * 获取文件图标
+ */
 export const getFileFontElement = (row: FileItem) => {
   const type = row.fileType
 
@@ -55,4 +61,22 @@ export const getFileFontElement = (row: FileItem) => {
       break
   }
   return <FontAwesomeIcon size={'lg'} color={'#999'} icon={icon} />
+}
+
+/**
+ * 获取分片大小
+ */
+export const getChunkSize = () => {
+  if (config.chunkUploadSwitch) {
+    return 1024 * 1024
+  }
+  return config.maxFileSize
+}
+
+/**
+ * 获取文件预览地址
+ */
+export const getPreviewUrl = fileId => {
+  const token = localCache.getCache(CacheEnum.USER_TOKEN)
+  return `${config.previewUrl}/file/preview?fileId=${encodeURIComponent(fileId)}&authorization=${token}`
 }

@@ -64,7 +64,11 @@ class Request {
     return this.request({ ...config, method: 'GET', headers: {} as AxiosRequestHeaders })
   }
 
-  post<T = any>(config: Omit<MyRequestConfig<T>, 'headers'> & { headers?: { 'Content-Type': string } }) {
+  post<T = any>(
+    config: Omit<MyRequestConfig<T>, 'headers'> & {
+      headers?: { 'Content-Type'?: string }
+    }
+  ) {
     return this.request({ ...config, method: 'POST', headers: {} as AxiosRequestHeaders })
   }
 

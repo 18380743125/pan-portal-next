@@ -22,6 +22,10 @@ const fileSlice = createAppSlice({
   name: 'file',
   initialState,
   reducers: create => ({
+    // 修改文件类型
+    setFileTypes: create.reducer((state, action: PayloadAction<string>) => {
+      state.fileType = action.payload
+    }),
     // 修改面包屑
     setBreadcrumbList: create.reducer((state, action: PayloadAction<Record<string, any>>) => {
       const { list } = action.payload
@@ -53,7 +57,13 @@ const fileSlice = createAppSlice({
   })
 })
 
-export const { setBreadcrumbList, setFileList, setSelectFileList, getBreadcrumbListAction, getFileAction } =
-  fileSlice.actions
+export const {
+  setBreadcrumbList,
+  setFileList,
+  setSelectFileList,
+  setFileTypes,
+  getBreadcrumbListAction,
+  getFileAction
+} = fileSlice.actions
 
 export default fileSlice

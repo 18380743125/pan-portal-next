@@ -2,8 +2,10 @@
  * 公用配置
  */
 export const config = {
-  baseUrl: 'https://139.155.139.173:18080/api'
-  // baseUrl: 'http://127.0.0.1:8080'
+  baseUrl: 'https://139.155.139.173:18080/api',
+  previewUrl: 'https://139.155.139.173:18080',
+  chunkUploadSwitch: true,
+  maxFileSize: 1024 * 1024 * 1024 * 3
 }
 
 /**
