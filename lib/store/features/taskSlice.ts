@@ -89,11 +89,11 @@ const taskSlice = createAppSlice({
       for (let i = 0; i < taskList.length; i++) {
         if (filename === taskList[i].filename) {
           taskList[i].target.cancel()
-          message.info('文件：' + filename + ' 取消上传')
+          message.info('文件：' + filename + ' 已取消上传')
           break
         }
       }
-      state.taskList = []
+      state.taskList = taskList.filter(task => task.filename !== filename)
     }),
 
     // 重试上传任务

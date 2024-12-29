@@ -73,11 +73,13 @@ export default function ShareFC() {
       title: '分享名称',
       dataIndex: 'shareName',
       fixed: 'left',
-      minWidth: 360
+      minWidth: 360,
+      align: 'left'
     },
     {
       dataIndex: 'operator',
-      width: 300,
+      minWidth: 200,
+      align: 'center',
       render: (_, row) => (
         <section>
           <div className={styles.btnGroup}>
@@ -121,7 +123,8 @@ export default function ShareFC() {
     {
       title: '分享链接',
       dataIndex: 'shareUrl',
-      width: 220,
+      minWidth: 200,
+      align: 'center',
       render: value => (
         <a target={'_blank'} href={value}>
           {value.slice(0, 30)}...
@@ -131,17 +134,20 @@ export default function ShareFC() {
     {
       title: '提取码',
       dataIndex: 'shareCode',
-      width: 160
+      minWidth: 100,
+      align: 'center'
     },
     {
       title: '分享时间',
       dataIndex: 'createTime',
-      width: 220
+      minWidth: 120,
+      align: 'center'
     },
     {
       title: '分享状态',
       dataIndex: 'shareEndTime',
-      width: 240,
+      minWidth: 120,
+      align: 'center',
       render: (value: string) => <div>{value} 到期</div>
     }
   ]

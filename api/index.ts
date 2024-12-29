@@ -32,9 +32,11 @@ const request = new Request({
       }
 
       const config = res.config
-      const data = JSON.parse(config.data)
-      if (data.hideMessageTip && result.code !== 0) {
-        return Promise.reject(res)
+      if (config.data) {
+        const data = JSON.parse(config?.data)
+        if (data?.hideMessageTip && result?.code !== 0) {
+          return Promise.reject(res)
+        }
       }
 
       switch (result.code) {

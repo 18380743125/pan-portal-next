@@ -2,29 +2,53 @@
 
 import React from 'react'
 import { Button, Popover, Progress, Table, TableColumnsType } from 'antd'
-
-import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'
-
-import styles from './styles.module.scss'
-import { fileStatus } from '@/lib/utils/status.util'
 import {
   ClockCircleOutlined,
   CloseCircleOutlined,
   DeploymentUnitOutlined,
   LoadingOutlined,
   PauseCircleOutlined,
+  PlayCircleFilled,
   PlayCircleOutlined,
+  RedoOutlined,
   UploadOutlined,
   WarningOutlined
 } from '@ant-design/icons'
 
+import { cancelTaskAction, pauseTaskAction, resumeTaskAction, retryTaskAction } from '@/lib/store/features/taskSlice'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { fileStatus } from '@/lib/utils/status.util'
+import styles from './styles.module.scss'
+
 const TaskListFC = () => {
+  const dispatch = useAppDispatch()
   const { taskList } = useAppSelector(
     state => ({
       taskList: state.task.taskList
     }),
     shallowEqualApp
   )
+
+  // 控制文件上床
+  const onToggleTask = (action: string, row: Record<string, any>) => {
+    const { filename } = row
+    switch (action) {
+      case 'pause':
+        dispatch(pauseTaskAction(filename))
+        break
+      case 'resume':
+        dispatch(resumeTaskAction(filename))
+        break
+      case 'cancel':
+        dispatch(cancelTaskAction(filename))
+        break
+      case 'retry':
+        dispatch(retryTaskAction(filename))
+        break
+      default:
+        break
+    }
+  }
 
   const columns: TableColumnsType = [
     {
@@ -104,19 +128,52 @@ const TaskListFC = () => {
       align: 'center',
       render(_, row) {
         return (
-          <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
-            {row.status === fileStatus.PAUSE ? (
-              <Button
-                type={'primary'}
-                style={{ color: '#7ec050' }}
-                size={'small'}
-                shape={'circle'}
-                icon={<PlayCircleOutlined />}
-              />
-            ) : (
-              <Button type={'primary'} size={'small'} shape={'circle'} icon={<PauseCircleOutlined />} />
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {row.status === fileStatus.PAUSE.code && (
+              <Popover trigger={'hover'} placement={'top'} content={'继续上传'}>
+                <Button
+                  type={'link'}
+                  size={'middle'}
+                  icon={<PlayCircleFilled />}
+                  onClick={() => onToggleTask('resume', row)}
+                />
+              </Popover>
             )}
-            <Button type={'primary'} danger size={'small'} shape={'circle'} icon={<CloseCircleOutlined />} />
+
+            {row.status === fileStatus.UPLOADING.code && (
+              <Popover trigger={'hover'} placement={'top'} content={'暂停上传'}>
+                <Button
+                  type={'link'}
+                  size={'middle'}
+                  icon={<PauseCircleOutlined />}
+                  onClick={() => onToggleTask('pause', row)}
+                />
+              </Popover>
+            )}
+
+            {row.status === fileStatus.FAIL.code && (
+              <Popover trigger={'hover'} placement={'top'} content={'重新上传'}>
+                <Button
+                  type={'link'}
+                  size={'middle'}
+                  style={{ color: '#919191' }}
+                  icon={<RedoOutlined />}
+                  onClick={() => onToggleTask('retry', row)}
+                />
+              </Popover>
+            )}
+
+            {row.status !== fileStatus.SUCCESS && (
+              <Popover trigger={'hover'} placement={'top'} content={'取消上传'}>
+                <Button
+                  type={'link'}
+                  size={'middle'}
+                  style={{ color: '#919191' }}
+                  icon={<CloseCircleOutlined />}
+                  onClick={() => onToggleTask('cancel', row)}
+                />
+              </Popover>
+            )}
           </div>
         )
       }
