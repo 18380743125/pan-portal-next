@@ -8,12 +8,13 @@ import SearchFC from '@/components/search'
 import FileTable from '@/components/file-table'
 import { useAppDispatch } from '@/lib/store/hooks'
 import { FileTypeEnum, PanEnum } from '@/lib/constants'
-import { getFileAction } from '@/lib/store/features/fileSlice'
+import { getFileAction, setFileTypes } from '@/lib/store/features/fileSlice'
 
 export default function Home() {
   const dispatch = useAppDispatch()
   useEffect(() => {
     const fileTypes = [FileTypeEnum.VIDEO_FILE].join(PanEnum.COMMON_SEPARATOR)
+    dispatch(setFileTypes(fileTypes))
     dispatch(getFileAction({ parentId: FileTypeEnum.ALL_FILE, fileTypes }))
   }, [])
   return (

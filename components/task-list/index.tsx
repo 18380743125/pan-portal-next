@@ -55,4 +55,8 @@ export const openTaskList = () => {
   toggleTaskList(true)
 }
 
+export const closeTaskList = () => {
+  toggleTaskList(false)
+}
+
 export default TaskListFC

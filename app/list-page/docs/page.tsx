@@ -6,7 +6,7 @@ import styles from '@/app/list-page/images/styles.module.scss'
 import FileButtonGroupFC from '@/components/file-button-group'
 import SearchFC from '@/components/search'
 import FileTable from '@/components/file-table'
-import { getFileAction } from '@/lib/store/features/fileSlice'
+import { getFileAction, setFileTypes } from '@/lib/store/features/fileSlice'
 import { FileTypeEnum, PanEnum } from '@/lib/constants'
 import { useAppDispatch } from '@/lib/store/hooks'
 
@@ -21,6 +21,7 @@ export default function DocsFC() {
       FileTypeEnum.TXT_FILE,
       FileTypeEnum.SOURCE_CODE_FILE
     ].join(PanEnum.COMMON_SEPARATOR)
+    dispatch(setFileTypes(fileTypes))
     dispatch(getFileAction({ parentId: FileTypeEnum.ALL_FILE, fileTypes }))
   }, [])
 

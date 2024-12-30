@@ -8,8 +8,9 @@ import FileButtonGroupFC from '@/components/file-button-group'
 import SearchFC from '@/components/search'
 
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { getFileAction } from '@/lib/store/features/fileSlice'
+import { getFileAction, setBreadcrumbList, setFileTypes } from '@/lib/store/features/fileSlice'
 import styles from './styles.module.scss'
+import { FileTypeEnum } from '@/lib/constants'
 
 export default function FilesFC() {
   const dispatch = useAppDispatch()
@@ -23,10 +24,25 @@ export default function FilesFC() {
   )
 
   useEffect(() => {
+    if (fileTypes !== '-1') {
+      return
+    }
     if (userInfo?.rootFileId) {
       dispatch(getFileAction({ parentId: userInfo.rootFileId, fileTypes }))
+      const initBreadcrumbList = [
+        {
+          id: userInfo.rootFileId,
+          name: userInfo.rootFilename,
+          parentId: userInfo.rootFileId
+        }
+      ]
+      dispatch(setBreadcrumbList({ list: initBreadcrumbList }))
     }
-  }, [userInfo])
+  }, [userInfo, fileTypes])
+
+  useEffect(() => {
+    dispatch(setFileTypes(FileTypeEnum.ALL_FILE))
+  }, [])
 
   return (
     <main className={styles.root}>

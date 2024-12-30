@@ -60,7 +60,7 @@ export const getFileFontElement = (row: FileItem) => {
     default:
       break
   }
-  return <FontAwesomeIcon size={'lg'} color={'#999'} icon={icon} />
+  return <FontAwesomeIcon size={'lg'} color={'#919398'} icon={icon} />
 }
 
 /**

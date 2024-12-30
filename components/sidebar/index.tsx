@@ -63,31 +63,6 @@ const Sidebar = () => {
     setActiveIndex(index)
     dispatch(setFileList([]))
     router.push(path)
-    let fileTypes: FileTypeEnum | string = FileTypeEnum.ALL_FILE
-    switch (index) {
-      case 1:
-        fileTypes = [FileTypeEnum.IMAGE_FILE].join(PanEnum.COMMON_SEPARATOR)
-        break
-      case 2:
-        fileTypes = [
-          FileTypeEnum.WORD_FILE,
-          FileTypeEnum.EXCEL_FILE,
-          FileTypeEnum.POWER_POINT_FILE,
-          FileTypeEnum.PDF_FILE,
-          FileTypeEnum.TXT_FILE,
-          FileTypeEnum.SOURCE_CODE_FILE
-        ].join(PanEnum.COMMON_SEPARATOR)
-        break
-      case 3:
-        fileTypes = [FileTypeEnum.VIDEO_FILE].join(PanEnum.COMMON_SEPARATOR)
-        break
-      case 4:
-        fileTypes = [FileTypeEnum.AUDIO_FILE].join(PanEnum.COMMON_SEPARATOR)
-        break
-      default:
-        break
-    }
-    dispatch(setFileTypes(fileTypes))
   }
 
   return (

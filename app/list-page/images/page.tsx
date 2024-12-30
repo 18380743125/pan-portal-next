@@ -7,13 +7,14 @@ import SearchFC from '@/components/search'
 
 import { useAppDispatch } from '@/lib/store/hooks'
 import { FileTypeEnum, PanEnum } from '@/lib/constants'
-import { getFileAction } from '@/lib/store/features/fileSlice'
+import { getFileAction, setFileTypes } from '@/lib/store/features/fileSlice'
 import styles from './styles.module.scss'
 
 export default function ImagesFC() {
   const dispatch = useAppDispatch()
   useEffect(() => {
     const fileTypes = [FileTypeEnum.IMAGE_FILE].join(PanEnum.COMMON_SEPARATOR)
+    dispatch(setFileTypes(fileTypes))
     dispatch(getFileAction({ parentId: FileTypeEnum.ALL_FILE, fileTypes }))
   }, [])
 

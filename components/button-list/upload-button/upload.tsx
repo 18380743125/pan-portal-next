@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { Modal } from 'antd'
 import { CloudUploadOutlined } from '@ant-design/icons'
 import Uploader from 'simple-uploader.js'
@@ -22,7 +22,7 @@ import {
 } from '@/lib/store/features/taskSlice'
 import { mergeFileApi, secUploadFileApi } from '@/api/features/file'
 import { getFileAction } from '@/lib/store/features/fileSlice'
-import { openTaskList } from '@/components/task-list'
+import { openTaskList, closeTaskList } from '@/components/task-list'
 
 import styles from './styles.module.scss'
 
@@ -36,33 +36,40 @@ const UploadFC = forwardRef((_, ref) => {
   // simple upload 上传实例
   const [uploader, setUploader] = useState<Uploader>()
 
-  const parentIdRef = useRef<any>()
+  const uploaderInstanceRef = useRef<any>()
+  const parentIdRef = useRef<string>()
+  const fileTypesRef = useRef<string>()
   const taskListRef = useRef<Record<string, any>[]>()
 
   const dispatch = useAppDispatch()
 
-  const { fileTypes, breadcrumbList, taskList } = useAppSelector(
+  const { fileTypes, breadcrumbList, taskList, userInfo } = useAppSelector(
     state => ({
       fileTypes: state.file.fileType,
       breadcrumbList: state.file.breadcrumbList,
-      taskList: state.task.taskList
+      taskList: state.task.taskList,
+      userInfo: state.user.userInfo
     }),
     shallowEqualApp
   )
 
   useEffect(() => {
+    // taskList
     taskListRef.current = taskList
   }, [taskList])
 
-  useMemo(() => {
+  useEffect(() => {
+    // fileTypes
+    fileTypesRef.current = fileTypes
+
+    // parentId
     const lastFile = breadcrumbList[breadcrumbList.length - 1]
-    if (lastFile && fileTypes === FileTypeEnum.ALL_FILE) {
+    if (fileTypes === FileTypeEnum.ALL_FILE && lastFile) {
       parentIdRef.current = lastFile.id
-      return lastFile?.id
+    } else {
+      parentIdRef.current = userInfo.rootFileId
     }
-    parentIdRef.current = '-1'
-    return '-1'
-  }, [breadcrumbList])
+  }, [breadcrumbList, fileTypes])
 
   const open = () => {
     setVisible(true)
@@ -79,6 +86,10 @@ const UploadFC = forwardRef((_, ref) => {
 
   const onCancel = () => {
     close()
+  }
+
+  const findTaskItem = (name: string) => {
+    return taskListRef.current?.find(item => item.filename === name)
   }
 
   // 详细文档地址：https://github.com/simple-uploader/Uploader/blob/develop/README_zh-CN.md#%E9%85%8D%E7%BD%AE
@@ -132,10 +143,12 @@ const UploadFC = forwardRef((_, ref) => {
   const filesAdded = (files, fileList, event) => {
     // 插件在调用该方法之前会自动过滤选择的文件 去除正在上传的文件 新添加的文件就是第一个参数files
     try {
+      // 关闭弹框并打开下载任务PopOver
       close()
       setTimeout(() => {
         openTaskList()
       }, 500)
+
       files.forEach(file => {
         file.pause()
         if (file.size > config.maxFileSize) {
@@ -151,7 +164,8 @@ const UploadFC = forwardRef((_, ref) => {
           timeRemaining: translateTime(Number.POSITIVE_INFINITY),
           speed: translateSpeed(file.averageSpeed),
           percentage: 0,
-          parentId: parentIdRef.current
+          parentId: parentIdRef.current,
+          fileTypes: fileTypesRef.current
         }
         // 添加
         dispatch(addTaskAction(taskItem))
@@ -164,11 +178,16 @@ const UploadFC = forwardRef((_, ref) => {
               parentId: parentIdRef.current
             })
             if (result.code === 0) {
+              // 秒传成功
               message.success('文件：' + file.name + ' 上传完成')
               file.cancel()
               dispatch(removeTaskAction(file.name))
-              // 刷新文件列表
-              dispatch(getFileAction({ parentId: parentIdRef.current, fileTypes: FileTypeEnum.ALL_FILE }))
+              const taskItem = findTaskItem(file.name) || {}
+              const { parentId, fileTypes } = taskItem
+              if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
+                // 刷新文件列表
+                dispatch(getFileAction({ parentId, fileTypes }))
+              }
             } else {
               file.resume()
               dispatch(
@@ -194,7 +213,7 @@ const UploadFC = forwardRef((_, ref) => {
       })
     } catch (e: any) {
       message.error(e.message)
-      uploader.cancel()
+      uploaderInstanceRef.current.cancel()
       dispatch(clearTaskAction())
       return false
     }
@@ -203,7 +222,7 @@ const UploadFC = forwardRef((_, ref) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const uploadProgress = (rootFile, file, chunk) => {
-    const taskItem = taskListRef.current?.find(item => item.filename === file.name)
+    const taskItem = findTaskItem(file.name)
     if (file.isUploading()) {
       if (taskItem?.status !== fileStatus.UPLOADING.code) {
         dispatch(
@@ -227,63 +246,64 @@ const UploadFC = forwardRef((_, ref) => {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const doMerge = useCallback(
-    async file => {
-      const taskItem = taskListRef.current?.find(item => item.filename === file.name)
+  const doMerge = async file => {
+    const taskItem = findTaskItem(file.name) || {}
+    dispatch(
+      updateTaskStatusAction({
+        filename: file.name,
+        status: fileStatus.MERGE.code,
+        statusText: fileStatus.MERGE.text
+      })
+    )
+
+    dispatch(
+      updateTaskProcessAction({
+        filename: file.name,
+        speed: translateSpeed(file.averageSpeed),
+        percentage: 99,
+        uploadedSize: translateFileSize(file.sizeUploaded()),
+        timeRemaining: translateTime(file.timeRemaining())
+      })
+    )
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      await mergeFileApi({
+        filename: taskItem?.filename,
+        identifier: taskItem?.target.uniqueIdentifier,
+        parentId: taskItem?.parentId,
+        totalSize: taskItem?.target.size
+      })
+      message.success('文件：' + file.name + ' 上传完成')
+      uploaderInstanceRef.current?.removeFile(file)
+      if (uploaderInstanceRef.current.files?.length === 0) {
+        closeTaskList()
+      }
       dispatch(
         updateTaskStatusAction({
           filename: file.name,
-          status: fileStatus.MERGE.code,
-          statusText: fileStatus.MERGE.text
+          status: fileStatus.SUCCESS.code,
+          statusText: fileStatus.SUCCESS.text
         })
       )
-
-      dispatch(
-        updateTaskProcessAction({
-          filename: file.name,
-          speed: translateSpeed(file.averageSpeed),
-          percentage: 99,
-          uploadedSize: translateFileSize(file.sizeUploaded()),
-          timeRemaining: translateTime(file.timeRemaining())
-        })
-      )
-
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        await mergeFileApi({
-          filename: taskItem?.filename,
-          identifier: taskItem?.target.uniqueIdentifier,
-          parentId: taskItem?.parentId,
-          totalSize: taskItem?.target.size
-        })
-        message.success('文件：' + file.name + ' 上传完成')
-        uploader?.removeFile(file)
+      dispatch(removeTaskAction(file.name))
+      if (taskItem.parentId === parentIdRef.current && taskItem.fileTypes === FileTypeEnum.ALL_FILE) {
         // 刷新文件列表
-        console.log('fileTypes', fileTypes)
-        dispatch(getFileAction({ parentId: parentIdRef.current, fileTypes: FileTypeEnum.ALL_FILE }))
-        dispatch(
-          updateTaskStatusAction({
-            filename: file.name,
-            status: fileStatus.SUCCESS.code,
-            statusText: fileStatus.SUCCESS.text
-          })
-        )
-
-        dispatch(removeTaskAction(file.name))
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (e) {
-        file.pause()
-        dispatch(
-          updateTaskStatusAction({
-            filename: file.name,
-            status: fileStatus.FAIL.code,
-            statusText: fileStatus.FAIL.text
-          })
-        )
+        const { parentId, fileTypes } = taskItem
+        dispatch(getFileAction({ parentId, fileTypes }))
       }
-    },
-    [fileTypes]
-  )
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      file.pause()
+      dispatch(
+        updateTaskStatusAction({
+          filename: file.name,
+          status: fileStatus.FAIL.code,
+          statusText: fileStatus.FAIL.text
+        })
+      )
+    }
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const fileUploaded = (rootFile, file, message, chunk) => {
@@ -301,9 +321,11 @@ const UploadFC = forwardRef((_, ref) => {
         }
       } else {
         message.success('文件：' + file.name + ' 上传完成')
-        uploader.removeFile(file)
+        uploaderInstanceRef.current.removeFile(file)
+        if (uploaderInstanceRef.current.files?.length === 0) {
+          closeTaskList()
+        }
         // 刷新文件列表
-        dispatch(getFileAction({ parentId: parentIdRef.current, fileTypes: FileTypeEnum.ALL_FILE }))
         dispatch(
           updateTaskStatusAction({
             filename: file.name,
@@ -312,6 +334,12 @@ const UploadFC = forwardRef((_, ref) => {
           })
         )
         dispatch(removeTaskAction(file.name))
+        const taskItem = findTaskItem(file.name) || {}
+        if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
+          // 刷新文件列表
+          const { parentId, fileTypes } = taskItem
+          dispatch(getFileAction({ parentId, fileTypes }))
+        }
       }
     } else {
       file.pause()
@@ -350,7 +378,6 @@ const UploadFC = forwardRef((_, ref) => {
 
   // 初始化 uploader
   const initUploader = () => {
-    dispatch(clearTaskAction())
     // 实例化一个上传对象
     const uploader = new Uploader(fileOptions)
     // 如果不支持 需要降级的地方
@@ -367,6 +394,8 @@ const UploadFC = forwardRef((_, ref) => {
     uploader.on('complete', uploadComplete)
     // 上传出错调用
     uploader.on('fileError', uploadError)
+
+    uploaderInstanceRef.current = uploader
 
     setUploader(uploader)
   }
