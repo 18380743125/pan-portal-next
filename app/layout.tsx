@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   const theme = {
     token: {
-      colorPrimary: '#4096ff',
+      colorPrimary: '#4096ff'
     },
     components: {
       Menu: {
@@ -58,6 +58,6 @@ export default function RootLayout({
 }
 
 export const metadata: Metadata = {
-  title: '小浪网盘',
-  description: '私人云盘'
+  title: '迅翼云盘',
+  description: '极速传输，畅享高效文件私享空间'
 }

@@ -7,8 +7,8 @@ import classNames from 'classnames'
 import { DeleteOutlined, FolderOutlined, ShareAltOutlined } from '@ant-design/icons'
 
 import styles from './styles.module.scss'
-import { setFileList, setFileTypes } from '@/lib/store/features/fileSlice'
-import { FileTypeEnum, PanEnum } from '@/lib/constants'
+import { setFileList } from '@/lib/store/features/fileSlice'
+// import { FileTypeEnum, PanEnum } from '@/lib/constants'
 
 const Sidebar = () => {
   const [activeIndex, setActiveIndex] = useState(-1)
