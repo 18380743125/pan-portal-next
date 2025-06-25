@@ -52,6 +52,7 @@ export default function throttle(fn: (...arg: any[]) => unknown, config: Config)
   _throttle.cancel = function () {
     if (timer) {
       clearTimeout(timer)
+      startTime = 0
       timer = null
     }
   }

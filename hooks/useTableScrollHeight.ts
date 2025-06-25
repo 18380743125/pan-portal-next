@@ -19,7 +19,7 @@ function useTableScrollHeight(ref: RefObject<HTMLElement>, extraOffset = 12) {
       return
     }
     const rect = theadHeightEl.getBoundingClientRect()
-    setTableScrollY(`calc(100vh - ${(rect?.top as number) + rect.height + extraOffset}px)`)
+    setTableScrollY(`calc(100vh - ${rect.top + rect.height + extraOffset}px)`)
   }, [ref])
 
   useEffect(() => {

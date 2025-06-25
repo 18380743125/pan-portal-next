@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
-import debounceUtil from '@/lib/utils/common/debounce'
+import debounce from '@/lib/utils/common/debounce'
 
 function useResize(resizeFn: (...args: any[]) => void) {
-  const resizeFnDebounce = debounceUtil(resizeFn, {
+  const resizeFnDebounce = debounce(resizeFn, {
     delay: 300
   })
 
