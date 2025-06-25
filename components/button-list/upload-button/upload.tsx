@@ -1,18 +1,15 @@
 'use client'
 
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { Modal } from 'antd'
 import { CloudUploadOutlined } from '@ant-design/icons'
+import { Modal } from 'antd'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import Uploader from 'simple-uploader.js'
 
+import { mergeFileApi, secUploadFileApi } from '@/api/features/file'
+import { closeTaskList, openTaskList } from '@/components/task-list'
 import { message } from '@/lib/AntdGlobal'
-import { CacheEnum, config, FileTypeEnum } from '@/lib/constants'
-import { getChunkSize } from '@/lib/utils/file.util'
-import { localCache } from '@/lib/utils/cache.util'
-import { translateFileSize, translateSpeed, translateTime } from '@/lib/utils/format.util'
-import { fileStatus } from '@/lib/utils/status.util'
-import { MD5 } from '@/lib/utils/md5.util'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { CacheEnum, config, FileTypeEnum } from '@/lib/constants/base'
+import { getFileAction } from '@/lib/store/features/fileSlice'
 import {
   addTaskAction,
   clearTaskAction,
@@ -20,9 +17,12 @@ import {
   updateTaskProcessAction,
   updateTaskStatusAction
 } from '@/lib/store/features/taskSlice'
-import { mergeFileApi, secUploadFileApi } from '@/api/features/file'
-import { getFileAction } from '@/lib/store/features/fileSlice'
-import { openTaskList, closeTaskList } from '@/components/task-list'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { MD5 } from '@/lib/utils/base'
+import { localCache } from '@/lib/utils/common/cache'
+import { getChunkSize } from '@/lib/utils/file-util'
+import { translateFileSize, translateSpeed, translateTime } from '@/lib/utils/format'
+import { fileStatus } from '@/lib/utils/file-util'
 
 import styles from './styles.module.scss'
 
@@ -59,6 +59,10 @@ const UploadFC = forwardRef((_, ref) => {
   }, [taskList])
 
   useEffect(() => {
+    if (!userInfo) {
+      return
+    }
+
     // fileTypes
     fileTypesRef.current = fileTypes
 

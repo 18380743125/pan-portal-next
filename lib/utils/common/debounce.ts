@@ -13,13 +13,11 @@ export default function debounce(fn: (...arg: any[]) => unknown, config: Config)
   let timer: NodeJS.Timeout | null = null
   let isInvoke = false
 
-  const _debounce = function (...args: any[]) {
+  const _debounce = function (this: any, ...args: any[]) {
     return new Promise((resolve, reject) => {
       try {
         // 立即执行控制
         if (immediate && !isInvoke) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
           const result = fn.apply(this, args)
           isInvoke = true
           resolve(result)
@@ -28,8 +26,6 @@ export default function debounce(fn: (...arg: any[]) => unknown, config: Config)
         if (timer) clearTimeout(timer)
 
         timer = setTimeout(() => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
           const result = fn.apply(this, args)
           resolve(result)
           timer = null

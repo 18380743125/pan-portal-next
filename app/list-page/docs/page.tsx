@@ -7,7 +7,7 @@ import FileButtonGroupFC from '@/components/file-button-group'
 import SearchFC from '@/components/search'
 import FileTable from '@/components/file-table'
 import { getFileAction, setFileTypes } from '@/lib/store/features/fileSlice'
-import { FileTypeEnum, PanEnum } from '@/lib/constants'
+import { FileTypeEnum, PanEnum } from '@/lib/constants/base'
 import { useAppDispatch } from '@/lib/store/hooks'
 
 export default function DocsFC() {

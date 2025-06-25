@@ -7,7 +7,7 @@ import FileButtonGroupFC from '@/components/file-button-group'
 import SearchFC from '@/components/search'
 import FileTable from '@/components/file-table'
 import { useAppDispatch } from '@/lib/store/hooks'
-import { FileTypeEnum, PanEnum } from '@/lib/constants'
+import { FileTypeEnum, PanEnum } from '@/lib/constants/base'
 import { getFileAction, setFileTypes } from '@/lib/store/features/fileSlice'
 
 export default function MusicFC() {

@@ -5,8 +5,8 @@ import type { FileItem } from '@/types/file'
 
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { message, modal } from '@/lib/AntdGlobal'
-import { PanEnum } from '@/lib/constants'
-import { download } from '@/lib/utils/base.util'
+import { PanEnum } from '@/lib/constants/base'
+import { download } from '@/lib/utils/base'
 import { getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
 
 const useFileHandler = () => {

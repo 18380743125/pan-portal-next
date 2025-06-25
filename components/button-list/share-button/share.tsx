@@ -4,13 +4,13 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState }
 import { Button, Form, Input, type InputRef, Modal, Radio, Select } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 
-import { PanEnum } from '@/lib/constants'
+import { PanEnum } from '@/lib/constants/base'
 import { shareApi } from '@/api/features/file'
 import { FileItem } from '@/types/file'
 
 import styles from './styles.module.scss'
 import { CopyOutlined } from '@ant-design/icons'
-import { copyText2Clipboard } from '@/lib/utils/base.util'
+import { copyText2Clipboard } from '@/lib/utils/base'
 import { message } from '@/lib/AntdGlobal'
 
 const ShareFC = forwardRef((_, ref) => {

@@ -1,7 +1,7 @@
 interface Config {
-  interval: number
-  leading?: boolean
-  trailing?: boolean
+  interval: number // 间隔
+  leading?: boolean // 首次执行?
+  trailing?: boolean // 尾部执行?
 }
 
 /**
@@ -11,22 +11,21 @@ interface Config {
  */
 export default function throttle(fn: (...arg: any[]) => unknown, config: Config) {
   const { interval, leading = true, trailing = false } = config
+
   let startTime = 0
   let timer: NodeJS.Timeout | null = null
 
-  const _throttle = function (...args: any[]) {
+  const _throttle = function (this: any, ...args: any[]) {
     return new Promise((resolve, reject) => {
       try {
         const nowTime = Date.now()
-        // 立即执行控制
+        // 首次执行控制
         if (!leading && startTime === 0) {
           startTime = nowTime
         }
         const waitTime = interval - (nowTime - startTime)
         if (waitTime <= 0) {
           if (timer) clearTimeout(timer)
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
           const res = fn.apply(this, args)
           resolve(res)
           startTime = nowTime
@@ -37,8 +36,6 @@ export default function throttle(fn: (...arg: any[]) => unknown, config: Config)
         // 尾部执行控制
         if (trailing && !timer) {
           timer = setTimeout(() => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
             const res = fn.apply(this, args)
             resolve(res)
             timer = null

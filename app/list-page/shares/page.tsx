@@ -6,9 +6,9 @@ import { LinkOutlined, PoweroffOutlined } from '@ant-design/icons'
 import React, { useEffect, useRef, useState } from 'react'
 import useTableScrollHeight from '@/hooks/useTableScrollHeight'
 import { cancelShareApi, getShareListApi } from '@/api/features/share'
-import { copyText2Clipboard } from '@/lib/utils/base.util'
+import { copyText2Clipboard } from '@/lib/utils/base'
 import { message, modal } from '@/lib/AntdGlobal'
-import { PanEnum } from '@/lib/constants'
+import { PanEnum } from '@/lib/constants/base'
 
 import styles from './styles.module.scss'
 

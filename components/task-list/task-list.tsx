@@ -17,7 +17,7 @@ import {
 
 import { cancelTaskAction, pauseTaskAction, resumeTaskAction, retryTaskAction } from '@/lib/store/features/taskSlice'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { fileStatus } from '@/lib/utils/status.util'
+import { fileStatus } from '@/lib/utils/file-util'
 import styles from './styles.module.scss'
 
 const TaskListFC = () => {

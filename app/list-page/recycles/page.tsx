@@ -6,10 +6,10 @@ import { DeleteOutlined, UndoOutlined } from '@ant-design/icons'
 import React, { useEffect, useRef, useState } from 'react'
 import useTableScrollHeight from '@/hooks/useTableScrollHeight'
 import { deleteRecycleApi, getRecycleListApi, restoreRecycleApi } from '@/api/features/recycle'
-import { getFileFontElement } from '@/lib/utils/file.util'
+import { getFileFontElement } from '@/lib/utils/file-util'
 import { FileItem } from '@/types/file'
 import { message, modal } from '@/lib/AntdGlobal'
-import { PanEnum } from '@/lib/constants'
+import { PanEnum } from '@/lib/constants/base'
 
 import styles from './styles.module.scss'
 

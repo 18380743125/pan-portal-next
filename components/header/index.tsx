@@ -3,10 +3,10 @@ import UserInfo from '@/components/user-info'
 
 import styles from './styles.module.scss'
 
-const AppHeaderFC = () => {
+const AppHeader = () => {
   return (
     <main className={styles.root}>
-      <section className={styles.left}>小浪网盘</section>
+      <section className={styles.left}>迅翼云盘</section>
 
       <section className={styles.right}>
         <TaskList />
@@ -16,4 +16,4 @@ const AppHeaderFC = () => {
   )
 }
 
-export default AppHeaderFC
+export default AppHeader

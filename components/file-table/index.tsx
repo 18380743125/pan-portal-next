@@ -16,8 +16,8 @@ import ShareFC from '@/components/button-list/share-button/share'
 
 import { getBreadcrumbListAction, getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { getFileFontElement } from '@/lib/utils/file.util'
-import { FileTypeEnum, PanEnum } from '@/lib/constants'
+import { getFileFontElement } from '@/lib/utils/file-util'
+import { FileTypeEnum, PanEnum } from '@/lib/constants/base'
 import useFileHandler from '@/hooks/useFileHandler'
 import type { FileItem } from '@/types/file'
 

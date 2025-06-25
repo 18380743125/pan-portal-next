@@ -2,10 +2,10 @@
  * 公用配置
  */
 export const config = {
-  baseUrl: 'https://139.155.139.173:18080/api',
-  previewUrl: 'https://139.155.139.173:18080',
+  baseUrl: 'https://14.103.231.136/api',
+  previewUrl: 'https://14.103.231.136',
   chunkUploadSwitch: true,
-  maxFileSize: 1024 * 1024 * 1024 * 3
+  maxFileSize: 1024 * 1024 * 1024 * 3 // 3GB
 }
 
 /**

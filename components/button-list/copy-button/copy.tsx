@@ -12,7 +12,7 @@ import { FileItem } from '@/types/file'
 import { copyFileApi, getFolderTreeApi } from '@/api/features/file'
 
 import styles from './styles.module.scss'
-import { PanEnum } from '@/lib/constants'
+import { PanEnum } from '@/lib/constants/base'
 
 const CopyFC = forwardRef((_, ref) => {
   const dispatch = useAppDispatch()

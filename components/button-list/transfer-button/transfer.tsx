@@ -9,7 +9,7 @@ import { getFolderTreeApi, transferFileApi } from '@/api/features/file'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { message } from '@/lib/AntdGlobal'
 import { getFileAction } from '@/lib/store/features/fileSlice'
-import { PanEnum } from '@/lib/constants'
+import { PanEnum } from '@/lib/constants/base'
 import { FileItem } from '@/types/file'
 import styles from '@/components/button-list/copy-button/styles.module.scss'
 

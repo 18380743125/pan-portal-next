@@ -1,6 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit'
 import { createAppSlice } from '@/lib/store/createAppSlice'
-import { fileStatus } from '@/lib/utils/status.util'
+import { fileStatus } from '@/lib/utils/file-util'
 import { message } from '@/lib/AntdGlobal'
 
 interface IState {

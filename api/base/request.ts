@@ -1,5 +1,5 @@
-import axios, { AxiosRequestHeaders } from 'axios'
 import type { AxiosInstance } from 'axios'
+import axios, { AxiosRequestHeaders } from 'axios'
 
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'

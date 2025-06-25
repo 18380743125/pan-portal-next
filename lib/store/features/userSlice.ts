@@ -2,8 +2,8 @@ import { PayloadAction } from '@reduxjs/toolkit'
 
 import { getUserInfoApi, loginApi } from '@/api/features/user'
 import { createAppSlice } from '@/lib/store/createAppSlice'
-import { localCache } from '@/lib/utils/cache.util'
-import { CacheEnum } from '@/lib/constants'
+import { localCache } from '@/lib/utils/common/cache'
+import { CacheEnum } from '@/lib/constants/base'
 import { User } from '@/types/user'
 import { setBreadcrumbList } from '@/lib/store/features/fileSlice'
 

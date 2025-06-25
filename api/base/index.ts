@@ -3,8 +3,8 @@ import { BASE_URL, TIME_OUT } from './config'
 
 import type { Result } from '@/types/base'
 import { message } from '@/lib/AntdGlobal'
-import { localCache } from '@/lib/utils/cache.util'
-import { CacheEnum, ContentTypeEnum } from '@/lib/constants'
+import { localCache } from '@/lib/utils/common/cache'
+import { CacheEnum, ContentTypeEnum } from '@/lib/constants/base'
 
 const request = new Request({
   timeout: TIME_OUT,

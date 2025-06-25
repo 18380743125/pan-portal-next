@@ -8,7 +8,7 @@ import styles from './styles.module.scss'
 
 import { checkAnswerApi, checkUsernameApi, resetPasswordApi } from '@/api/features/user'
 
-import { validatePassword, validateUsername } from '@/lib/form-validate'
+import { validatePassword, validateUsername } from '@/lib/utils/form-validate'
 import { message } from '@/lib/AntdGlobal'
 
 const stepList = [

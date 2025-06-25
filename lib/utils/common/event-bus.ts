@@ -37,8 +37,6 @@ class EventBus {
         break
       }
     }
-
-    // 如果eventFns已经清空了
     if (eventFns.length === 0) {
       delete this.eventMap[eventName]
     }

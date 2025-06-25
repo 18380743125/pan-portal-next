@@ -6,7 +6,7 @@ import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hoo
 import styles from './styles.module.scss'
 import React from 'react'
 import { getFileAction, setBreadcrumbList } from '@/lib/store/features/fileSlice'
-import { FileTypeEnum } from '@/lib/constants'
+import { FileTypeEnum } from '@/lib/constants/base'
 
 const BreadcrumbFC = () => {
   const dispatch = useAppDispatch()

@@ -1,4 +1,4 @@
-import request from '@/api'
+import request from '@/api/base'
 
 /**
  * 获取回收站列表

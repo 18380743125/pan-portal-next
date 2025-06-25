@@ -10,7 +10,7 @@ import SearchFC from '@/components/search'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { getFileAction, setBreadcrumbList, setFileTypes } from '@/lib/store/features/fileSlice'
 import styles from './styles.module.scss'
-import { FileTypeEnum } from '@/lib/constants'
+import { FileTypeEnum } from '@/lib/constants/base'
 
 export default function FilesFC() {
   const dispatch = useAppDispatch()

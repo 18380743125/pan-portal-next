@@ -11,12 +11,12 @@ import styles from './styles.module.scss'
 import { message, modal } from '@/lib/AntdGlobal'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { loginAction } from '@/lib/store/features/userSlice'
-import { validateUsernameAndPassword } from '@/lib/form-validate'
-import { localCache } from '@/lib/utils/cache.util'
+import { validateUsernameAndPassword } from '@/lib/utils/form-validate'
+import { localCache } from '@/lib/utils/common/cache'
 
 export default function LoginFC() {
   const router = useRouter()
-  const usernameRef = useRef<InputRef | null>(null)
+  const inputRef = useRef<InputRef | null>(null)
 
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
@@ -32,7 +32,7 @@ export default function LoginFC() {
 
   // 聚焦输入框
   useEffect(() => {
-    const usernameEl = usernameRef.current as any
+    const usernameEl = inputRef.current as any
     if (token) {
       modal.confirm({
         title: '提示',
@@ -105,7 +105,7 @@ export default function LoginFC() {
                 allowClear
                 style={{ position: 'relative', left: 3 }}
                 rootClassName={styles.input}
-                ref={usernameRef}
+                ref={inputRef}
                 size={'small'}
                 variant={'borderless'}
                 value={username}
