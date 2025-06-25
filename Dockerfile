@@ -5,8 +5,9 @@ WORKDIR /app
 
 # 先复制 package 文件
 COPY package*.json ./
+COPY pnpm-lock.yaml ./
 
-# 配置淘宝镜像并安装依赖
+# 配置镜像并安装依赖
 RUN npm config set registry https://registry.npmmirror.com && \
     npm install --no-audit --progress=false --loglevel=error
 
