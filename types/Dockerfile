@@ -11,7 +11,7 @@ RUN npm config set registry https://registry.npmmirror.com && \
     npm install --no-audit --progress=false --loglevel=error
 
 # 复制其他文件并构建
-COPY . .
+COPY .. .
 RUN npm run build:docker
 
 # 运行阶段
