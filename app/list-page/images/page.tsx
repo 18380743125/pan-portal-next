@@ -17,7 +17,7 @@ export default function ImagesFC() {
     // 图片
     const fileTypes = [FileTypeEnum.IMAGE_FILE].join(PanEnum.COMMON_SEPARATOR)
     dispatch(setFileTypes(fileTypes))
-    dispatch(getFileAction({ parentId: FileTypeEnum.ALL_FILE, fileTypes }))
+    dispatch(getFileAction({ parentId: '-1', fileTypes }))
   }, [])
 
   return (

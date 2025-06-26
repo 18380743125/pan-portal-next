@@ -12,12 +12,14 @@ interface IState {
   userInfo: Record<string, any>
 }
 
+const initialState = {
+  token: localCache.getCache(CacheEnum.USER_TOKEN),
+  userInfo: localCache.getCache(CacheEnum.USER_INFO)
+} as IState
+
 const userSlice = createAppSlice({
   name: 'user',
-  initialState: {
-    token: localCache.getCache(CacheEnum.USER_TOKEN),
-    userInfo: localCache.getCache(CacheEnum.USER_INFO)
-  } as IState,
+  initialState,
   reducers: ({ reducer, asyncThunk }) => ({
     // 缓存 token
     setToken: reducer((state, action: PayloadAction<string>) => {

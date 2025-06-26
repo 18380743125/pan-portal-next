@@ -1,7 +1,8 @@
 import { PayloadAction } from '@reduxjs/toolkit'
-import { createAppSlice } from '@/lib/store/createAppSlice'
-import { FileTypeEnum } from '@/lib/constants/base'
+
 import { getBreadcrumbListApi, getFileListApi } from '@/api/features/file'
+import { FileTypeEnum } from '@/lib/constants/base'
+import { createAppSlice } from '@/lib/store/createAppSlice'
 import { FileItem } from '@/types/file'
 
 interface IState {

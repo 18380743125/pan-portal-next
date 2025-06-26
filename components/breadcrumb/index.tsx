@@ -1,14 +1,15 @@
 'use client'
 
-import { Button, Divider } from 'antd'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { Button, Divider } from 'antd'
+import React from 'react'
+
+import { FileTypeEnum } from '@/lib/constants/base'
+import { getFileAction, setBreadcrumbList } from '@/lib/store/features/fileSlice'
 
 import styles from './styles.module.scss'
-import React from 'react'
-import { getFileAction, setBreadcrumbList } from '@/lib/store/features/fileSlice'
-import { FileTypeEnum } from '@/lib/constants/base'
 
-const BreadcrumbFC = () => {
+const Breadcrumb = () => {
   const dispatch = useAppDispatch()
 
   const { breadcrumbList } = useAppSelector(
@@ -73,4 +74,4 @@ const BreadcrumbFC = () => {
   )
 }
 
-export default BreadcrumbFC
+export default Breadcrumb

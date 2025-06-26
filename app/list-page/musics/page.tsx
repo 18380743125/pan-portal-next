@@ -17,9 +17,9 @@ export default function MusicFC() {
     // 音乐
     const fileTypes = [FileTypeEnum.AUDIO_FILE].join(PanEnum.COMMON_SEPARATOR)
     dispatch(setFileTypes(fileTypes))
-    dispatch(getFileAction({ parentId: FileTypeEnum.ALL_FILE, fileTypes }))
+    dispatch(getFileAction({ parentId: '-1', fileTypes }))
   }, [])
-  
+
   return (
     <main className={styles.root}>
       {/* 头部区域 */}

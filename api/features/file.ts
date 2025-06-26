@@ -17,7 +17,7 @@ export const getBreadcrumbListApi = (fileId: string) => {
  */
 export const getFileListApi = (parentId: string, fileTypes: string) => {
   return request.get({
-    url: 'files',
+    url: '/files',
     params: {
       parentId,
       fileTypes

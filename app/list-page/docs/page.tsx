@@ -24,7 +24,7 @@ export default function DocsFC() {
       FileTypeEnum.SOURCE_CODE_FILE
     ].join(PanEnum.COMMON_SEPARATOR)
     dispatch(setFileTypes(fileTypes))
-    dispatch(getFileAction({ parentId: FileTypeEnum.ALL_FILE, fileTypes }))
+    dispatch(getFileAction({ parentId: '-1', fileTypes }))
   }, [])
 
   return (

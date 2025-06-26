@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 import Breadcrumb from '@/components/breadcrumb'
 import FileButtonGroup from '@/components/file-button-group'
@@ -25,7 +25,7 @@ function Files() {
   )
 
   useEffect(() => {
-    if (fileTypes !== FileTypeEnum.ALL_FILE || !userInfo) {
+    if (!userInfo) {
       return
     }
 
