@@ -31,7 +31,7 @@ export function download(res: AxiosResponse, _filename?: string) {
  * 复制文本到剪切板
  */
 export function copyText2Clipboard(text: string) {
-  navigator.clipboard.writeText(text).catch(() => {
+  navigator?.clipboard?.writeText(text).catch(() => {
     const el = document.createElement('textarea')
     el.value = text
     document.body.appendChild(el)

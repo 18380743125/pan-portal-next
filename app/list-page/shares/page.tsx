@@ -1,18 +1,18 @@
 'use client'
 
-import { Button, Table, TableColumnsType, Tooltip } from 'antd'
 import { LinkOutlined, PoweroffOutlined } from '@ant-design/icons'
-
+import { Button, Table, TableColumnsType, Tooltip } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
-import useTableScrollHeight from '@/hooks/useTableScrollHeight'
+
 import { cancelShareApi, getShareListApi } from '@/api/features/share'
-import { copyText2Clipboard } from '@/lib/utils/base'
+import useTableScrollHeight from '@/hooks/useTableScrollHeight'
 import { message, modal } from '@/lib/AntdGlobal'
 import { PanEnum } from '@/lib/constants/base'
+import { copyText2Clipboard } from '@/lib/utils/base'
 
 import styles from './styles.module.scss'
 
-export default function ShareFC() {
+function Share() {
   const tableRef = useRef<HTMLDivElement>(null)
   const [tableScrollY] = useTableScrollHeight(tableRef)
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([])
@@ -182,3 +182,5 @@ export default function ShareFC() {
     </main>
   )
 }
+
+export default Share

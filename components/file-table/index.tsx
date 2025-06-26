@@ -1,7 +1,5 @@
 'use client'
 
-import React, { useMemo, useRef } from 'react'
-import { Button, Table, TableColumnsType, Tooltip } from 'antd'
 import {
   CopyOutlined,
   DeleteOutlined,
@@ -10,21 +8,23 @@ import {
   SendOutlined,
   ShareAltOutlined
 } from '@ant-design/icons'
+import { Button, Table, TableColumnsType, Tooltip } from 'antd'
+import React, { useMemo, useRef } from 'react'
 
-import RenameFC from '@/components/button-list/rename-button/rename'
-import ShareFC from '@/components/button-list/share-button/share'
+import Copy from '@/components/button-list/copy-button/copy'
+import Rename from '@/components/button-list/rename-button/rename'
+import Share from '@/components/button-list/share-button/share'
+import Transfer from '@/components/button-list/transfer-button/transfer'
 
+import useFileHandler from '@/hooks/useFileHandler'
+import useTableScrollHeight from '@/hooks/useTableScrollHeight'
+import { FileTypeEnum, PanEnum } from '@/lib/constants/base'
 import { getBreadcrumbListAction, getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { getFileFontElement } from '@/lib/utils/file-util'
-import { FileTypeEnum, PanEnum } from '@/lib/constants/base'
-import useFileHandler from '@/hooks/useFileHandler'
 import type { FileItem } from '@/types/file'
 
 import styles from './styles.module.scss'
-import CopyFC from '@/components/button-list/copy-button/copy'
-import TransferFC from '@/components/button-list/transfer-button/transfer'
-import useTableScrollHeight from '@/hooks/useTableScrollHeight'
 
 const Breadcrumb = () => {
   const dispatch = useAppDispatch()
@@ -194,16 +194,16 @@ const Breadcrumb = () => {
   return (
     <section className={styles.root}>
       {/* 重命名文件 */}
-      <RenameFC ref={renameRef} />
+      <Rename ref={renameRef} />
 
       {/* 分享文件 */}
-      <ShareFC ref={shareRef} />
+      <Share ref={shareRef} />
 
       {/* 复制文件 */}
-      <CopyFC ref={copyRef} />
+      <Copy ref={copyRef} />
 
       {/* 移动文件 */}
-      <TransferFC ref={moveRef} />
+      <Transfer ref={moveRef} />
 
       <section ref={tableRef}>
         <Table<FileItem>

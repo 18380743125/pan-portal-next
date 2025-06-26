@@ -1,15 +1,15 @@
 'use client'
 
-import { useMemo, useState } from 'react'
 import { Button, Input, Steps } from 'antd'
 import { useRouter } from 'next/navigation'
+import { useMemo, useState } from 'react'
 
 import styles from './styles.module.scss'
 
 import { checkAnswerApi, checkUsernameApi, resetPasswordApi } from '@/api/features/user'
 
-import { validatePassword, validateUsername } from '@/lib/utils/form-validate'
 import { message } from '@/lib/AntdGlobal'
+import { validatePassword, validateUsername } from '@/lib/utils/form-validate'
 
 const stepList = [
   {
@@ -21,7 +21,7 @@ const stepList = [
     key: 'answer'
   },
   {
-    title: '修改密码',
+    title: '重置密码',
     key: 'submit'
   }
 ]
@@ -37,19 +37,10 @@ export default function LoginFC() {
   const [answer, setAnswer] = useState('')
   const [password, setPassword] = useState('')
   const [okPassword, setOkPassword] = useState('')
-
-  // 密码答案
   const [question, setQuestion] = useState('')
-  // 重置密码携带的token
-  const [token, setToken] = useState('')
+  const [token, setToken] = useState('') // 重置密码 token
 
-  const title = useMemo(() => {
-    if (currentStep === 2) {
-      return '重置密码'
-    } else {
-      return stepList[currentStep].title
-    }
-  }, [currentStep])
+  const title = useMemo(() => stepList[currentStep].title, [currentStep])
 
   const onOperator = () => {
     const stepKey = stepList[currentStep].key
@@ -108,7 +99,7 @@ export default function LoginFC() {
       await resetPasswordApi({
         username,
         password,
-        token: token
+        token
       })
       message.success('重置密码成功')
       setTimeout(() => {
@@ -116,6 +107,7 @@ export default function LoginFC() {
       }, 2000)
     } catch (error: any) {
       if (error?.message === 'TOKEN_EXPIRE') {
+        message.error('由于您长时间未操作，将重新校验用户名')
         setTimeout(() => {
           setCurrentStep(0)
           setUsername('')
@@ -124,8 +116,7 @@ export default function LoginFC() {
           setQuestion('')
           setAnswer('')
           setToken('')
-          message.error('由于您长时间未操作，将重新校验用户名')
-        }, 2000)
+        }, 3000)
         return
       }
     }

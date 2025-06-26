@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+
 import debounce from '@/lib/utils/common/debounce'
 
 function useResize(resizeFn: (...args: any[]) => void) {

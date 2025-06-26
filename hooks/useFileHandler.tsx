@@ -3,11 +3,11 @@
 import { deleteFileApi, downloadFileApi } from '@/api/features/file'
 import type { FileItem } from '@/types/file'
 
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { message, modal } from '@/lib/AntdGlobal'
 import { PanEnum } from '@/lib/constants/base'
-import { download } from '@/lib/utils/base'
 import { getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { download } from '@/lib/utils/base'
 
 const useFileHandler = () => {
   const dispatch = useAppDispatch()

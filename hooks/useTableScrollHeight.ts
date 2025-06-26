@@ -1,4 +1,5 @@
 import { RefObject, useCallback, useEffect, useState } from 'react'
+
 import useResize from '@/hooks/useResize'
 
 /**

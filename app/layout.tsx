@@ -1,23 +1,22 @@
-import React from 'react'
-import type { Metadata } from 'next'
-import { ConfigProvider, App as AntdApp } from 'antd'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
-import 'normalize.css'
+import { App as AntdApp, ConfigProvider } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
+import type { Metadata } from 'next'
+import React from 'react'
 
 // fontawesome
 import { config, library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import '@fortawesome/fontawesome-svg-core/styles.css'
-
-library.add(fas)
-config.autoAddCss = false
+import 'normalize.css'
 
 import '@/styles/common.css'
 
-// redux store
-import { StoreProvider } from './StoreProvider'
 import AntdGlobal from '@/lib/AntdGlobal'
+import { StoreProvider } from './StoreProvider'
+
+library.add(fas)
+config.autoAddCss = false
 
 export default function RootLayout({
   children
@@ -26,7 +25,7 @@ export default function RootLayout({
 }>) {
   const theme = {
     token: {
-      colorPrimary: '#4096ff'
+      colorPrimary: '#409EFF'
     },
     components: {
       Menu: {

@@ -1,19 +1,19 @@
 'use client'
 
-import { Button, Table, TableColumnsType, Tooltip } from 'antd'
 import { DeleteOutlined, UndoOutlined } from '@ant-design/icons'
-
+import { Button, Table, TableColumnsType, Tooltip } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
-import useTableScrollHeight from '@/hooks/useTableScrollHeight'
+
 import { deleteRecycleApi, getRecycleListApi, restoreRecycleApi } from '@/api/features/recycle'
-import { getFileFontElement } from '@/lib/utils/file-util'
-import { FileItem } from '@/types/file'
+import useTableScrollHeight from '@/hooks/useTableScrollHeight'
 import { message, modal } from '@/lib/AntdGlobal'
 import { PanEnum } from '@/lib/constants/base'
+import { getFileFontElement } from '@/lib/utils/file-util'
+import { FileItem } from '@/types/file'
 
 import styles from './styles.module.scss'
 
-export default function RecyclesFC() {
+function Recycles() {
   const tableRef = useRef<HTMLDivElement>(null)
   const [tableScrollY] = useTableScrollHeight(tableRef)
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([])
@@ -191,3 +191,5 @@ export default function RecyclesFC() {
     </main>
   )
 }
+
+export default Recycles

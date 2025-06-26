@@ -1,12 +1,12 @@
-import AppHeaderFC from '@/components/header'
+import AppHeader from '@/components/header'
 import Sidebar from '@/components/sidebar'
 
 import styles from './styles.module.scss'
 
-export default function ListPageLayout({ children }) {
+function ListPageLayout({ children }) {
   return (
     <>
-      <AppHeaderFC />
+      <AppHeader />
       <main className={styles.root}>
         <section className={styles.left}>
           <Sidebar />
@@ -17,3 +17,5 @@ export default function ListPageLayout({ children }) {
     </>
   )
 }
+
+export default ListPageLayout

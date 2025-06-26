@@ -1,18 +1,20 @@
 'use client'
 
-import { useEffect } from 'react'
+import FileButtonGroup from '@/components/file-button-group'
 import FileTable from '@/components/file-table'
-import FileButtonGroupFC from '@/components/file-button-group'
-import SearchFC from '@/components/search'
+import Search from '@/components/search'
+import { useEffect } from 'react'
 
-import { useAppDispatch } from '@/lib/store/hooks'
 import { FileTypeEnum, PanEnum } from '@/lib/constants/base'
 import { getFileAction, setFileTypes } from '@/lib/store/features/fileSlice'
+import { useAppDispatch } from '@/lib/store/hooks'
 import styles from './styles.module.scss'
 
 export default function ImagesFC() {
   const dispatch = useAppDispatch()
+  
   useEffect(() => {
+    // 图片
     const fileTypes = [FileTypeEnum.IMAGE_FILE].join(PanEnum.COMMON_SEPARATOR)
     dispatch(setFileTypes(fileTypes))
     dispatch(getFileAction({ parentId: FileTypeEnum.ALL_FILE, fileTypes }))
@@ -22,8 +24,8 @@ export default function ImagesFC() {
     <main className={styles.root}>
       {/* 头部区域 */}
       <section className={styles.topButtonGroup}>
-        <FileButtonGroupFC />
-        <SearchFC />
+        <FileButtonGroup />
+        <Search />
       </section>
 
       {/*  文件列表 */}

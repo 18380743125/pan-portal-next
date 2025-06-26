@@ -4,12 +4,12 @@ import axios, { AxiosRequestHeaders } from 'axios'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
-import type { MyRequestConfig } from './type'
+import type { MyRequestConfig, RequestConstructor } from './type'
 
 class Request {
   instance: AxiosInstance
 
-  constructor(config: Omit<MyRequestConfig, 'headers'>) {
+  constructor(config: RequestConstructor) {
     this.instance = axios.create(config)
 
     // 全局请求拦截器

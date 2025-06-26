@@ -1,18 +1,19 @@
 'use client'
 
 import { useEffect } from 'react'
-import BreadcrumbFC from '@/components/breadcrumb'
+
+import Breadcrumb from '@/components/breadcrumb'
+import FileButtonGroup from '@/components/file-button-group'
 import FileTable from '@/components/file-table'
+import Search from '@/components/search'
 
-import FileButtonGroupFC from '@/components/file-button-group'
-import SearchFC from '@/components/search'
-
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { getFileAction, setBreadcrumbList, setFileTypes } from '@/lib/store/features/fileSlice'
-import styles from './styles.module.scss'
 import { FileTypeEnum } from '@/lib/constants/base'
+import { getFileAction, setBreadcrumbList, setFileTypes } from '@/lib/store/features/fileSlice'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 
-export default function FilesFC() {
+import styles from './styles.module.scss'
+
+function Files() {
   const dispatch = useAppDispatch()
 
   const { userInfo, fileTypes } = useAppSelector(
@@ -24,23 +25,23 @@ export default function FilesFC() {
   )
 
   useEffect(() => {
-    if (fileTypes !== '-1') {
+    if (fileTypes !== FileTypeEnum.ALL_FILE || !userInfo) {
       return
     }
-    if (userInfo?.rootFileId) {
-      dispatch(getFileAction({ parentId: userInfo.rootFileId, fileTypes }))
-      const initBreadcrumbList = [
-        {
-          id: userInfo.rootFileId,
-          name: userInfo.rootFilename,
-          parentId: userInfo.rootFileId
-        }
-      ]
-      dispatch(setBreadcrumbList({ list: initBreadcrumbList }))
-    }
+
+    dispatch(getFileAction({ parentId: userInfo.rootFileId, fileTypes }))
+    const initBreadcrumbList = [
+      {
+        id: userInfo.rootFileId,
+        name: userInfo.rootFilename,
+        parentId: userInfo.rootFileId
+      }
+    ]
+    dispatch(setBreadcrumbList({ list: initBreadcrumbList }))
   }, [userInfo, fileTypes])
 
   useEffect(() => {
+    // 所有文件
     dispatch(setFileTypes(FileTypeEnum.ALL_FILE))
   }, [])
 
@@ -48,13 +49,13 @@ export default function FilesFC() {
     <main className={styles.root}>
       {/* 头部区域 */}
       <section className={styles.topButtonGroup}>
-        <FileButtonGroupFC />
-        <SearchFC />
+        <FileButtonGroup />
+        <Search />
       </section>
 
       {/* 面包屑 */}
       <section className={styles.breadcrumb}>
-        <BreadcrumbFC />
+        <Breadcrumb />
       </section>
 
       {/* 文件列表 */}
@@ -64,3 +65,5 @@ export default function FilesFC() {
     </main>
   )
 }
+
+export default Files

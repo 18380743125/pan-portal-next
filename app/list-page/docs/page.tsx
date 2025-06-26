@@ -2,17 +2,19 @@
 
 import { useEffect } from 'react'
 
-import styles from '@/app/list-page/images/styles.module.scss'
-import FileButtonGroupFC from '@/components/file-button-group'
-import SearchFC from '@/components/search'
+import FileButtonGroup from '@/components/file-button-group'
 import FileTable from '@/components/file-table'
-import { getFileAction, setFileTypes } from '@/lib/store/features/fileSlice'
+import SearchFC from '@/components/search'
 import { FileTypeEnum, PanEnum } from '@/lib/constants/base'
+import { getFileAction, setFileTypes } from '@/lib/store/features/fileSlice'
 import { useAppDispatch } from '@/lib/store/hooks'
+
+import styles from './styles.module.scss'
 
 export default function DocsFC() {
   const dispatch = useAppDispatch()
   useEffect(() => {
+    // 文档
     const fileTypes = [
       FileTypeEnum.WORD_FILE,
       FileTypeEnum.EXCEL_FILE,
@@ -29,7 +31,7 @@ export default function DocsFC() {
     <main className={styles.root}>
       {/* 头部区域 */}
       <section className={styles.topButtonGroup}>
-        <FileButtonGroupFC />
+        <FileButtonGroup />
         <SearchFC />
       </section>
 

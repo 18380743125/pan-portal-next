@@ -4,7 +4,7 @@ import { Input } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { useState } from 'react'
 
-const SearchFC = () => {
+const Search = () => {
   const [keywords, setKeywords] = useState('')
 
   return (
@@ -21,4 +21,4 @@ const SearchFC = () => {
   )
 }
 
-export default SearchFC
+export default Search

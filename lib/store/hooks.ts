@@ -1,5 +1,5 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, RootState } from './index'
+import type { AppDispatch, RootState } from '.'
 
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
 

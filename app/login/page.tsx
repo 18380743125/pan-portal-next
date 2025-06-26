@@ -1,20 +1,19 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { Button, Input } from 'antd'
-import type { InputRef } from 'antd'
-import { useRouter } from 'next/navigation'
 import { ExclamationCircleFilled } from '@ant-design/icons'
+import { type InputRef, Button, Input } from 'antd'
+import { useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 
 import styles from './styles.module.scss'
 
 import { message, modal } from '@/lib/AntdGlobal'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { loginAction } from '@/lib/store/features/userSlice'
-import { validateUsernameAndPassword } from '@/lib/utils/form-validate'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { localCache } from '@/lib/utils/common/cache'
+import { validateUsernameAndPassword } from '@/lib/utils/form-validate'
 
-export default function LoginFC() {
+function LoginPage() {
   const router = useRouter()
   const inputRef = useRef<InputRef | null>(null)
 
@@ -32,31 +31,34 @@ export default function LoginFC() {
 
   // 聚焦输入框
   useEffect(() => {
-    const usernameEl = inputRef.current as any
+    const inputDOM = inputRef.current
+    if (!inputDOM) {
+      return
+    }
     if (token) {
       modal.confirm({
         title: '提示',
         content: '当前您已登陆，您确定要重新登陆吗? ',
         icon: <ExclamationCircleFilled />,
         onOk() {
-          usernameEl.focus()
+          inputDOM.focus()
           localCache.clear()
         },
         onCancel() {
           router.back()
         }
       })
-    } else {
-      usernameEl.focus()
+      return
     }
+    inputDOM.focus()
   }, [])
 
-  // 跳转到忘记密码页面
+  // 跳转到忘记密码界面
   const jumpForget = () => {
     router.push('/forget')
   }
 
-  // 跳转到注册页面
+  // 跳转到注册界面
   const jumpRegister = () => {
     router.push('/register')
   }
@@ -73,23 +75,21 @@ export default function LoginFC() {
 
     setLoading(true)
 
-    const result = await dispatch(
-      loginAction({
-        username,
-        password
-      })
-    )
-
-    setLoading(false)
-
-    if (result.meta.requestStatus === 'rejected') {
-      return
+    try {
+      await dispatch(
+        loginAction({
+          username,
+          password
+        })
+      ).unwrap()
+      message.success('登录成功')
+      setTimeout(() => {
+        router.push('/')
+      }, 1500)
+    } catch (e) {
+    } finally {
+      setLoading(false)
     }
-
-    message.success('登录成功')
-    setTimeout(() => {
-      router.push('/')
-    }, 1500)
   }
 
   return (
@@ -152,3 +152,5 @@ export default function LoginFC() {
     </main>
   )
 }
+
+export default LoginPage

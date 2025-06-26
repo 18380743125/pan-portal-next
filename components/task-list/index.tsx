@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { Badge, Popover } from 'antd'
 import { SwapOutlined } from '@ant-design/icons'
+import { Badge, Popover } from 'antd'
+import { useEffect, useMemo, useState } from 'react'
 
-import TaskList from './task-list'
 import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'
+import TaskList from './task-list'
 
 import styles from './styles.module.scss'
 

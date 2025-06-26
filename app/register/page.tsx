@@ -1,19 +1,19 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { Button, Input } from 'antd'
-import type { InputRef } from 'antd'
+import { Button, Input, type InputRef } from 'antd'
 import { useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 
 import styles from './styles.module.scss'
 
+import { registerApi } from '@/api/features/user'
+
 import { message } from '@/lib/AntdGlobal'
 import { validateUsernameAndPassword } from '@/lib/utils/form-validate'
-import { registerApi } from '@/api/features/user'
 
 export default function RegisterFC() {
   const router = useRouter()
-  const usernameRef = useRef<InputRef | null>(null)
+  const inputRef = useRef<InputRef | null>(null)
 
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
@@ -24,8 +24,8 @@ export default function RegisterFC() {
 
   // 聚焦输入框
   useEffect(() => {
-    const usernameEl = usernameRef.current as any
-    usernameEl.focus()
+    const inputDOM = inputRef.current
+    inputDOM && inputDOM.focus()
   }, [])
 
   // 跳转到注册页面
@@ -45,7 +45,7 @@ export default function RegisterFC() {
 
     if (password !== okPassword) {
       if (!okPassword) {
-        return message.warning('请输入确认密码')
+        return message.warning('请填写确认密码')
       }
       return message.warning('两次密码输入不一致')
     }
@@ -100,7 +100,7 @@ export default function RegisterFC() {
                 allowClear
                 style={{ position: 'relative', left: 3 }}
                 rootClassName={styles.input}
-                ref={usernameRef}
+                ref={inputRef}
                 size={'small'}
                 variant={'borderless'}
                 value={username}

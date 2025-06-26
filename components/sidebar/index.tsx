@@ -1,14 +1,14 @@
 'use client'
 
-import { useAppDispatch } from '@/lib/store/hooks'
-import { useEffect, useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
-import classNames from 'classnames'
 import { DeleteOutlined, FolderOutlined, ShareAltOutlined } from '@ant-design/icons'
+import classNames from 'classnames'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
+import { setFileList } from '@/lib/store/features/fileSlice'
+import { useAppDispatch } from '@/lib/store/hooks'
 
 import styles from './styles.module.scss'
-import { setFileList } from '@/lib/store/features/fileSlice'
-// import { FileTypeEnum, PanEnum } from '@/lib/constants'
 
 const Sidebar = () => {
   const [activeIndex, setActiveIndex] = useState(-1)
@@ -16,48 +16,48 @@ const Sidebar = () => {
   const pathname = usePathname()
   const dispatch = useAppDispatch()
 
+  const navList = [
+    {
+      path: '/list-page/files',
+      label: '全部文件',
+      icon: <FolderOutlined />
+    },
+    {
+      path: '/list-page/images',
+      label: '图片',
+      icon: null
+    },
+    {
+      path: '/list-page/docs',
+      label: '文档',
+      icon: null
+    },
+    {
+      path: '/list-page/videos',
+      label: '视频',
+      icon: null
+    },
+    {
+      path: '/list-page/musics',
+      label: '音乐',
+      icon: null
+    },
+    {
+      path: '/list-page/shares',
+      label: '我的分享',
+      icon: <ShareAltOutlined />
+    },
+    {
+      path: '/list-page/recycles',
+      label: '回收站',
+      icon: <DeleteOutlined />
+    }
+  ]
+
   useEffect(() => {
     const index = navList.findIndex(item => item.path === pathname)
     setActiveIndex(index)
   }, [])
-
-  const navList = [
-    {
-      label: '全部文件',
-      icon: <FolderOutlined />,
-      path: '/list-page/files'
-    },
-    {
-      label: '图片',
-      icon: null,
-      path: '/list-page/images'
-    },
-    {
-      label: '文档',
-      icon: null,
-      path: '/list-page/docs'
-    },
-    {
-      label: '视频',
-      icon: null,
-      path: '/list-page/videos'
-    },
-    {
-      label: '音乐',
-      icon: null,
-      path: '/list-page/musics'
-    },
-    {
-      label: '我的分享',
-      icon: <ShareAltOutlined />,
-      path: '/list-page/shares'
-    },
-    {
-      label: '回收站',
-      icon: <DeleteOutlined />,
-      path: '/list-page/recycles'
-    }
-  ]
 
   const onNavItemClick = (index: number, path: string) => {
     setActiveIndex(index)

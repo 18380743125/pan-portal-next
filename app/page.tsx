@@ -1,9 +1,9 @@
 'use client'
 
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
-export default function AppFC() {
+function App() {
   const router = useRouter()
   const pathname = usePathname()
 
@@ -15,3 +15,5 @@ export default function AppFC() {
 
   return <></>
 }
+
+export default App

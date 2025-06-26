@@ -10,3 +10,9 @@ export interface MyInterceptors<T = AxiosResponse> {
 export interface MyRequestConfig<T = AxiosResponse> extends InternalAxiosRequestConfig {
   interceptors?: MyInterceptors<T>
 }
+
+export interface RequestConstructor {
+  timeout: number
+  baseURL: string
+  interceptors?: MyInterceptors
+}

@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-import { Button, Popover, Progress, Table, TableColumnsType } from 'antd'
 import {
   ClockCircleOutlined,
   CloseCircleOutlined,
@@ -14,10 +12,12 @@ import {
   UploadOutlined,
   WarningOutlined
 } from '@ant-design/icons'
+import { Button, Popover, Progress, Table, TableColumnsType } from 'antd'
 
 import { cancelTaskAction, pauseTaskAction, resumeTaskAction, retryTaskAction } from '@/lib/store/features/taskSlice'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { fileStatus } from '@/lib/utils/file-util'
+
 import styles from './styles.module.scss'
 
 const TaskListFC = () => {
@@ -29,7 +29,7 @@ const TaskListFC = () => {
     shallowEqualApp
   )
 
-  // 控制文件上床
+  // 控制文件上传
   const onToggleTask = (action: string, row: Record<string, any>) => {
     const { filename } = row
     switch (action) {

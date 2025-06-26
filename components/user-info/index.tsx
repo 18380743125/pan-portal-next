@@ -1,18 +1,19 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { Dropdown } from 'antd'
-import type { MenuProps } from 'antd'
-import { useRouter } from 'next/navigation'
-import { DownOutlined, ExclamationCircleFilled } from '@ant-design/icons'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { clearUserAction, getUserAction } from '@/lib/store/features/userSlice'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { DownOutlined, ExclamationCircleFilled } from '@ant-design/icons'
+import type { MenuProps } from 'antd'
+import { Dropdown } from 'antd'
+import { useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 
 import UpdatePasswordFC from '@/components/user-info/update-password'
-import styles from './styles.module.scss'
 
-import { modal } from '@/lib/AntdGlobal'
 import { logoutApi } from '@/api/features/user'
+import { modal } from '@/lib/AntdGlobal'
+
+import styles from './styles.module.scss'
 
 const UserInfoFC = () => {
   const router = useRouter()

@@ -14,11 +14,7 @@ function Forbidden() {
       status={403}
       title='403'
       subTitle='抱歉，发生了一点错误~'
-      extra={
-        <Button type='primary' onClick={handleClick}>
-          回到首页
-        </Button>
-      }
+      extra={<Button onClick={handleClick}>回到首页</Button>}
     />
   )
 }

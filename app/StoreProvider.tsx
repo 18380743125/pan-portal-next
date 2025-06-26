@@ -1,7 +1,6 @@
 'use client'
 
-import type { ReactNode } from 'react'
-import { useRef } from 'react'
+import { useRef, type ReactNode } from 'react'
 import { Provider } from 'react-redux'
 
 import type { AppStore } from '@/lib/store'

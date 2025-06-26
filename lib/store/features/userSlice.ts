@@ -1,11 +1,11 @@
-import { PayloadAction } from '@reduxjs/toolkit'
+import { type PayloadAction } from '@reduxjs/toolkit'
 
 import { getUserInfoApi, loginApi } from '@/api/features/user'
-import { createAppSlice } from '@/lib/store/createAppSlice'
-import { localCache } from '@/lib/utils/common/cache'
 import { CacheEnum } from '@/lib/constants/base'
-import { User } from '@/types/user'
+import { createAppSlice } from '@/lib/store/createAppSlice'
 import { setBreadcrumbList } from '@/lib/store/features/fileSlice'
+import { localCache } from '@/lib/utils/common/cache'
+import { type User } from '@/types/user'
 
 interface IState {
   token: string
@@ -18,45 +18,52 @@ const userSlice = createAppSlice({
     token: localCache.getCache(CacheEnum.USER_TOKEN),
     userInfo: localCache.getCache(CacheEnum.USER_INFO)
   } as IState,
-  reducers: create => ({
-    // 缓存token
-    setToken: create.reducer((state, action: PayloadAction<string>) => {
+  reducers: ({ reducer, asyncThunk }) => ({
+    // 缓存 token
+    setToken: reducer((state, action: PayloadAction<string>) => {
       state.token = action.payload
       localCache.setCache(CacheEnum.USER_TOKEN, action.payload)
     }),
 
     // 缓存用户信息
-    setUserInfo: create.reducer((state, action: PayloadAction<Record<string, any>>) => {
+    setUserInfo: reducer((state, action: PayloadAction<Record<string, any>>) => {
       state.userInfo = action.payload
       localCache.setCache(CacheEnum.USER_INFO, action.payload)
     }),
 
     // 登陆action
-    loginAction: create.asyncThunk(async (data: User.LoginParams, { dispatch }) => {
-      const result = await loginApi(data)
-      dispatch(setToken(result))
-      return result
+    loginAction: asyncThunk(async (data: User.LoginParams, { dispatch, rejectWithValue }) => {
+      try {
+        const result = await loginApi(data)
+        dispatch(setToken(result))
+        return result
+      } catch (err) {
+        return rejectWithValue(err)
+      }
     }),
 
     // 获取用户信息action
-    getUserAction: create.asyncThunk(async (_, { dispatch }) => {
+    getUserAction: asyncThunk(async (_, { dispatch }) => {
       const result = await getUserInfoApi()
-      const initBreadcrumbList = [
-        {
-          id: result.rootFileId,
-          name: result.rootFilename,
-          parentId: result.rootFileId
-        }
-      ]
-      dispatch(setBreadcrumbList({ list: initBreadcrumbList }))
-      dispatch(setUserInfo(result))
+      if (result.rootFileId) {
+        dispatch(setUserInfo(result))
+        const initBreadcrumbList = [
+          {
+            id: result.rootFileId,
+            name: result.rootFilename,
+            parentId: result.rootFileId
+          }
+        ]
+        dispatch(setBreadcrumbList({ list: initBreadcrumbList }))
+      }
     }),
 
     // 清除redux数据
-    clearUserAction: create.reducer(state => {
+    clearUserAction: reducer(state => {
       state.userInfo = {}
       state.token = ''
-      localCache.clear()
+      localCache.removeCache(CacheEnum.USER_TOKEN)
+      localCache.removeCache(CacheEnum.USER_INFO)
     })
   })
 })

@@ -31,21 +31,13 @@ const request = new Request({
         return res
       }
 
-      const config = res.config
-      if (config.data) {
-        const data = JSON.parse(config?.data)
-        if (data?.hideMessageTip && result?.code !== 0) {
-          return Promise.reject(res)
-        }
-      }
-
       switch (result.code) {
         case 10: // 未登录
           localCache.clear()
           message.error('请先登陆').then(() => {})
           setTimeout(() => {
             location.href = '/login'
-          }, 2000)
+          }, 1500)
           break
         default:
           message.error(result.message).then(() => {})

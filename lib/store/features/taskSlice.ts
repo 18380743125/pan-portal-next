@@ -14,26 +14,26 @@ const initialState: IState = {
 const taskSlice = createAppSlice({
   name: 'task',
   initialState,
-  reducers: create => ({
+  reducers: ({ reducer, asyncThunk }) => ({
     // 清空任务
-    clearTaskAction: create.reducer(state => {
+    clearTaskAction: reducer(state => {
       state.taskList = []
     }),
 
     // 移除任务
-    removeTaskAction: create.reducer((state, action: PayloadAction<string>) => {
+    removeTaskAction: reducer((state, action: PayloadAction<string>) => {
       const taskList = state.taskList
       const filename = action.payload
       state.taskList = taskList.filter(task => task.filename !== filename)
     }),
 
     // 添加上传任务
-    addTaskAction: create.reducer((state, action: PayloadAction<Record<string, any>>) => {
+    addTaskAction: reducer((state, action: PayloadAction<Record<string, any>>) => {
       state.taskList.push(action.payload)
     }),
 
     // 更新上传任务状态
-    updateTaskStatusAction: create.reducer((state, action: PayloadAction<Record<string, any>>) => {
+    updateTaskStatusAction: reducer((state, action: PayloadAction<Record<string, any>>) => {
       const param = action.payload
       const taskList = state.taskList
       const taskItem = taskList.find(taskItem => param.filename === taskItem.filename)
@@ -45,7 +45,7 @@ const taskSlice = createAppSlice({
     }),
 
     // 更新上传任务进度
-    updateTaskProcessAction: create.reducer((state, action: PayloadAction<Record<string, any>>) => {
+    updateTaskProcessAction: reducer((state, action: PayloadAction<Record<string, any>>) => {
       const param = action.payload
       const taskList = state.taskList
       const taskItem = taskList.find(taskItem => param.filename === taskItem.filename)
@@ -59,7 +59,7 @@ const taskSlice = createAppSlice({
     }),
 
     // 暂停上传任务
-    pauseTaskAction: create.reducer((state, action: PayloadAction<string>) => {
+    pauseTaskAction: reducer((state, action: PayloadAction<string>) => {
       const filename = action.payload
       const taskList = state.taskList
       const taskItem = taskList.find(taskItem => filename === taskItem.filename)
@@ -72,7 +72,7 @@ const taskSlice = createAppSlice({
     }),
 
     // 继续上传任务
-    resumeTaskAction: create.reducer((state, action: PayloadAction<string>) => {
+    resumeTaskAction: reducer((state, action: PayloadAction<string>) => {
       const filename = action.payload
       const taskList = state.taskList
       const taskItem = taskList.find(taskItem => filename === taskItem.filename)
@@ -83,7 +83,7 @@ const taskSlice = createAppSlice({
     }),
 
     // 取消上传任务
-    cancelTaskAction: create.reducer((state, action: PayloadAction<string>) => {
+    cancelTaskAction: reducer((state, action: PayloadAction<string>) => {
       const filename = action.payload
       const taskList = state.taskList
       for (let i = 0; i < taskList.length; i++) {
@@ -97,7 +97,7 @@ const taskSlice = createAppSlice({
     }),
 
     // 重试上传任务
-    retryTaskAction: create.reducer((state, action: PayloadAction<string>) => {
+    retryTaskAction: reducer((state, action: PayloadAction<string>) => {
       const filename = action.payload
       const taskList = state.taskList
       const taskItem = taskList.find(taskItem => filename === taskItem.filename)
