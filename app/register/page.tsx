@@ -3,12 +3,12 @@
 import { Button, Input, type InputRef } from 'antd'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 import styles from './styles.module.scss'
 
 import { registerApi } from '@/api/features/user'
 
-import { message } from '@/lib/AntdGlobal'
 import { validateUsernameAndPassword } from '@/lib/utils/form-validate'
 
 export default function RegisterFC() {
@@ -45,17 +45,17 @@ export default function RegisterFC() {
 
     if (password !== okPassword) {
       if (!okPassword) {
-        return message.warning('请填写确认密码')
+        return toast.warning('请填写确认密码')
       }
-      return message.warning('两次密码输入不一致')
+      return toast.warning('两次密码输入不一致')
     }
 
     if (!question) {
-      return message.warning('请填写密保问题')
+      return toast.warning('请填写密保问题')
     }
 
     if (!answer) {
-      return message.warning('请填写密保答案')
+      return toast.warning('请填写密保答案')
     }
 
     setLoading(true)
@@ -69,7 +69,7 @@ export default function RegisterFC() {
 
     await registerApi(data)
 
-    message.success('注册成功')
+    toast.success('注册成功')
     setTimeout(() => {
       router.push('/login')
     }, 1500)

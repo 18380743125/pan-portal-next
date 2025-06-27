@@ -136,9 +136,9 @@ export const uploadFileApi = data => {
 export const secUploadFileApi = data => {
   return request.post({
     url: '/file/sec-upload',
+    hideTip: true,
     data: {
-      ...data,
-      hideMessageTip: true
+      ...data
     }
   })
 }

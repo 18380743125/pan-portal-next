@@ -1,12 +1,12 @@
-import { forwardRef, useImperativeHandle, useState } from 'react'
-import { Form, Modal, Input } from 'antd'
+import { Form, Input, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
+import { forwardRef, useImperativeHandle, useState } from 'react'
+import { toast } from 'sonner'
 
 import { updatePasswordApi } from '@/api/features/user'
-import { message } from '@/lib/AntdGlobal'
+import { clearUserAction } from '@/lib/store/features/userSlice'
 import { useAppDispatch } from '@/lib/store/hooks'
 import { validatePassword } from '@/lib/utils/form-validate'
-import { clearUserAction } from '@/lib/store/features/userSlice'
 
 type FieldType = {
   oldPassword?: string
@@ -46,11 +46,11 @@ const UpdatePasswordFC = forwardRef((_, ref) => {
     }
 
     if (newPassword !== okPassword) {
-      return message.warning('两次密码输入不一致')
+      return toast.warning('两次密码输入不一致')
     }
     await updatePasswordApi({ oldPassword, newPassword })
 
-    message.success('修改密码成功')
+    toast.success('修改密码成功')
 
     setTimeout(() => {
       router.push('/login')

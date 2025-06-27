@@ -4,10 +4,11 @@ import { ExclamationCircleFilled } from '@ant-design/icons'
 import { type InputRef, Button, Input } from 'antd'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 import styles from './styles.module.scss'
 
-import { message, modal } from '@/lib/AntdGlobal'
+import { modal } from '@/lib/AntdGlobal'
 import { loginAction } from '@/lib/store/features/userSlice'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { localCache } from '@/lib/utils/common/cache'
@@ -82,7 +83,7 @@ function LoginPage() {
           password
         })
       ).unwrap()
-      message.success('登录成功')
+      toast.success('登录成功')
       setTimeout(() => {
         router.push('/')
       }, 1500)

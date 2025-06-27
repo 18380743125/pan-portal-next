@@ -1,7 +1,7 @@
 'use client'
 
-import { Input } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
+import { Input } from 'antd'
 import { useState } from 'react'
 
 const Search = () => {

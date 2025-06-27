@@ -1,9 +1,11 @@
 'use client'
 
+import { toast } from 'sonner'
+
 import { deleteFileApi, downloadFileApi } from '@/api/features/file'
 import type { FileItem } from '@/types/file'
 
-import { message, modal } from '@/lib/AntdGlobal'
+import { modal } from '@/lib/AntdGlobal'
 import { PanEnum } from '@/lib/constants/base'
 import { getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
@@ -26,18 +28,18 @@ const useFileHandler = () => {
     // 下载单个文件
     if (row) {
       if (row.folderFlag === PanEnum.FOLDER_FLAG) {
-        return message.warning('文件夹暂不支持下载')
+        return toast.warning('文件夹暂不支持下载')
       }
       const result = await downloadFileApi(row.fileId)
       download(result, row.filename)
     } else {
       // 下载多个文件
       if (!selectFileList.length) {
-        return message.warning('请选择要下载的文件')
+        return toast.warning('请选择要下载的文件')
       }
       for (const item of selectFileList) {
         if (item.folderFlag === PanEnum.FOLDER_FLAG) {
-          return message.warning('文件夹暂不支持下载')
+          return toast.warning('文件夹暂不支持下载')
         }
       }
       for (const item of selectFileList) {
@@ -54,7 +56,7 @@ const useFileHandler = () => {
     if (!row) {
       // 删除多个文件
       if (!selectFileList.length) {
-        return message.warning('请选择要删除的文件')
+        return toast.warning('请选择要删除的文件')
       }
       fileIds = selectFileList.map(item => item.fileId).join(PanEnum.COMMON_SEPARATOR)
     }
@@ -67,7 +69,7 @@ const useFileHandler = () => {
       content: <div style={{ marginBottom: 10 }}>{`文件删除后将保存在回收站，您确定这样做吗？`}</div>,
       async onOk() {
         await deleteFileApi(fileIds)
-        message.success('删除成功')
+        toast.success('删除成功')
         const current = pathList[pathList.length - 1]
 
         // 刷新文件列表

@@ -23,7 +23,7 @@ const request = new Request({
     responseSuccessFn(res: any) {
       const result = res.data as Result.BaseResult
       if (result.code === 0) {
-        return result.data
+        return result.data ? result.data : result
       }
 
       const contentType = res.headers['content-type']
@@ -40,7 +40,11 @@ const request = new Request({
           }, 1500)
           break
         default:
-          message.error(result.message).then(() => {})
+          if (res.config?.hideTip) {
+            return result
+          } else {
+            message.error(result.message)
+          }
       }
       // 处理失败
       return Promise.reject(result)

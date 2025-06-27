@@ -1,17 +1,17 @@
 'use client'
 
-import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react'
-import { Modal, Tree } from 'antd'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolder } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Modal, Tree } from 'antd'
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 
 import { getFolderTreeApi, transferFileApi } from '@/api/features/file'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { message } from '@/lib/AntdGlobal'
-import { getFileAction } from '@/lib/store/features/fileSlice'
-import { PanEnum } from '@/lib/constants/base'
-import { FileItem } from '@/types/file'
 import styles from '@/components/button-list/copy-button/styles.module.scss'
+import { PanEnum } from '@/lib/constants/base'
+import { getFileAction } from '@/lib/store/features/fileSlice'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { FileItem } from '@/types/file'
 
 const TransferFC = forwardRef((_, ref) => {
   const dispatch = useAppDispatch()
@@ -73,7 +73,7 @@ const TransferFC = forwardRef((_, ref) => {
     const targetParentId = selectKeys[0]
     const fileIds = rows?.map(row => row.fileId).join(PanEnum.COMMON_SEPARATOR)
     await transferFileApi(targetParentId, fileIds as string)
-    message.success('移动成功')
+    toast.success('移动成功')
 
     // 刷新文件列表
     const current = pathList[pathList.length - 1]

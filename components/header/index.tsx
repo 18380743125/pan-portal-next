@@ -6,7 +6,7 @@ import styles from './styles.module.scss'
 const AppHeader = () => {
   return (
     <main className={styles.root}>
-      <section className={styles.left}>迅翼云盘</section>
+      <section className={styles.left}>迅翼网盘</section>
 
       <section className={styles.right}>
         <TaskList />

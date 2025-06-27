@@ -11,6 +11,7 @@
     "import/no-anonymous-default-export": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-empty-object-type": "off",
-    "react-hooks/exhaustive-deps": "off"
+    "react-hooks/exhaustive-deps": "off",
+    "@typescript-eslint/no-unused-vars": "off"
   }
 }

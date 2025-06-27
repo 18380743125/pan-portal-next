@@ -12,6 +12,7 @@
   .right {
     width: calc(100% - 200px);
     flex: 1;
+    overflow: auto;
     background-color: #ffffff;
   }
 }

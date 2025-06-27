@@ -3,6 +3,7 @@ import { App as AntdApp, ConfigProvider } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
 import type { Metadata } from 'next'
 import React from 'react'
+import { Toaster } from 'sonner'
 
 // fontawesome
 import { config, library } from '@fortawesome/fontawesome-svg-core'
@@ -46,6 +47,7 @@ export default function RootLayout({
         <StoreProvider>
           <ConfigProvider locale={zhCN} theme={theme}>
             <AntdApp>
+              <Toaster richColors closeButton />
               <AntdGlobal />
               <AntdRegistry>{children}</AntdRegistry>
             </AntdApp>
@@ -57,6 +59,6 @@ export default function RootLayout({
 }
 
 export const metadata: Metadata = {
-  title: '迅翼云盘',
+  title: '迅翼网盘',
   description: '极速传输，畅享高效文件私享空间'
 }

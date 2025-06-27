@@ -16,7 +16,7 @@ import styles from './styles.module.scss'
 function Files() {
   const dispatch = useAppDispatch()
 
-  const { userInfo, fileTypes } = useAppSelector(
+  const { userInfo } = useAppSelector(
     state => ({
       fileTypes: state.file.fileType,
       userInfo: state.user.userInfo
@@ -24,12 +24,16 @@ function Files() {
     shallowEqualApp
   )
 
+  const firstLoadRef = useRef(true)
+
   useEffect(() => {
-    if (!userInfo) {
+    if (!userInfo || !firstLoadRef.current) {
       return
     }
 
-    dispatch(getFileAction({ parentId: userInfo.rootFileId, fileTypes }))
+    firstLoadRef.current = false
+
+    dispatch(getFileAction({ parentId: userInfo.rootFileId, fileTypes: FileTypeEnum.ALL_FILE }))
     const initBreadcrumbList = [
       {
         id: userInfo.rootFileId,
@@ -38,10 +42,9 @@ function Files() {
       }
     ]
     dispatch(setBreadcrumbList({ list: initBreadcrumbList }))
-  }, [userInfo, fileTypes])
+  }, [userInfo])
 
   useEffect(() => {
-    // 所有文件
     dispatch(setFileTypes(FileTypeEnum.ALL_FILE))
   }, [])
 

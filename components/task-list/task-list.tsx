@@ -20,8 +20,9 @@ import { fileStatus } from '@/lib/utils/file-util'
 
 import styles from './styles.module.scss'
 
-const TaskListFC = () => {
+const TaskList = () => {
   const dispatch = useAppDispatch()
+  
   const { taskList } = useAppSelector(
     state => ({
       taskList: state.task.taskList
@@ -194,4 +195,4 @@ const TaskListFC = () => {
   )
 }
 
-export default TaskListFC
+export default TaskList

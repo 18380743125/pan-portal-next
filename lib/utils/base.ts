@@ -41,34 +41,36 @@ export function copyText2Clipboard(text: string) {
   })
 }
 
-export function MD5(_file: any, callback: Function) {
-  const blobSlice = File.prototype.slice
-  const file = _file
-  const chunkSize = 1024 * 1024 * 2
-  const chunks = Math.ceil(file.size / chunkSize)
-  const spark = new sparkMD5.ArrayBuffer()
-  const fileReader = new FileReader()
-  let currentChunk = 0
+export function MD5(_file: any) {
+  return new Promise((resolve, reject) => {
+    const blobSlice = File.prototype.slice
+    const file = _file
+    const chunkSize = 1024 * 1024 * 1
+    const chunks = Math.ceil(file.size / chunkSize)
+    const spark = new sparkMD5.ArrayBuffer()
+    const fileReader = new FileReader()
+    let currentChunk = 0
 
-  fileReader.onload = function (e: any) {
-    spark.append(e.target.result)
-    currentChunk++
-    if (currentChunk < chunks) {
-      loadNext()
-    } else {
-      callback(null, spark.end())
+    fileReader.onload = function (e: any) {
+      spark.append(e.target.result)
+      currentChunk++
+      if (currentChunk < chunks) {
+        loadNext()
+      } else {
+        resolve(spark.end())
+      }
     }
-  }
 
-  fileReader.onerror = function () {
-    callback('oops, something went wrong.')
-  }
+    fileReader.onerror = function () {
+      reject('oops, something went wrong.')
+    }
 
-  function loadNext() {
-    const start = currentChunk * chunkSize
-    const end = start + chunkSize >= file.size ? file.size : start + chunkSize
-    fileReader.readAsArrayBuffer(blobSlice.call(file, start, end))
-  }
+    function loadNext() {
+      const start = currentChunk * chunkSize
+      const end = start + chunkSize >= file.size ? file.size : start + chunkSize
+      fileReader.readAsArrayBuffer(blobSlice.call(file, start, end))
+    }
 
-  loadNext()
+    loadNext()
+  })
 }

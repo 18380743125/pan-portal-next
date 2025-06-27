@@ -1,10 +1,11 @@
 'use client'
 
-import { useRef } from 'react'
-import { Button } from 'antd'
 import { FolderAddOutlined } from '@ant-design/icons'
+import { Button } from 'antd'
+import { useRef } from 'react'
 
-import CreateFolder from '@/components/button-list/create-folder-button/create-folder'
+import CreateFolder from './create-folder'
+
 import styles from './styles.module.scss'
 
 const CreateFolderButton = () => {

@@ -67,6 +67,7 @@ class Request {
   post<T = any>(
     config: Omit<MyRequestConfig<T>, 'headers'> & {
       headers?: { 'Content-Type'?: string }
+      hideTip?: boolean
     }
   ) {
     return this.request({ ...config, method: 'POST', headers: {} as AxiosRequestHeaders })

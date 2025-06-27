@@ -1,13 +1,14 @@
 'use client'
 
-import { Button } from 'antd'
 import { CopyOutlined } from '@ant-design/icons'
-
-import CopyFC from '@/components/button-list/copy-button/copy'
+import { Button } from 'antd'
 import { useRef } from 'react'
-import { FileItem } from '@/types/file'
+import { toast } from 'sonner'
+
 import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'
-import { message } from '@/lib/AntdGlobal'
+import { FileItem } from '@/types/file'
+import Copy from './copy'
+
 import styles from './styles.module.scss'
 
 const CopyButton = () => {
@@ -22,13 +23,13 @@ const CopyButton = () => {
 
   const onCopy = () => {
     if (!selectFileList?.length) {
-      return message.warning('请选择要复制的文件')
+      return toast.warning('请选择要复制的文件')
     }
     copyRef.current?.open(selectFileList)
   }
   return (
     <>
-      <CopyFC ref={copyRef} />
+      <Copy ref={copyRef} />
       <Button
         className={styles.button}
         type={'primary'}

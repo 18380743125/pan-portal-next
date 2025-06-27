@@ -3,6 +3,7 @@
 import { Button, Input, Steps } from 'antd'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
 
 import styles from './styles.module.scss'
 
@@ -70,7 +71,7 @@ export default function LoginFC() {
 
   const checkAnswer = async () => {
     if (!answer) {
-      return message.warning('请填写密保答案')
+      return toast.warning('请填写密保答案')
     }
     const result = await checkAnswerApi({
       username,
@@ -88,9 +89,9 @@ export default function LoginFC() {
 
     if (!okPassword || password !== okPassword) {
       if (!okPassword) {
-        message.warning('请填写确认密码')
+        toast.warning('请填写确认密码')
       } else {
-        message.warning('两次密码输入不一致')
+        toast.warning('两次密码输入不一致')
       }
       return
     }
@@ -101,13 +102,13 @@ export default function LoginFC() {
         password,
         token
       })
-      message.success('重置密码成功')
+      toast.success('重置密码成功')
       setTimeout(() => {
         jumpLogin()
       }, 2000)
     } catch (error: any) {
       if (error?.message === 'TOKEN_EXPIRE') {
-        message.error('由于您长时间未操作，将重新校验用户名')
+        toast.error('由于您长时间未操作，将重新校验用户名')
         setTimeout(() => {
           setCurrentStep(0)
           setUsername('')

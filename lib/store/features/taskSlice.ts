@@ -1,7 +1,8 @@
 import { PayloadAction } from '@reduxjs/toolkit'
+import { toast } from 'sonner'
+
 import { createAppSlice } from '@/lib/store/createAppSlice'
 import { fileStatus } from '@/lib/utils/file-util'
-import { message } from '@/lib/AntdGlobal'
 
 interface IState {
   taskList: Array<Record<string, any>>
@@ -14,7 +15,7 @@ const initialState: IState = {
 const taskSlice = createAppSlice({
   name: 'task',
   initialState,
-  reducers: ({ reducer, asyncThunk }) => ({
+  reducers: ({ reducer }) => ({
     // 清空任务
     clearTaskAction: reducer(state => {
       state.taskList = []
@@ -29,7 +30,8 @@ const taskSlice = createAppSlice({
 
     // 添加上传任务
     addTaskAction: reducer((state, action: PayloadAction<Record<string, any>>) => {
-      state.taskList.push(action.payload)
+      const params = action.payload
+      state.taskList.push(params)
     }),
 
     // 更新上传任务状态
@@ -89,7 +91,7 @@ const taskSlice = createAppSlice({
       for (let i = 0; i < taskList.length; i++) {
         if (filename === taskList[i].filename) {
           taskList[i].target.cancel()
-          message.info('文件：' + filename + ' 已取消上传')
+          toast.info('文件：' + filename + ' 已取消上传')
           break
         }
       }

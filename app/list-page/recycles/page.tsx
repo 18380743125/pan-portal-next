@@ -3,13 +3,14 @@
 import { DeleteOutlined, UndoOutlined } from '@ant-design/icons'
 import { Button, Table, TableColumnsType, Tooltip } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 import { deleteRecycleApi, getRecycleListApi, restoreRecycleApi } from '@/api/features/recycle'
 import useTableScrollHeight from '@/hooks/useTableScrollHeight'
-import { message, modal } from '@/lib/AntdGlobal'
+import { modal } from '@/lib/AntdGlobal'
 import { PanEnum } from '@/lib/constants/base'
 import { getFileFontElement } from '@/lib/utils/file-util'
-import { FileItem } from '@/types/file'
+import { type FileItem } from '@/types/file'
 
 import styles from './styles.module.scss'
 
@@ -35,7 +36,7 @@ function Recycles() {
   // 还原
   const onRestore = async (row?: FileItem) => {
     if (!row && selectedRowKeys?.length === 0) {
-      return message.warning('请选择要还原的文件')
+      return toast.warning('请选择要还原的文件')
     }
     let fileIds = row?.fileId
     let newKeys = [] as string[]
@@ -49,12 +50,12 @@ function Recycles() {
 
     setSelectedRowKeys(newKeys)
     await restoreRecycleApi(fileIds)
-    message.success('还原成功')
+    toast.success('还原成功')
     loadData()
   }
 
   // 彻底删除
-  const onDelete = row => {
+  const onDelete = (row: Record<string, any>) => {
     modal.confirm({
       title: '提示',
       cancelText: '取消',
@@ -65,7 +66,7 @@ function Recycles() {
         await deleteRecycleApi(row.fileId)
         const newKey = selectedRowKeys.filter(item => item !== row.fileId)
         setSelectedRowKeys(newKey)
-        message.success('删除成功')
+        toast.success('删除成功')
         loadData()
       }
     })

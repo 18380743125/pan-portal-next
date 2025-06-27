@@ -1,14 +1,14 @@
 'use client'
 
-import { clearUserAction, getUserAction } from '@/lib/store/features/userSlice'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { DownOutlined, ExclamationCircleFilled } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import { Dropdown } from 'antd'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
-import UpdatePasswordFC from '@/components/user-info/update-password'
+import UpdatePassword from '@/components/user-info/update-password'
+import { clearUserAction, getUserAction } from '@/lib/store/features/userSlice'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 
 import { logoutApi } from '@/api/features/user'
 import { modal } from '@/lib/AntdGlobal'
@@ -74,14 +74,14 @@ const UserInfoFC = () => {
 
   return (
     <>
-      <UpdatePasswordFC ref={updatePasswordRef} />
+      <UpdatePassword ref={updatePasswordRef} />
 
       <Dropdown menu={{ items }} placement='bottom' arrow={{ pointAtCenter: true }} className={styles.root}>
         <a>
           <span className={styles.username} suppressHydrationWarning={true}>
             {isClient ? userInfo?.username : '-'}
           </span>
-          <DownOutlined style={{ position: 'relative', top: 1 }} />
+          <DownOutlined style={{ position: 'relative', top: 2 }} />
         </a>
       </Dropdown>
     </>

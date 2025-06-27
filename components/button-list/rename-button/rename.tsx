@@ -1,13 +1,13 @@
 'use client'
 
-import { forwardRef, useImperativeHandle, useState } from 'react'
 import { Form, Input, Modal } from 'antd'
 import { useForm } from 'antd/es/form/Form'
+import { forwardRef, useImperativeHandle, useState } from 'react'
+import { toast } from 'sonner'
 
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { renameApi } from '@/api/features/file'
-import { message } from '@/lib/AntdGlobal'
 import { getFileAction } from '@/lib/store/features/fileSlice'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { FileItem } from '@/types/file'
 
 const RenameFC = forwardRef((_, ref) => {
@@ -53,7 +53,7 @@ const RenameFC = forwardRef((_, ref) => {
     await form.validateFields()
     const data = form.getFieldsValue()
     await renameApi(row?.fileId, data.newFilename)
-    message.success('重命名成功')
+    toast.success('重命名成功')
     // 刷新列表
     const current = pathList[pathList.length - 1]
     dispatch(getFileAction({ parentId: current.parentId, fileType }))

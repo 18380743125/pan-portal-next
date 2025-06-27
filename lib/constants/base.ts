@@ -2,8 +2,8 @@
  * 公用配置
  */
 export const config = {
-  baseUrl: 'https://14.103.231.136/api',
   // baseUrl: 'http://127.0.0.1:8089',
+  baseUrl: 'https://14.103.231.136/api',
   previewUrl: 'https://14.103.231.136',
   chunkUploadSwitch: true,
   maxFileSize: 1024 * 1024 * 1024 * 3 // 3GB
@@ -14,8 +14,7 @@ export const config = {
  */
 export enum CacheEnum {
   USER_TOKEN = 'USER_TOKEN',
-  USER_INFO = 'USER_INFO',
-  BREADCRUMB_LIST = 'BREADCRUMB_LIST'
+  USER_INFO = 'USER_INFO'
 }
 
 /**

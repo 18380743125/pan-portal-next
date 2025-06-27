@@ -11,7 +11,7 @@ import styles from './styles.module.scss'
 
 let toggleTaskList: any = null
 
-const TaskListFC = () => {
+const Task = () => {
   const { taskList } = useAppSelector(
     state => ({
       taskList: state.task.taskList
@@ -29,14 +29,14 @@ const TaskListFC = () => {
     return taskList.length || ''
   }, [taskList])
 
-  const handleOpenChange = (newOpen: boolean) => {
+  const onOpenChange = (newOpen: boolean) => {
     setVisible(newOpen)
   }
 
   return (
     <Popover
       open={visible}
-      onOpenChange={handleOpenChange}
+      onOpenChange={onOpenChange}
       placement={'bottomRight'}
       trigger={'click'}
       content={<TaskList />}
@@ -59,4 +59,4 @@ export const closeTaskList = () => {
   toggleTaskList(false)
 }
 
-export default TaskListFC
+export default Task

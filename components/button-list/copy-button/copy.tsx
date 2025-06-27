@@ -1,18 +1,19 @@
 'use client'
 
-import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react'
-import { Modal, Tree } from 'antd'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolder } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Modal, Tree } from 'antd'
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { message } from '@/lib/AntdGlobal'
-import { getFileAction } from '@/lib/store/features/fileSlice'
-import { FileItem } from '@/types/file'
 import { copyFileApi, getFolderTreeApi } from '@/api/features/file'
+import { getFileAction } from '@/lib/store/features/fileSlice'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { FileItem } from '@/types/file'
+
+import { PanEnum } from '@/lib/constants/base'
 
 import styles from './styles.module.scss'
-import { PanEnum } from '@/lib/constants/base'
 
 const CopyFC = forwardRef((_, ref) => {
   const dispatch = useAppDispatch()
@@ -72,12 +73,12 @@ const CopyFC = forwardRef((_, ref) => {
 
   const onOk = async () => {
     if (selectKeys.length === 0) {
-      return message.warning('请选择文件夹')
+      return toast.warning('请选择文件夹')
     }
     const targetParentId = selectKeys[0]
     const fileIds = rows?.map(row => row.fileId).join(PanEnum.COMMON_SEPARATOR)
     await copyFileApi(targetParentId, fileIds as string)
-    message.success('复制成功')
+    toast.success('复制成功')
     // 刷新文件列表
     const current = pathList[pathList.length - 1]
 

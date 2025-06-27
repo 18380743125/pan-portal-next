@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 
 import FileButtonGroup from '@/components/file-button-group'
 import FileTable from '@/components/file-table'
-import SearchFC from '@/components/search'
+import Search from '@/components/search'
 import { FileTypeEnum, PanEnum } from '@/lib/constants/base'
 import { getFileAction, setFileTypes } from '@/lib/store/features/fileSlice'
 import { useAppDispatch } from '@/lib/store/hooks'
@@ -32,7 +32,7 @@ export default function DocsFC() {
       {/* 头部区域 */}
       <section className={styles.topButtonGroup}>
         <FileButtonGroup />
-        <SearchFC />
+        <Search />
       </section>
 
       {/*  文件列表 */}

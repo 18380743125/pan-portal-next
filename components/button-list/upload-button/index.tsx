@@ -1,7 +1,8 @@
-import { Button } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
-import UploadFC from '@/components/button-list/upload-button/upload'
+import { Button } from 'antd'
 import { useRef } from 'react'
+
+import Upload from './upload'
 
 const UploadButton = () => {
   const uploadRef = useRef<{ open: () => {} }>(null)
@@ -12,7 +13,7 @@ const UploadButton = () => {
 
   return (
     <>
-      <UploadFC ref={uploadRef} />
+      <Upload ref={uploadRef} />
 
       <Button type={'primary'} shape={'round'} icon={<UploadOutlined />} iconPosition={'end'} onClick={onUpload}>
         上传

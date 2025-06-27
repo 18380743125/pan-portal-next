@@ -1,14 +1,16 @@
 'use client'
 
-import { Button } from 'antd'
 import { ShareAltOutlined } from '@ant-design/icons'
-
-import ShareFC from '@/components/button-list/share-button/share'
-import styles from './styles.module.scss'
+import { Button } from 'antd'
 import { useRef } from 'react'
+import { toast } from 'sonner'
+
+import Share from './share'
+
 import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'
-import { message } from '@/lib/AntdGlobal'
-import { FileItem } from '@/types/file'
+import { type FileItem } from '@/types/file'
+
+import styles from './styles.module.scss'
 
 const ShareButton = () => {
   const shareRef = useRef<{ open: (rows: FileItem[]) => void }>(null)
@@ -22,14 +24,14 @@ const ShareButton = () => {
 
   const onShare = () => {
     if (!selectFileList?.length) {
-      return message.warning('请选择要分享的文件')
+      return toast.warning('请选择要分享的文件')
     }
     shareRef.current?.open(selectFileList)
   }
 
   return (
     <>
-      <ShareFC ref={shareRef} />
+      <Share ref={shareRef} />
       <Button
         className={styles.button}
         type={'primary'}

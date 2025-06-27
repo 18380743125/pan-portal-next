@@ -1,9 +1,10 @@
 'use client'
 
-import { Button } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
+import { Button } from 'antd'
 
 import useFileHandler from '@/hooks/useFileHandler'
+
 import styles from './styles.module.scss'
 
 const DeleteButton = () => {

@@ -1,13 +1,13 @@
 'use client'
 
-import { forwardRef, useImperativeHandle, useState } from 'react'
 import { Form, Input, Modal } from 'antd'
 import { useForm } from 'antd/es/form/Form'
+import { forwardRef, useImperativeHandle, useState } from 'react'
+import { toast } from 'sonner'
 
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { createFolderApi } from '@/api/features/file'
-import { message } from '@/lib/AntdGlobal'
 import { getFileAction } from '@/lib/store/features/fileSlice'
+import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 
 const CreateFolder = forwardRef((_, ref) => {
   const dispatch = useAppDispatch()
@@ -45,7 +45,7 @@ const CreateFolder = forwardRef((_, ref) => {
     const data = form.getFieldsValue()
     const current = pathList[pathList.length - 1]
     await createFolderApi(current.id, data.folderName)
-    message.success('新建成功')
+    toast.success('新建成功')
     dispatch(getFileAction({ parentId: current.id, fileType }))
     close()
   }

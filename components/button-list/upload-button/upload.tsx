@@ -4,10 +4,10 @@ import { CloudUploadOutlined } from '@ant-design/icons'
 import { Modal } from 'antd'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import Uploader from 'simple-uploader.js'
+import { toast } from 'sonner'
 
 import { mergeFileApi, secUploadFileApi } from '@/api/features/file'
-import { closeTaskList, openTaskList } from '@/components/task-list'
-import { message } from '@/lib/AntdGlobal'
+import { openTaskList } from '@/components/task-list'
 import { CacheEnum, config, FileTypeEnum } from '@/lib/constants/base'
 import { getFileAction } from '@/lib/store/features/fileSlice'
 import {
@@ -20,17 +20,16 @@ import {
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { MD5 } from '@/lib/utils/base'
 import { localCache } from '@/lib/utils/common/cache'
-import { getChunkSize } from '@/lib/utils/file-util'
+import { fileStatus, getChunkSize } from '@/lib/utils/file-util'
 import { translateFileSize, translateSpeed, translateTime } from '@/lib/utils/format'
-import { fileStatus } from '@/lib/utils/file-util'
 
 import styles from './styles.module.scss'
 
-const UploadFC = forwardRef((_, ref) => {
-  // 上传弹框组件实例
-  const uploaderRef = useRef<HTMLElement | null>(null)
+const Upload = forwardRef((_, ref) => {
   // 上传弹框是否显示
   const [visible, setVisible] = useState(false)
+  // 上传弹框组件实例
+  const uploaderRef = useRef<HTMLElement | null>(null)
   // simple upload 和 dom 是否绑定
   const [assignFlag, setAssignFlag] = useState(false)
   // simple upload 上传实例
@@ -98,8 +97,8 @@ const UploadFC = forwardRef((_, ref) => {
 
   // 详细文档地址：https://github.com/simple-uploader/Uploader/blob/develop/README_zh-CN.md#%E9%85%8D%E7%BD%AE
   const token = localCache.getCache(CacheEnum.USER_TOKEN)
+
   const fileOptions = {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     target: function (file, chunk) {
       if (config.chunkUploadSwitch) {
         return config.baseUrl + '/file/chunk-upload'
@@ -112,7 +111,6 @@ const UploadFC = forwardRef((_, ref) => {
     forceChunkSize: false,
     simultaneousUploads: 3,
     fileParameterName: 'file',
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     query: function (file, chunk) {
       return {
         parentId: parentIdRef.current
@@ -125,7 +123,6 @@ const UploadFC = forwardRef((_, ref) => {
       let objMessage = {} as any
       try {
         objMessage = JSON.parse(message)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {}
       if (objMessage.data) {
         return (objMessage.data.uploadedChunks || []).indexOf(chunk.offset + 1) >= 0
@@ -143,88 +140,79 @@ const UploadFC = forwardRef((_, ref) => {
     initialPaused: false
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // 插件在调用该方法之前会自动过滤选择的文件 去除正在上传的文件 新添加的文件就是第一个参数files
   const filesAdded = (files, fileList, event) => {
-    // 插件在调用该方法之前会自动过滤选择的文件 去除正在上传的文件 新添加的文件就是第一个参数files
     try {
-      // 关闭弹框并打开下载任务PopOver
+      // 关闭上传弹框并打开下载任务 PopOver
       close()
       setTimeout(() => {
         openTaskList()
       }, 500)
 
-      files.forEach(file => {
-        file.pause()
-        if (file.size > config.maxFileSize) {
-          throw new Error(`文件：${file.name}大小超过了最大上传文件的限制（${translateFileSize(config.maxFileSize)}）`)
+      files.forEach(async target => {
+        target.pause()
+        if (target.size > config.maxFileSize) {
+          throw new Error(
+            `文件：${target.name}大小超过了最大上传文件的限制（${translateFileSize(config.maxFileSize)}）`
+          )
         }
+
         const taskItem = {
-          target: file,
-          filename: file.name,
-          fileSize: translateFileSize(file.size),
+          target,
+          filename: target.name,
+          fileSize: translateFileSize(target.size),
           uploadedSize: translateFileSize(0),
           status: fileStatus.PARSING.code,
           statusText: fileStatus.PARSING.text,
           timeRemaining: translateTime(Number.POSITIVE_INFINITY),
-          speed: translateSpeed(file.averageSpeed),
+          speed: translateSpeed(target.averageSpeed),
           percentage: 0,
           parentId: parentIdRef.current,
           fileTypes: fileTypesRef.current
         }
         // 添加
         dispatch(addTaskAction(taskItem))
-        MD5(file.file, async (e, md5) => {
-          file['uniqueIdentifier'] = md5
-          try {
-            const result = await secUploadFileApi({
-              filename: file.name,
-              identifier: md5,
-              parentId: parentIdRef.current
-            })
-            if (result.code === 0) {
-              // 秒传成功
-              message.success('文件：' + file.name + ' 上传完成')
-              file.cancel()
-              dispatch(removeTaskAction(file.name))
-              const taskItem = findTaskItem(file.name) || {}
-              const { parentId, fileTypes } = taskItem
-              if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
-                // 刷新文件列表
-                dispatch(getFileAction({ parentId, fileTypes }))
-              }
-            } else {
-              file.resume()
-              dispatch(
-                updateTaskStatusAction({
-                  filename: file.name,
-                  status: fileStatus.WAITING.code,
-                  statusText: fileStatus.WAITING.text
-                })
-              )
-            }
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          } catch (res) {
-            file.resume()
-            dispatch(
-              updateTaskStatusAction({
-                filename: file.name,
-                status: fileStatus.WAITING.code,
-                statusText: fileStatus.WAITING.text
-              })
-            )
-          }
+
+        const md5 = await MD5(target.file)
+        target['uniqueIdentifier'] = md5
+
+        // 尝试秒传
+        const result = await secUploadFileApi({
+          filename: target.name,
+          identifier: md5,
+          parentId: parentIdRef.current
         })
+
+        if (result.code === 0) {
+          // 秒传成功
+          toast.success('文件：' + target.name + ' 上传完成')
+          target.cancel()
+          dispatch(removeTaskAction(target.name))
+          const taskItem = findTaskItem(target.name) || {}
+          const { parentId, fileTypes } = taskItem
+          if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
+            // 刷新文件列表
+            dispatch(getFileAction({ parentId, fileTypes }))
+          }
+        } else {
+          target.resume()
+          dispatch(
+            updateTaskStatusAction({
+              filename: target.name,
+              status: fileStatus.WAITING.code,
+              statusText: fileStatus.WAITING.text
+            })
+          )
+        }
       })
     } catch (e: any) {
-      message.error(e.message)
+      toast.error(e.message)
       uploaderInstanceRef.current.cancel()
       dispatch(clearTaskAction())
-      return false
     }
     return true
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const uploadProgress = (rootFile, file, chunk) => {
     const taskItem = findTaskItem(file.name)
     if (file.isUploading()) {
@@ -249,7 +237,6 @@ const UploadFC = forwardRef((_, ref) => {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const doMerge = async file => {
     const taskItem = findTaskItem(file.name) || {}
     dispatch(
@@ -271,18 +258,14 @@ const UploadFC = forwardRef((_, ref) => {
     )
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       await mergeFileApi({
         filename: taskItem?.filename,
         identifier: taskItem?.target.uniqueIdentifier,
         parentId: taskItem?.parentId,
         totalSize: taskItem?.target.size
       })
-      message.success('文件：' + file.name + ' 上传完成')
+      toast.success('文件：' + file.name + ' 上传完成')
       uploaderInstanceRef.current?.removeFile(file)
-      if (uploaderInstanceRef.current.files?.length === 0) {
-        closeTaskList()
-      }
       dispatch(
         updateTaskStatusAction({
           filename: file.name,
@@ -291,12 +274,11 @@ const UploadFC = forwardRef((_, ref) => {
         })
       )
       dispatch(removeTaskAction(file.name))
-      if (taskItem.parentId === parentIdRef.current && taskItem.fileTypes === FileTypeEnum.ALL_FILE) {
+      if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
         // 刷新文件列表
         const { parentId, fileTypes } = taskItem
         dispatch(getFileAction({ parentId, fileTypes }))
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       file.pause()
       dispatch(
@@ -309,26 +291,22 @@ const UploadFC = forwardRef((_, ref) => {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const fileUploaded = (rootFile, file, message, chunk) => {
     let res = {} as any
     try {
       res = JSON.parse(message)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {}
     if (res.code === 0) {
       if (res.data) {
         if (res.data.mergeFlag) {
           doMerge(file)
-        } else if (res.data.uploadedChunks && res.data.uploadedChunks.length === file.chunks.length) {
+        } else if (res.data.uploadedChunks?.length === file.chunks.length) {
           doMerge(file)
         }
       } else {
-        message.success('文件：' + file.name + ' 上传完成')
+        // 不分片上传（上传完成）
+        toast.success('文件：' + file.name + ' 上传完成')
         uploaderInstanceRef.current.removeFile(file)
-        if (uploaderInstanceRef.current.files?.length === 0) {
-          closeTaskList()
-        }
         // 刷新文件列表
         dispatch(
           updateTaskStatusAction({
@@ -359,7 +337,6 @@ const UploadFC = forwardRef((_, ref) => {
 
   const uploadComplete = () => {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const uploadError = (rootFile, file, message, chunk) => {
     dispatch(
       updateTaskStatusAction({
@@ -386,7 +363,7 @@ const UploadFC = forwardRef((_, ref) => {
     const uploader = new Uploader(fileOptions)
     // 如果不支持 需要降级的地方
     if (!uploader.support) {
-      message.error('本浏览器不支持simple-uploader，请更换浏览器重试')
+      toast.error('本浏览器不支持simple-uploader，请更换浏览器重试')
     }
     // 绑定进队列
     uploader.on('filesAdded', filesAdded)
@@ -407,7 +384,7 @@ const UploadFC = forwardRef((_, ref) => {
   // 绑定DOM
   const bindUploader = () => {
     if (uploader && !uploader.support) {
-      message.error('本浏览器不支持simple-uploader，请更换浏览器重试')
+      toast.error('本浏览器不支持simple-uploader，请更换浏览器重试')
     }
     if (uploader && !assignFlag) {
       uploader.assignBrowse(uploaderRef.current)
@@ -442,6 +419,6 @@ const UploadFC = forwardRef((_, ref) => {
   )
 })
 
-UploadFC.displayName = 'UploadFC'
+Upload.displayName = 'Upload'
 
-export default UploadFC
+export default Upload

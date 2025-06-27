@@ -1,17 +1,18 @@
 'use client'
 
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { CopyOutlined } from '@ant-design/icons'
 import { Button, Form, Input, type InputRef, Modal, Radio, Select } from 'antd'
 import { useForm } from 'antd/es/form/Form'
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
-import { PanEnum } from '@/lib/constants/base'
 import { shareApi } from '@/api/features/file'
+import { PanEnum } from '@/lib/constants/base'
 import { FileItem } from '@/types/file'
 
-import styles from './styles.module.scss'
-import { CopyOutlined } from '@ant-design/icons'
 import { copyText2Clipboard } from '@/lib/utils/base'
-import { message } from '@/lib/AntdGlobal'
+
+import styles from './styles.module.scss'
 
 const ShareFC = forwardRef((_, ref) => {
   const shareNameRef = useRef<InputRef | null>(null)
@@ -70,7 +71,7 @@ const ShareFC = forwardRef((_, ref) => {
   const onCopyText = () => {
     const text = `链接：${shareResult?.shareUrl}  提取码：${shareResult?.shareCode}  赶快分享给小伙伴吧！`
     copyText2Clipboard(text)
-    message.info('已复制').then(() => {})
+    toast.info('已复制')
   }
 
   const modalProps: Record<string, any> = {

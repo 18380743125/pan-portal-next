@@ -2,11 +2,13 @@
 
 import { LinkOutlined, PoweroffOutlined } from '@ant-design/icons'
 import { Button, Table, TableColumnsType, Tooltip } from 'antd'
+import { type AnyObject } from 'antd/es/_util/type'
 import React, { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 import { cancelShareApi, getShareListApi } from '@/api/features/share'
 import useTableScrollHeight from '@/hooks/useTableScrollHeight'
-import { message, modal } from '@/lib/AntdGlobal'
+import { modal } from '@/lib/AntdGlobal'
 import { PanEnum } from '@/lib/constants/base'
 import { copyText2Clipboard } from '@/lib/utils/base'
 
@@ -32,17 +34,17 @@ function Share() {
   }
 
   // 复制链接
-  const onCopyLink = (e, row) => {
+  const onCopyLink = (e: React.MouseEvent<HTMLElement, MouseEvent>, row: AnyObject) => {
     e.preventDefault()
     const text = `链接：${row?.shareUrl}  提取码：${row?.shareCode}  赶快分享给小伙伴吧！`
     copyText2Clipboard(text)
-    message.info('已复制').then(() => {})
+    toast.info('已复制')
   }
 
   // 取消分享
   const onCancelShare = (row?: Record<string, any>) => {
     if (!row && selectedRowKeys?.length === 0) {
-      return message.warning('请选择要取消的分享')
+      return toast.warning('请选择要取消的分享')
     }
     let shareIds = row?.shareId
     let newKeys = [] as string[]
@@ -61,7 +63,7 @@ function Share() {
       content: <div style={{ marginBottom: 10 }}>{`分享取消后将不可恢复，您确定这样做吗？`}</div>,
       async onOk() {
         await cancelShareApi(shareIds)
-        message.success('取消分享成功')
+        toast.success('取消分享成功')
         setSelectedRowKeys(newKeys)
         loadData()
       }
