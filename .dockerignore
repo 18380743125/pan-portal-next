@@ -1,8 +1,26 @@
-node_modules
-.next
-.git
-.DS_Store
-.env.local
-.env.development
-.env.test
-.env.production
+# 必排除项
+**/.git
+**/.gitignore
+**/.DS_Store
+**/.idea
+**/.vscode
+**/.husky
+
+# 日志
+**/node_modules
+**/npm-debug.log*
+**/pnpm-debug.log*
+**/yarn-error.log*
+
+# Next.js 开发文件
+.next/cache/**
+.next/analyze/**
+.next/debug*
+
+# 环境文件
+.env*
+!.env.production
+
+# 构建产物
+**/dist
+**/build
