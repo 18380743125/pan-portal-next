@@ -27,7 +27,7 @@ function Files() {
   const firstLoadRef = useRef(true)
 
   useEffect(() => {
-    if (!userInfo || !firstLoadRef.current) {
+    if (!userInfo?.rootFileId || !firstLoadRef.current) {
       return
     }
 

@@ -9,7 +9,7 @@ import {
   ShareAltOutlined
 } from '@ant-design/icons'
 import { Button, Table, TableColumnsType, Tooltip } from 'antd'
-import React, { useMemo, useRef } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 
 import Copy from '@/components/button-list/copy-button/copy'
 import Rename from '@/components/button-list/rename-button/rename'
@@ -21,12 +21,13 @@ import useTableScrollHeight from '@/hooks/useTableScrollHeight'
 import { FileTypeEnum, PanEnum } from '@/lib/constants/base'
 import { getBreadcrumbListAction, getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { getFileFontElement } from '@/lib/utils/file-util'
+import { getFileFontElement, getPreviewUrl } from '@/lib/utils/file-util'
 import type { FileItem } from '@/types/file'
 
 import styles from './styles.module.scss'
+import ImageViewer, { type ImageType } from '../image-viewer'
 
-const Breadcrumb = () => {
+const FileTable = () => {
   const dispatch = useAppDispatch()
 
   const { fileList, selectFileList } = useAppSelector(
@@ -36,6 +37,10 @@ const Breadcrumb = () => {
     }),
     shallowEqualApp
   )
+
+  const [viewerVisible, setViewerVisible] = useState(false)
+  const [imgList, setImgList] = useState<ImageType[]>([])
+  const [imgIndex, setImgIndex] = useState(-1)
 
   const renameRef = useRef<{ open: (row?: FileItem) => void }>(null)
   const shareRef = useRef<{ open: (rows?: FileItem[]) => void }>(null)
@@ -50,7 +55,7 @@ const Breadcrumb = () => {
 
   const { onDownload, onDelete } = useFileHandler()
 
-  const onSelectChange = (selectedRowKeys: React.Key[], rows: FileItem[]) => {
+  const onSelectChange = (_: React.Key[], rows: FileItem[]) => {
     dispatch(setSelectFileList(rows))
   }
 
@@ -62,7 +67,27 @@ const Breadcrumb = () => {
       dispatch(setSelectFileList([]))
     } else {
       // 文件预览
+      if (row.fileType === Number(FileTypeEnum.IMAGE_FILE)) {
+        showImages(row)
+      }
     }
+  }
+
+  // 预览图片
+  const showImages = (row: FileItem) => {
+    const list = [] as ImageType[]
+    for (let i = 0; i < fileList.length; i++) {
+      const item = fileList[i]
+      if (item.fileType === Number(FileTypeEnum.IMAGE_FILE)) {
+        list.push({
+          src: getPreviewUrl(item.fileId),
+          alt: item.filename
+        })
+        if (row === item) setImgIndex(i)
+      }
+    }
+    setImgList(list)
+    setViewerVisible(true)
   }
 
   // 重命名文件
@@ -90,12 +115,13 @@ const Breadcrumb = () => {
       title: '文件名',
       dataIndex: 'filename',
       width: 360,
-      // sorter: (a, b) => a.filename.localeCompare(b.filename),
       render: (text: string, row) => (
-        <div className={styles.filename} onClick={() => onFileNameClick(row)}>
-          <span>{getFileFontElement(row)}</span>
-          <span className={styles.text}>{text}</span>
-        </div>
+        <Tooltip title={text}>
+          <div className={styles.filename} onClick={() => onFileNameClick(row)}>
+            <span>{getFileFontElement(row)}</span>
+            <span className={styles.text}>{text}</span>
+          </div>
+        </Tooltip>
       )
     },
     {
@@ -216,8 +242,12 @@ const Breadcrumb = () => {
           rowSelection={{ type: 'checkbox', selectedRowKeys, onChange: onSelectChange }}
         />
       </section>
+
+      {viewerVisible && (
+        <ImageViewer images={imgList} current={imgIndex} onClose={() => setViewerVisible(false)} showDownload={true} />
+      )}
     </section>
   )
 }
 
-export default Breadcrumb
+export default FileTable

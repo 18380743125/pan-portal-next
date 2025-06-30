@@ -4,7 +4,7 @@
 export const config = {
   // baseUrl: 'http://127.0.0.1:8089',
   baseUrl: 'https://14.103.231.136/api',
-  previewUrl: 'https://14.103.231.136',
+  previewUrl: 'https://14.103.231.136/api',
   chunkUploadSwitch: true,
   maxFileSize: 1024 * 1024 * 1024 * 3 // 3GB
 }

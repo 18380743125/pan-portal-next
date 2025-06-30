@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: false,
   output: 'standalone',
-  compress: true
+  compress: true,
 }
 
 export default nextConfig

@@ -1,5 +1,5 @@
 'use client'
 
-export default function ListPageFc() {
+export default function ListPage() {
   return <></>
 }

@@ -12,7 +12,9 @@
 
   .filename {
     cursor: pointer;
-    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     .text {
       margin-left: 8px;
