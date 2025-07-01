@@ -31,6 +31,18 @@ const ImageViewer: FC<ImageViewerProps> = ({
   const [scale, setScale] = useState(1)
   const [imageBlobUrl, setImageBlobUrl] = useState<string | null>(null)
 
+  const currentImage = useMemo(() => images[currentIndex], [currentIndex, images])
+
+  const imagesShow = useMemo(() => {
+    const mid = Math.floor(thumbnailsCount / 2)
+    let start = Math.max(0, currentIndex - mid)
+    const end = Math.min(start + thumbnailsCount, images.length)
+    if (end === images.length) {
+      start = end - thumbnailsCount
+    }
+    return images.slice(start, end)
+  }, [thumbnailsCount, currentIndex, images])
+
   // 获取图片数据
   useEffect(() => {
     const fetchImage = async () => {
@@ -79,8 +91,6 @@ const ImageViewer: FC<ImageViewerProps> = ({
     setRotation(0)
     setScale(1)
   }, [])
-
-  const currentImage = useMemo(() => images[currentIndex], [currentIndex, images])
 
   const onDownload = useCallback(async () => {
     if (!currentImage) {
@@ -138,7 +148,7 @@ const ImageViewer: FC<ImageViewerProps> = ({
       </div>
 
       {/* 图片区域 */}
-      <div className={styles.viewerContent} onClick={e => e.stopPropagation()}>
+      <div className={styles.viewerContent}>
         <div className={styles.imageContainer}>
           {imageBlobUrl && (
             <img
@@ -182,10 +192,10 @@ const ImageViewer: FC<ImageViewerProps> = ({
         {/* 缩略图区域 */}
         {images.length > 1 && (
           <div className={styles.thumbnailArea}>
-            {images.slice(0, thumbnailsCount).map((img, index) => (
+            {imagesShow.map((img, index) => (
               <button
                 key={index}
-                className={`${styles.thumbnail} ${currentIndex === index ? styles.thumbnailActive : ''}`}
+                className={`${styles.thumbnail} ${currentIndex % thumbnailsCount === index ? styles.thumbnailActive : ''}`}
                 onClick={() => {
                   setCurrentIndex(index)
                   resetTransform()
