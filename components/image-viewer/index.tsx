@@ -1,4 +1,6 @@
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+
+import cs from 'classnames'
 
 import styles from './styles.module.scss'
 
@@ -33,6 +35,9 @@ const ImageViewer: FC<ImageViewerProps> = ({
   useEffect(() => {
     const fetchImage = async () => {
       try {
+        if (!images[currentIndex]?.src) {
+          throw new Error(`图片加载失败：${images[currentIndex]?.src}`)
+        }
         const response = await fetch(images[currentIndex].src)
         if (!response.ok) throw new Error(`图片加载失败：${images[currentIndex].src}`)
         const blob = await response.blob()
@@ -75,14 +80,67 @@ const ImageViewer: FC<ImageViewerProps> = ({
     setScale(1)
   }, [])
 
-  const currentImage = images[currentIndex]
+  const currentImage = useMemo(() => images[currentIndex], [currentIndex, images])
+
+  const onDownload = useCallback(async () => {
+    if (!currentImage) {
+      return
+    }
+    try {
+      const response = await fetch(currentImage.src)
+      if (!response.ok) {
+        throw new Error(`图片下载失败：${currentImage.src}`)
+      }
+      const ext = response.headers.get('Content-Type')?.split('/')[1] || 'png'
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `image_${Date.now()}.${ext}`
+      a.style.display = 'none'
+      document.body.appendChild(a)
+      a.click()
+      setTimeout(() => {
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+      }, 100)
+    } catch (error) {
+      console.error('下载失败:', error)
+    }
+  }, [currentImage])
 
   return (
-    <div className={styles.viewerContainer} onClick={onClose}>
+    <div className={styles.viewerContainer}>
+      {/* 切换上一张 / 下一张 */}
+      <div className={styles.switchContainer}>
+        <div
+          className={cs([
+            styles.switchPrev,
+            {
+              [styles.disabled]: currentIndex === 0
+            }
+          ])}
+          onClick={() => navigateImage('prev')}
+        />
+        <div
+          className={cs([
+            styles.switchNext,
+            {
+              [styles.disabled]: currentIndex === images.length - 1
+            }
+          ])}
+          onClick={() => navigateImage('next')}
+        />
+      </div>
+
+      <div className={styles.closeContainer}>
+        <button onClick={onClose} />
+      </div>
+
+      {/* 图片区域 */}
       <div className={styles.viewerContent} onClick={e => e.stopPropagation()}>
-        {/* 主图片区域 */}
         <div className={styles.imageContainer}>
-          {imageBlobUrl ? (
+          {imageBlobUrl && (
             <img
               src={imageBlobUrl}
               alt={currentImage.alt}
@@ -92,57 +150,33 @@ const ImageViewer: FC<ImageViewerProps> = ({
                 transition: 'transform 0.3s ease'
               }}
             />
-          ) : (
-            <div className={styles.loadingPlaceholder}>图片加载中...</div>
           )}
         </div>
 
-        {/* 操作工具栏 */}
+        {/* 工具栏 */}
         <div className={styles.toolbar}>
           <div className={styles.toolGroup}>
-            <button onClick={() => navigateImage('prev')} disabled={currentIndex === 0}>
-              <i className={styles.iconPrev} />
-            </button>
             <span className={styles.pageIndicator}>
               {currentIndex + 1} / {images.length}
             </span>
-            <button onClick={() => navigateImage('next')} disabled={currentIndex === images.length - 1}>
-              <i className={styles.iconNext}></i>
-            </button>
           </div>
 
           <div className={styles.toolGroup}>
-            <button onClick={() => rotateImage(-90)} title='向左旋转'>
-              <i className={styles.iconRotateLeft}></i>
-            </button>
-            <button onClick={() => rotateImage(90)} title='向右旋转'>
-              <i className={styles.iconRotateRight}></i>
-            </button>
+            <button onClick={() => rotateImage(-90)} />
+            <button onClick={() => rotateImage(90)} />
           </div>
 
           <div className={styles.toolGroup}>
-            <button onClick={() => zoomImage(0.8)} title='缩小'>
-              <i className={styles.iconZoomOut}></i>
-            </button>
+            <button onClick={() => zoomImage(0.8)} />
             <span className={styles.zoomIndicator}>{Math.round(scale * 100)}%</span>
-            <button onClick={() => zoomImage(1.2)} title='放大'>
-              <i className={styles.iconZoomIn}></i>
-            </button>
+            <button onClick={() => zoomImage(1.2)} />
           </div>
 
           {showDownload && (
             <div className={styles.toolGroup}>
-              <button title='下载'>
-                <i className={styles.iconDownload}></i>
-              </button>
+              <button onClick={onDownload} />
             </div>
           )}
-
-          <div className={styles.toolGroup}>
-            <button onClick={onClose} title='关闭'>
-              <i className={styles.iconClose}></i>
-            </button>
-          </div>
         </div>
 
         {/* 缩略图区域 */}

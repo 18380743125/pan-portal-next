@@ -83,10 +83,12 @@ const FileTable = () => {
           src: getPreviewUrl(item.fileId),
           alt: item.filename
         })
-        if (row === item) setImgIndex(i)
       }
     }
     setImgList(list)
+    for (const [key, item] of Object.entries(list)) {
+      if (item.src.includes(encodeURIComponent(row.fileId))) setImgIndex(Number(key))
+    }
     setViewerVisible(true)
   }
 
