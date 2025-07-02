@@ -13,13 +13,23 @@ export function isObject(value: unknown) {
 /**
  * 下载文件
  */
-export function download(res: AxiosResponse, _filename?: string) {
-  const data = res.data instanceof Blob ? res.data : new Blob([res.data])
-  const filename = res.headers['content-disposition']?.replace(/\w+;filename=(.*)/, '$1') || _filename
+export function download(res: any, _filename?: string) {
+  const data = res.data instanceof Blob ? res.data : new Blob([res.data.buffer || res.data])
+  const contentDisposition = res.headers['content-disposition']
+  let filename = _filename
+  if (contentDisposition) {
+    const matches = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+    if (matches?.[1]) {
+      filename = matches[1].replace(/['"]/g, '')
+      if (filename?.startsWith("UTF-8''")) {
+        filename = decodeURIComponent(filename.substring(8))
+      }
+    }
+  }
   const dom = document.createElement('a')
   const url = window.URL.createObjectURL(data)
   dom.href = url
-  dom.download = decodeURIComponent(filename)
+  dom.download = decodeURIComponent(filename!)
   dom.style.display = 'none'
   document.body.appendChild(dom)
   dom.click()

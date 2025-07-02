@@ -44,6 +44,7 @@ export const createFolderApi = (parentId: string, folderName: string) => {
 export const downloadFileApi = (fileId: string) => {
   return request.get({
     url: '/file/download',
+    responseType: 'blob',
     params: {
       fileId
     }
