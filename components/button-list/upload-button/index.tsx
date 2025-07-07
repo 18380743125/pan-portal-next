@@ -2,7 +2,7 @@ import { UploadOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useRef } from 'react'
 
-import Upload from './upload'
+import Upload from './upload2'
 
 const UploadButton = () => {
   const uploadRef = useRef<{ open: () => {} }>(null)
