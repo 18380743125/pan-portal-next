@@ -101,7 +101,7 @@ export const getFileFontElement = (row: FileItem) => {
  */
 export const getChunkSize = () => {
   if (config.chunkUploadSwitch) {
-    return 1024 * 1024 * 2
+    return 256 * 1024
   }
   return config.maxFileSize
 }

@@ -1,7 +1,7 @@
 import { combineSlices, configureStore } from '@reduxjs/toolkit'
 
 import fileSlice from '@/lib/store/features/fileSlice'
-import taskSlice from '@/lib/store/features/taskSlice'
+import taskSlice from '@/lib/store/features/taskSlice2'
 import userSlice from '@/lib/store/features/userSlice'
 
 const rootReducer = combineSlices(userSlice, fileSlice, taskSlice)
