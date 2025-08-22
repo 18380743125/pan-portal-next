@@ -3,13 +3,18 @@ import UserInfo from '@/components/user-info'
 
 import styles from './styles.module.scss'
 
-const AppHeader = () => {
+interface AppHeaderProps {
+  showTaskList?: boolean
+}
+
+const AppHeader = (props: AppHeaderProps) => {
+  const { showTaskList = true } = props
   return (
     <main className={styles.root}>
       <section className={styles.left}>迅翼网盘</section>
 
       <section className={styles.right}>
-        <TaskList />
+        {showTaskList && <TaskList />}
         <UserInfo />
       </section>
     </main>

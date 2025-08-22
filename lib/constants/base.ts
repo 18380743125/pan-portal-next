@@ -37,6 +37,15 @@ export enum FileTypeEnum {
 }
 
 /**
+ * 预览路径映射
+ */
+export const previewPathMap = {
+  5: 'pdf',
+  8: 'music',
+  9: 'video'
+}
+
+/**
  * 公用常量
  */
 export enum PanEnum {

@@ -18,7 +18,7 @@ import Transfer from '@/components/button-list/transfer-button/transfer'
 
 import useFileHandler from '@/hooks/useFileHandler'
 import useTableScrollHeight from '@/hooks/useTableScrollHeight'
-import { FileTypeEnum, PanEnum } from '@/lib/constants/base'
+import { FileTypeEnum, PanEnum, previewPathMap } from '@/lib/constants/base'
 import { getBreadcrumbListAction, getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { getFileFontElement, getPreviewUrl } from '@/lib/utils/file-util'
@@ -26,9 +26,12 @@ import type { FileItem } from '@/types/file'
 
 import styles from './styles.module.scss'
 import ImageViewer, { type ImageType } from '../image-viewer'
+import { useRouter } from 'next/navigation'
 
 const FileTable = () => {
   const dispatch = useAppDispatch()
+
+  const router = useRouter()
 
   const { fileList, selectFileList } = useAppSelector(
     state => ({
@@ -67,8 +70,12 @@ const FileTable = () => {
       dispatch(setSelectFileList([]))
     } else {
       // 文件预览
-      if (row.fileType === Number(FileTypeEnum.IMAGE_FILE)) {
+      if (row.fileType == FileTypeEnum.IMAGE_FILE) {
         showImages(row)
+      } else if (row.fileType == FileTypeEnum.PDF_FILE) {
+        const type = previewPathMap[FileTypeEnum.PDF_FILE]
+        const url = `/preview/${type}/${encodeURIComponent(row.fileId)}?filename=${encodeURIComponent(row.filename)}`
+        window.open(url, '_blank')
       }
     }
   }
