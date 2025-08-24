@@ -14,7 +14,10 @@ export default function PdfPage({ params }: { params: { id: string } }) {
 
   const searchParams = useSearchParams()
 
-  console.log(searchParams)
+  useEffect(() => {
+    const title = searchParams.get('filename')
+    window.document.title = title || 'PDF 预览'
+  }, [])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
