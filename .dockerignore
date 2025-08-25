@@ -24,3 +24,4 @@
 # 构建产物
 **/dist
 **/build
+!public/pdfjs-5.4.54-dist/build

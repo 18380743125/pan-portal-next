@@ -102,7 +102,7 @@ export default function PdfPage({ params }: { params: { id: string } }) {
 
       {!loading && !error && pdfBlobUrl && (
         <div className={styles.pdfWrap}>
-          <iframe src={pdfBlobUrl} className={styles.pdfIframe} title={`PDF 预览 - ${id}`} loading='lazy' />
+          <iframe src={`/pdfjs-5.4.54-dist/web/viewer.html?file=${pdfBlobUrl}`} className={styles.pdfIframe} loading='lazy' />
         </div>
       )}
 
