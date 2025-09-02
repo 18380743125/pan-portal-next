@@ -4,6 +4,7 @@ import zhCN from 'antd/locale/zh_CN'
 import type { Metadata } from 'next'
 import React from 'react'
 import { Toaster } from 'sonner'
+import '@ant-design/v5-patch-for-react-19'
 
 // fontawesome
 import { config, library } from '@fortawesome/fontawesome-svg-core'

@@ -86,12 +86,7 @@ function Share() {
         <section>
           <div className={styles.btnGroup}>
             {/* 复制链接 */}
-            <Tooltip
-              placement='top'
-              overlayInnerStyle={{ color: '#666', fontSize: 12 }}
-              color='#fff'
-              title={'复制链接'}
-            >
+            <Tooltip placement='top' styles={{ body: { color: '#666', fontSize: 12 } }} color='#fff' title={'复制链接'}>
               <Button
                 className={styles.copyBtn}
                 size={'small'}
@@ -105,7 +100,7 @@ function Share() {
             {/* 取消分享 */}
             <Tooltip
               placement='top'
-              overlayInnerStyle={{ color: '#666', fontSize: 12 }}
+              styles={{ body: { color: '#666', fontSize: 12 } }}
               color='#fff'
               title={'取消分享'}
             >

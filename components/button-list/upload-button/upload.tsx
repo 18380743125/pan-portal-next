@@ -2,8 +2,8 @@
 
 import { CloudUploadOutlined } from '@ant-design/icons'
 import { Modal } from 'antd'
+import { EventTypeEnum, LucasUploader, UploaderOptions } from 'lucas-uploader'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import Uploader from 'simple-uploader.js'
 import { toast } from 'sonner'
 
 import { mergeFileApi, secUploadFileApi } from '@/api/features/file'
@@ -18,7 +18,6 @@ import {
   updateTaskStatusAction
 } from '@/lib/store/features/taskSlice'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { MD5 } from '@/lib/utils/base'
 import { localCache } from '@/lib/utils/common/cache'
 import { fileStatus, getChunkSize } from '@/lib/utils/file-util'
 import { translateFileSize, translateSpeed, translateTime } from '@/lib/utils/format'
@@ -33,9 +32,9 @@ const Upload = forwardRef((_, ref) => {
   // simple upload 和 dom 是否绑定
   const [assignFlag, setAssignFlag] = useState(false)
   // simple upload 上传实例
-  const [uploader, setUploader] = useState<Uploader>()
+  const [uploader, setUploader] = useState<LucasUploader>()
 
-  const uploaderInstanceRef = useRef<any>()
+  const uploaderInstanceRef = useRef<LucasUploader>()
   const parentIdRef = useRef<string>()
   const fileTypesRef = useRef<string>()
   const taskListRef = useRef<Record<string, any>[]>()
@@ -53,7 +52,6 @@ const Upload = forwardRef((_, ref) => {
   )
 
   useEffect(() => {
-    // taskList
     taskListRef.current = taskList
   }, [taskList])
 
@@ -95,53 +93,26 @@ const Upload = forwardRef((_, ref) => {
     return taskListRef.current?.find(item => item.filename === name)
   }
 
-  // 详细文档地址：https://github.com/simple-uploader/Uploader/blob/develop/README_zh-CN.md#%E9%85%8D%E7%BD%AE
   const token = localCache.getCache(CacheEnum.USER_TOKEN)
 
-  const fileOptions = {
-    target: function (file, chunk) {
-      if (config.chunkUploadSwitch) {
-        return config.baseUrl + '/file/chunk-upload'
-      }
-      return config.baseUrl + '/file/upload'
-    },
+  const fileOptions: UploaderOptions = {
+    target: config.chunkUploadSwitch ? config.baseUrl + '/file/chunk-upload' : config.baseUrl + '/file/upload',
+
     singleFile: false,
     chunkSize: getChunkSize(),
-    testChunks: config.chunkUploadSwitch,
-    forceChunkSize: false,
     simultaneousUploads: 3,
     fileParameterName: 'file',
-    query: function (file, chunk) {
+    getParams() {
       return {
         parentId: parentIdRef.current
       }
     },
     headers: {
       Authorization: token
-    },
-    checkChunkUploadedByResponse: function (chunk, message) {
-      let objMessage = {} as any
-      try {
-        objMessage = JSON.parse(message)
-      } catch (e) {}
-      if (objMessage.data) {
-        return (objMessage.data.uploadedChunks || []).indexOf(chunk.offset + 1) >= 0
-      }
-      // fake response
-      // objMessage.uploaded_chunks = [2, 3, 4, 5, 6, 8, 10, 11, 12, 13, 17, 20, 21]
-      // check the chunk is uploaded
-      return true
-    },
-    maxChunkRetries: 0,
-    chunkRetryInterval: null,
-    progressCallbacksInterval: 500,
-    successStatuses: [200, 201, 202],
-    permanentErrors: [404, 415, 500, 501],
-    initialPaused: false
+    }
   }
 
-  // 插件在调用该方法之前会自动过滤选择的文件 去除正在上传的文件 新添加的文件就是第一个参数files
-  const filesAdded = (files, fileList, event) => {
+  const filesAdded = (currentTasks: any[]) => {
     try {
       // 关闭上传弹框并打开下载任务 PopOver
       close()
@@ -149,23 +120,21 @@ const Upload = forwardRef((_, ref) => {
         openTaskList()
       }, 500)
 
-      files.forEach(async target => {
-        target.pause()
-        if (target.size > config.maxFileSize) {
-          throw new Error(
-            `文件：${target.name}大小超过了最大上传文件的限制（${translateFileSize(config.maxFileSize)}）`
-          )
+      currentTasks.forEach(async task => {
+        task.pause()
+        if (task.file.size > config.maxFileSize) {
+          throw new Error(`文件：${task.name}大小超过了最大上传文件的限制（${translateFileSize(config.maxFileSize)}）`)
         }
 
         const taskItem = {
-          target,
-          filename: target.name,
-          fileSize: translateFileSize(target.size),
+          target: task,
+          filename: task.file.name,
+          fileSize: translateFileSize(task.file.size),
           uploadedSize: translateFileSize(0),
           status: fileStatus.PARSING.code,
           statusText: fileStatus.PARSING.text,
           timeRemaining: translateTime(Number.POSITIVE_INFINITY),
-          speed: translateSpeed(target.averageSpeed),
+          speed: translateSpeed(task.progress.speed),
           percentage: 0,
           parentId: parentIdRef.current,
           fileTypes: fileTypesRef.current
@@ -173,32 +142,29 @@ const Upload = forwardRef((_, ref) => {
         // 添加
         dispatch(addTaskAction(taskItem))
 
-        const md5 = await MD5(target.file)
-        target['uniqueIdentifier'] = md5
-
         // 尝试秒传
         const result = await secUploadFileApi({
-          filename: target.name,
-          identifier: md5,
+          filename: task.file.name,
+          identifier: task.identifier,
           parentId: parentIdRef.current
         })
 
         if (result.code === 0) {
           // 秒传成功
-          toast.success('文件：' + target.name + ' 上传完成')
-          target.cancel()
-          dispatch(removeTaskAction(target.name))
-          const taskItem = findTaskItem(target.name) || {}
+          toast.success('文件：' + task.file.name + ' 上传完成')
+          task.cancel()
+          dispatch(removeTaskAction(task.file.name))
+          const taskItem = findTaskItem(task.file.name) || {}
           const { parentId, fileTypes } = taskItem
           if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
             // 刷新文件列表
             dispatch(getFileAction({ parentId, fileTypes }))
           }
         } else {
-          target.resume()
+          task.resume()
           dispatch(
             updateTaskStatusAction({
-              filename: target.name,
+              filename: task.file.name,
               status: fileStatus.WAITING.code,
               statusText: fileStatus.WAITING.text
             })
@@ -207,83 +173,86 @@ const Upload = forwardRef((_, ref) => {
       })
     } catch (e: any) {
       toast.error(e.message)
-      uploaderInstanceRef.current.cancel()
       dispatch(clearTaskAction())
     }
     return true
   }
 
-  const uploadProgress = (rootFile, file, chunk) => {
-    const taskItem = findTaskItem(file.name)
-    if (file.isUploading()) {
-      if (taskItem?.status !== fileStatus.UPLOADING.code) {
-        dispatch(
-          updateTaskStatusAction({
-            filename: file.name,
-            status: fileStatus.UPLOADING.code,
-            statusText: fileStatus.UPLOADING.text
-          })
-        )
-      }
+  const uploadProgress = currentTask => {
+    const taskItem = findTaskItem(currentTask.file.name)
+    if (!taskItem) {
+      return
+    }
+    if (currentTask.status.code === fileStatus.UPLOADING.code) {
+      const progress = currentTask.progress
       dispatch(
         updateTaskProcessAction({
-          filename: file.name,
-          speed: translateSpeed(file.averageSpeed),
-          percentage: Math.floor(file.progress() * 100),
-          uploadedSize: translateFileSize(file.sizeUploaded()),
-          timeRemaining: translateTime(file.timeRemaining())
+          filename: currentTask.file.name,
+          speed: translateSpeed(progress.speed),
+          percentage: Math.floor(progress.percentage * 100),
+          uploadedSize: translateFileSize(progress.uploadedSize),
+          timeRemaining: translateTime(progress.timeRemaining)
+        })
+      )
+    }
+    if (taskItem?.status !== currentTask.status.code) {
+      dispatch(
+        updateTaskStatusAction({
+          filename: currentTask.file.name,
+          status: currentTask.status.code,
+          statusText: currentTask.status.text
         })
       )
     }
   }
 
-  const doMerge = async file => {
-    const taskItem = findTaskItem(file.name) || {}
+  const doMerge = async currentTask => {
+    const taskItem = findTaskItem(currentTask.file.name) || {}
     dispatch(
       updateTaskStatusAction({
-        filename: file.name,
+        filename: currentTask.file.name,
         status: fileStatus.MERGE.code,
         statusText: fileStatus.MERGE.text
       })
     )
 
+    const progress = currentTask.progress
     dispatch(
       updateTaskProcessAction({
-        filename: file.name,
-        speed: translateSpeed(file.averageSpeed),
+        filename: currentTask.file.name,
+        speed: translateSpeed(currentTask.file.speed),
         percentage: 99,
-        uploadedSize: translateFileSize(file.sizeUploaded()),
-        timeRemaining: translateTime(file.timeRemaining())
+        uploadedSize: translateFileSize(progress.uploadedSize),
+        timeRemaining: translateTime(progress.timeRemaining)
       })
     )
 
     try {
       await mergeFileApi({
-        filename: taskItem?.filename,
-        identifier: taskItem?.target.uniqueIdentifier,
-        parentId: taskItem?.parentId,
-        totalSize: taskItem?.target.size
+        filename: taskItem.filename,
+        identifier: taskItem.target.identifier,
+        parentId: taskItem.parentId,
+        totalSize: taskItem.target.file.size
       })
-      toast.success('文件：' + file.name + ' 上传完成')
-      uploaderInstanceRef.current?.removeFile(file)
+      toast.success('文件：' + currentTask.file.name + ' 上传完成')
       dispatch(
         updateTaskStatusAction({
-          filename: file.name,
+          filename: currentTask.file.name,
           status: fileStatus.SUCCESS.code,
           statusText: fileStatus.SUCCESS.text
         })
       )
-      dispatch(removeTaskAction(file.name))
+      dispatch(removeTaskAction(currentTask.file.name))
       if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
         // 刷新文件列表
         const { parentId, fileTypes } = taskItem
         dispatch(getFileAction({ parentId, fileTypes }))
       }
     } catch (e) {
-      file.pause()
+      currentTask.pause()
       dispatch(
         updateTaskStatusAction({
-          filename: file.name,
+          filename: currentTask.file.name,
           status: fileStatus.FAIL.code,
           statusText: fileStatus.FAIL.text
         })
@@ -291,32 +260,28 @@ const Upload = forwardRef((_, ref) => {
     }
   }
 
-  const fileUploaded = (rootFile, file, message, chunk) => {
-    let res = {} as any
-    try {
-      res = JSON.parse(message)
-    } catch (e) {}
-    if (res.code === 0) {
-      if (res.data) {
-        if (res.data.mergeFlag) {
-          doMerge(file)
-        } else if (res.data.uploadedChunks?.length === file.chunks.length) {
-          doMerge(file)
+  const fileUploaded = (result, currentTask) => {
+    if (result.code === 0) {
+      if (result.data) {
+        if (result.data.mergeFlag) {
+          doMerge(currentTask)
+        } else if (result.data.uploadedChunks?.length === currentTask.chunks.length) {
+          doMerge(currentTask)
         }
       } else {
         // 不分片上传（上传完成）
-        toast.success('文件：' + file.name + ' 上传完成')
-        uploaderInstanceRef.current.removeFile(file)
+        toast.success('文件：' + currentTask.file.name + ' 上传完成')
+
         // 刷新文件列表
         dispatch(
           updateTaskStatusAction({
-            filename: file.name,
+            filename: currentTask.file.name,
             status: fileStatus.SUCCESS.code,
             statusText: fileStatus.SUCCESS.text
           })
         )
-        dispatch(removeTaskAction(file.name))
-        const taskItem = findTaskItem(file.name) || {}
+        dispatch(removeTaskAction(currentTask.file.name))
+        const taskItem = findTaskItem(currentTask.file.name) || {}
         if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
           // 刷新文件列表
           const { parentId, fileTypes } = taskItem
@@ -324,10 +289,10 @@ const Upload = forwardRef((_, ref) => {
         }
       }
     } else {
-      file.pause()
+      currentTask.pause()
       dispatch(
         updateTaskStatusAction({
-          filename: file.name,
+          filename: currentTask.file.name,
           status: fileStatus.FAIL.code,
           statusText: fileStatus.FAIL.text
         })
@@ -335,12 +300,10 @@ const Upload = forwardRef((_, ref) => {
     }
   }
 
-  const uploadComplete = () => {}
-
-  const uploadError = (rootFile, file, message, chunk) => {
+  const uploadError = (err: any, currentTask: any) => {
     dispatch(
       updateTaskStatusAction({
-        filename: file.name,
+        filename: currentTask.file.name,
         status: fileStatus.FAIL.code,
         statusText: fileStatus.FAIL.text
       })
@@ -348,7 +311,7 @@ const Upload = forwardRef((_, ref) => {
 
     dispatch(
       updateTaskProcessAction({
-        filename: file.name,
+        filename: currentTask.file.name,
         speed: translateSpeed(0),
         percentage: 0,
         uploadedSize: translateFileSize(0),
@@ -360,42 +323,38 @@ const Upload = forwardRef((_, ref) => {
   // 初始化 uploader
   const initUploader = () => {
     // 实例化一个上传对象
-    const uploader = new Uploader(fileOptions)
-    // 如果不支持 需要降级的地方
-    if (!uploader.support) {
-      toast.error('本浏览器不支持simple-uploader，请更换浏览器重试')
-    }
+    const uploader = new LucasUploader(fileOptions)
     // 绑定进队列
-    uploader.on('filesAdded', filesAdded)
+    uploader.on(EventTypeEnum.ADDED, filesAdded)
     // 绑定进度
-    uploader.on('fileProgress', uploadProgress)
+    uploader.on(EventTypeEnum.PROGRESS, uploadProgress)
     // 上传成功监听
-    uploader.on('fileSuccess', fileUploaded)
-    // 上传全部完成调用
-    uploader.on('complete', uploadComplete)
-    // 上传出错调用
-    uploader.on('fileError', uploadError)
+    uploader.on(EventTypeEnum.SUCCESS, fileUploaded)
+    // 上传全部完成
+    uploader.on(EventTypeEnum.COMPLETE, () => {})
+    // 上传出错
+    uploader.on(EventTypeEnum.ERROR, uploadError)
+    // 监听合并
+    uploader.on(EventTypeEnum.MERGE, doMerge)
 
     uploaderInstanceRef.current = uploader
 
     setUploader(uploader)
   }
 
-  // 绑定DOM
+  useEffect(() => {
+    console.log('xxxx');
+    initUploader()
+  }, [])
+
+  // 绑定DOM, 赋予组件点击 / 拖拽上传的功能
   const bindUploader = () => {
-    if (uploader && !uploader.support) {
-      toast.error('本浏览器不支持simple-uploader，请更换浏览器重试')
-    }
     if (uploader && !assignFlag) {
-      uploader.assignBrowse(uploaderRef.current)
-      uploader.assignDrop(uploaderRef.current)
+      uploader.assignBrowse(uploaderRef.current as HTMLElement)
+      uploader.assignDrop(uploaderRef.current as HTMLElement)
       setAssignFlag(true)
     }
   }
-
-  useEffect(() => {
-    initUploader()
-  }, [])
 
   useEffect(() => {
     bindUploader()

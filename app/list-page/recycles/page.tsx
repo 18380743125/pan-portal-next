@@ -110,7 +110,7 @@ function Recycles() {
         <section>
           <div className={styles.btnGroup}>
             {/* 还原 */}
-            <Tooltip placement='top' overlayInnerStyle={{ color: '#666', fontSize: 12 }} color='#fff' title={'还原'}>
+            <Tooltip placement='top' styles={{ body: { color: '#666', fontSize: 12 } }} color='#fff' title={'还原'}>
               <Button
                 className={styles.restoreBtn}
                 size={'small'}
@@ -122,12 +122,7 @@ function Recycles() {
             </Tooltip>
 
             {/* 彻底删除 */}
-            <Tooltip
-              placement='top'
-              overlayInnerStyle={{ color: '#666', fontSize: 12 }}
-              color='#fff'
-              title={'彻底删除'}
-            >
+            <Tooltip placement='top' styles={{ body: { color: '#666', fontSize: 12 } }} color='#fff' title={'彻底删除'}>
               <Button
                 className={styles.deleteBtn}
                 size={'small'}

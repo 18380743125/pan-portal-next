@@ -2,15 +2,15 @@
 
 import { AlertCircle, Loader2, RefreshCw } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 
 import { config } from '@/lib/constants/base'
 import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'
 
 import styles from './styles.module.scss'
 
-export default function PdfPage({ params }: { params: { id: string } }) {
-  const { id } = params
+export default function PdfPage({ params }) {
+  const { id } = use<{id: string}>(params)
 
   const searchParams = useSearchParams()
 

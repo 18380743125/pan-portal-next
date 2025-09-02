@@ -139,7 +139,7 @@ const FileTable = () => {
         <section>
           <div className={styles.btnGroup}>
             {/* 下载 */}
-            <Tooltip placement='top' overlayInnerStyle={{ color: '#666', fontSize: 12 }} color='#fff' title={'下载'}>
+            <Tooltip placement='top' styles={{ body: { color: '#666', fontSize: 12 } }} color='#fff' title={'下载'}>
               <Button
                 className={styles.downloadBtn}
                 size={'small'}
@@ -151,7 +151,7 @@ const FileTable = () => {
             </Tooltip>
 
             {/* 重命名 */}
-            <Tooltip placement='top' overlayInnerStyle={{ color: '#666', fontSize: 12 }} color='#fff' title={'重命名'}>
+            <Tooltip placement='top' styles={{ body: { color: '#666', fontSize: 12 } }} color='#fff' title={'重命名'}>
               <Button
                 className={styles.renameBtn}
                 size={'small'}
@@ -163,7 +163,7 @@ const FileTable = () => {
             </Tooltip>
 
             {/* 删除 */}
-            <Tooltip placement='top' overlayInnerStyle={{ color: '#666', fontSize: 12 }} color='#fff' title={'删除'}>
+            <Tooltip placement='top' styles={{ body: { color: '#666', fontSize: 12 } }} color='#fff' title={'删除'}>
               <Button
                 className={styles.deleteBtn}
                 size={'small'}
@@ -175,7 +175,7 @@ const FileTable = () => {
             </Tooltip>
 
             {/* 分享 */}
-            <Tooltip placement='top' overlayInnerStyle={{ color: '#666', fontSize: 12 }} color='#fff' title={'分享'}>
+            <Tooltip placement='top' styles={{ body: { color: '#666', fontSize: 12 } }} color='#fff' title={'分享'}>
               <Button
                 className={styles.shareBtn}
                 size={'small'}
@@ -187,7 +187,7 @@ const FileTable = () => {
             </Tooltip>
 
             {/* 复制 */}
-            <Tooltip placement='top' overlayInnerStyle={{ color: '#666', fontSize: 12 }} color='#fff' title={'复制到'}>
+            <Tooltip placement='top' styles={{ body: { color: '#666', fontSize: 12 } }} color='#fff' title={'复制到'}>
               <Button
                 className={styles.copyBtn}
                 size={'small'}
@@ -199,7 +199,7 @@ const FileTable = () => {
             </Tooltip>
 
             {/* 移动 */}
-            <Tooltip placement='top' overlayInnerStyle={{ color: '#666', fontSize: 12 }} color='#fff' title={'移动到'}>
+            <Tooltip placement='top' styles={{ body: { color: '#666', fontSize: 12 } }} color='#fff' title={'移动到'}>
               <Button
                 size={'small'}
                 type={'default'}
