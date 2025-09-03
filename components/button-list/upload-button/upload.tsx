@@ -2,7 +2,7 @@
 
 import { CloudUploadOutlined } from '@ant-design/icons'
 import { Modal } from 'antd'
-import { EventTypeEnum, LucasUploader, UploaderOptions } from 'lucas-uploader'
+import { EventTypeEnum, LucasUploader, UploaderOptions, UploadTask, WarningNameEnum } from 'lucas-uploader'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -23,6 +23,7 @@ import { fileStatus, getChunkSize } from '@/lib/utils/file-util'
 import { translateFileSize, translateSpeed, translateTime } from '@/lib/utils/format'
 
 import styles from './styles.module.scss'
+import { MD5 } from '@/lib/utils/base'
 
 const Upload = forwardRef((_, ref) => {
   // 上传弹框是否显示
@@ -120,10 +121,12 @@ const Upload = forwardRef((_, ref) => {
         openTaskList()
       }, 500)
 
-      currentTasks.forEach(async task => {
-        task.pause()
+      currentTasks.forEach(async (task: UploadTask) => {
         if (task.file.size > config.maxFileSize) {
-          throw new Error(`文件：${task.name}大小超过了最大上传文件的限制（${translateFileSize(config.maxFileSize)}）`)
+          task.abort()
+          throw new Error(
+            `文件：${task.file.name}大小超过了最大上传文件的限制（${translateFileSize(config.maxFileSize)}）`
+          )
         }
 
         const taskItem = {
@@ -139,37 +142,41 @@ const Upload = forwardRef((_, ref) => {
           parentId: parentIdRef.current,
           fileTypes: fileTypesRef.current
         }
-        // 添加
+        // 添加任务
         dispatch(addTaskAction(taskItem))
 
-        // 尝试秒传
-        const result = await secUploadFileApi({
-          filename: task.file.name,
-          identifier: task.identifier,
-          parentId: parentIdRef.current
-        })
+        // 设置 identifier
+        MD5(task.file).then(async identifier => {
+          task.setIdentifier(identifier as string)
+          // 尝试秒传
+          const result = await secUploadFileApi({
+            filename: task.file.name,
+            identifier: task.identifier,
+            parentId: parentIdRef.current
+          })
 
-        if (result.code === 0) {
-          // 秒传成功
-          toast.success('文件：' + task.file.name + ' 上传完成')
-          task.cancel()
-          dispatch(removeTaskAction(task.file.name))
-          const taskItem = findTaskItem(task.file.name) || {}
-          const { parentId, fileTypes } = taskItem
-          if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
-            // 刷新文件列表
-            dispatch(getFileAction({ parentId, fileTypes }))
+          if (result.code === 0) {
+            // 秒传成功
+            toast.success('文件：' + task.file.name + ' 上传完成')
+            task.abort()
+            const taskItem = findTaskItem(task.file.name) || {}
+            dispatch(removeTaskAction(task.file.name))
+            const { parentId, fileTypes } = taskItem
+            if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
+              // 刷新文件列表
+              dispatch(getFileAction({ parentId, fileTypes }))
+            }
+          } else {
+            task.bootstrap()
+            dispatch(
+              updateTaskStatusAction({
+                filename: task.file.name,
+                status: fileStatus.WAITING.code,
+                statusText: fileStatus.WAITING.text
+              })
+            )
           }
-        } else {
-          task.resume()
-          dispatch(
-            updateTaskStatusAction({
-              filename: task.file.name,
-              status: fileStatus.WAITING.code,
-              statusText: fileStatus.WAITING.text
-            })
-          )
-        }
+        })
       })
     } catch (e: any) {
       toast.error(e.message)
@@ -336,6 +343,13 @@ const Upload = forwardRef((_, ref) => {
     uploader.on(EventTypeEnum.ERROR, uploadError)
     // 监听合并
     uploader.on(EventTypeEnum.MERGE, doMerge)
+    // 警告提示
+    uploader.on(EventTypeEnum.WARNING, (type: WarningNameEnum, list: UploadTask[]) => {
+      if (type === WarningNameEnum.FILE_EXISTING) {
+        const names = list.map(item => item.file.name).join('，')
+        toast.warning(`文件：${names} 已在任务队列中，请勿重复提交！`)
+      }
+    })
 
     uploaderInstanceRef.current = uploader
 
@@ -343,7 +357,6 @@ const Upload = forwardRef((_, ref) => {
   }
 
   useEffect(() => {
-    console.log('xxxx');
     initUploader()
   }, [])
 
