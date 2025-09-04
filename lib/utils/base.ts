@@ -51,11 +51,20 @@ export function copyText2Clipboard(text: string) {
   })
 }
 
-export function MD5(_file: any) {
-  return new Promise((resolve, reject) => {
-    const blobSlice = File.prototype.slice
+/**
+ * 计算文件的 MD5 哈希值
+ * @param _file
+ * @param chunkSize
+ * @param onProgress
+ */
+export function MD5(
+  _file: File,
+  chunkSize: number = 512 * 1024,
+  onProgress?: (progress: { currentChunk: number; chunks: number }) => void
+) {
+  return new Promise<string>((resolve, reject) => {
+    const blobSlice = Blob.prototype.slice
     const file = _file
-    const chunkSize = 1024 * 1024 * 1
     const chunks = Math.ceil(file.size / chunkSize)
     const spark = new sparkMD5.ArrayBuffer()
     const fileReader = new FileReader()
@@ -64,6 +73,9 @@ export function MD5(_file: any) {
     fileReader.onload = function (e: any) {
       spark.append(e.target.result)
       currentChunk++
+      if (onProgress) {
+        onProgress({ currentChunk, chunks })
+      }
       if (currentChunk < chunks) {
         loadNext()
       } else {
@@ -72,7 +84,7 @@ export function MD5(_file: any) {
     }
 
     fileReader.onerror = function () {
-      reject('oops, something went wrong.')
+      reject(new Error(`FileReader error: ${fileReader.error?.message || null}`))
     }
 
     function loadNext() {

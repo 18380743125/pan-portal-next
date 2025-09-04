@@ -2,7 +2,7 @@
 
 import { CloudUploadOutlined } from '@ant-design/icons'
 import { Modal } from 'antd'
-import { EventTypeEnum, LucasUploader, UploaderOptions, UploadTask, WarningNameEnum } from 'lucas-uploader'
+import { EventTypeEnum, LucasUploader, UploaderOptions, UploadTask, UploadWarningEnum } from 'lucas-uploader'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -98,10 +98,10 @@ const Upload = forwardRef((_, ref) => {
 
   const fileOptions: UploaderOptions = {
     target: config.chunkUploadSwitch ? config.baseUrl + '/file/chunk-upload' : config.baseUrl + '/file/upload',
-
     singleFile: false,
     chunkSize: getChunkSize(),
     simultaneousUploads: 3,
+    chunkSimultaneousUploads: 5,
     fileParameterName: 'file',
     getParams() {
       return {
@@ -186,6 +186,7 @@ const Upload = forwardRef((_, ref) => {
   }
 
   const uploadProgress = currentTask => {
+    console.log(currentTask.status.text, currentTask)
     const taskItem = findTaskItem(currentTask.file.name)
     if (!taskItem) {
       return
@@ -297,17 +298,18 @@ const Upload = forwardRef((_, ref) => {
       }
     } else {
       currentTask.pause()
-      dispatch(
-        updateTaskStatusAction({
-          filename: currentTask.file.name,
-          status: fileStatus.FAIL.code,
-          statusText: fileStatus.FAIL.text
-        })
-      )
+      // dispatch(
+      //   updateTaskStatusAction({
+      //     filename: currentTask.file.name,
+      //     status: fileStatus.FAIL.code,
+      //     statusText: fileStatus.FAIL.text
+      //   })
+      // )
     }
   }
 
   const uploadError = (err: any, currentTask: any) => {
+    console.log(`upload error: `, err)
     dispatch(
       updateTaskStatusAction({
         filename: currentTask.file.name,
@@ -344,8 +346,8 @@ const Upload = forwardRef((_, ref) => {
     // 监听合并
     uploader.on(EventTypeEnum.MERGE, doMerge)
     // 警告提示
-    uploader.on(EventTypeEnum.WARNING, (type: WarningNameEnum, list: UploadTask[]) => {
-      if (type === WarningNameEnum.FILE_EXISTING) {
+    uploader.on(EventTypeEnum.WARNING, (type: UploadWarningEnum, list: UploadTask[]) => {
+      if (type === UploadWarningEnum.FILE_EXISTING) {
         const names = list.map(item => item.file.name).join('，')
         toast.warning(`文件：${names} 已在任务队列中，请勿重复提交！`)
       }

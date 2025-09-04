@@ -68,6 +68,7 @@ const taskSlice = createAppSlice({
       if (!taskItem) {
         return
       }
+
       taskItem.target.pause()
       taskItem.status = fileStatus.PAUSE.code
       taskItem.statusText = fileStatus.PAUSE.text
@@ -81,6 +82,7 @@ const taskSlice = createAppSlice({
       if (!taskItem) {
         return
       }
+
       taskItem.target.resume()
     }),
 
@@ -88,13 +90,15 @@ const taskSlice = createAppSlice({
     cancelTaskAction: reducer((state, action: PayloadAction<string>) => {
       const filename = action.payload
       const taskList = state.taskList
-      for (let i = 0; i < taskList.length; i++) {
-        if (filename === taskList[i].filename) {
-          taskList[i].target.cancel()
-          toast.info('文件：' + filename + ' 已取消上传')
-          break
-        }
+      const taskItem = taskList.find(taskItem => filename === taskItem.filename)
+
+      if (!taskItem) {
+        return
       }
+
+      taskItem.target.abort()
+      toast.info('文件：' + filename + ' 已取消上传')
+
       state.taskList = taskList.filter(task => task.filename !== filename)
     }),
 
@@ -106,8 +110,7 @@ const taskSlice = createAppSlice({
       if (!taskItem) {
         return
       }
-      taskItem.target.bootstrap()
-      taskItem.target.resume()
+      taskItem.target.retry()
     })
   })
 })
