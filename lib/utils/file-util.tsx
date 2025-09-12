@@ -12,9 +12,9 @@ import {
   faFilePowerpoint
 } from '@fortawesome/free-solid-svg-icons'
 
-import { CacheEnum, config } from '@/lib/constants/base'
-import { localCache } from '@/lib/utils/common/cache'
+import { config } from '@/lib/constants/base'
 import { FileItem } from '@/types/file'
+import { useUserStore } from '../store/userStore'
 
 /**
  * 文件上传状态
@@ -110,6 +110,6 @@ export const getChunkSize = () => {
  * 获取文件预览地址
  */
 export const getPreviewUrl = (fileId: string) => {
-  const token = localCache.getCache(CacheEnum.USER_TOKEN)
+  const token = useUserStore.getState().token
   return `${config.previewUrl}/file/preview?fileId=${encodeURIComponent(fileId)}&authorization=${token}`
 }

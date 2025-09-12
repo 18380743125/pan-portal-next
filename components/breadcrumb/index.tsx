@@ -1,34 +1,26 @@
 'use client'
 
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 import { Button, Divider } from 'antd'
 import React from 'react'
 
 import { FileTypeEnum } from '@/lib/constants/base'
-import { getFileAction, setBreadcrumbList } from '@/lib/store/features/fileSlice'
+import { useFileStore } from '@/lib/store/fileStore'
 
 import styles from './styles.module.scss'
 
 const Breadcrumb = () => {
-  const dispatch = useAppDispatch()
-
-  const { breadcrumbList } = useAppSelector(
-    state => ({
-      breadcrumbList: state.file.breadcrumbList
-    }),
-    shallowEqualApp
-  )
+  const { breadcrumbList, setBreadcrumbList, getFileAction } = useFileStore()
 
   // 返回上一级
   const onBackClick = () => {
     const size = breadcrumbList.length
     if (size > 1) {
       const item = breadcrumbList[size - 2]
-      dispatch(getFileAction({ parentId: item.id, fileType: FileTypeEnum.ALL_FILE }))
+      getFileAction({ parentId: item.id, fileType: FileTypeEnum.ALL_FILE })
 
       // 更新面包屑
       const newBreadcrumbList = [...breadcrumbList.slice(0, size - 1)]
-      dispatch(setBreadcrumbList({ list: newBreadcrumbList }))
+      setBreadcrumbList(newBreadcrumbList)
     }
   }
 
@@ -48,8 +40,8 @@ const Breadcrumb = () => {
       }
     }
     const last = newBreadcrumbList[newBreadcrumbList.length - 1]
-    dispatch(getFileAction({ parentId: last.id, fileType: FileTypeEnum.ALL_FILE }))
-    dispatch(setBreadcrumbList({ list: newBreadcrumbList }))
+    getFileAction({ parentId: last.id, fileType: FileTypeEnum.ALL_FILE })
+    setBreadcrumbList(newBreadcrumbList)
   }
 
   return (

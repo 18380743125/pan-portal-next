@@ -8,22 +8,15 @@ import { toast } from 'sonner'
 
 import { mergeFileApi, secUploadFileApi } from '@/api/features/file'
 import { openTaskList } from '@/components/task-list'
-import { CacheEnum, config, FileTypeEnum } from '@/lib/constants/base'
-import { getFileAction } from '@/lib/store/features/fileSlice'
-import {
-  addTaskAction,
-  clearTaskAction,
-  removeTaskAction,
-  updateTaskProcessAction,
-  updateTaskStatusAction
-} from '@/lib/store/features/taskSlice'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { localCache } from '@/lib/utils/common/cache'
+import { config, FileTypeEnum } from '@/lib/constants/base'
 import { fileStatus, getChunkSize } from '@/lib/utils/file-util'
 import { translateFileSize, translateSpeed, translateTime } from '@/lib/utils/format'
 
 import styles from './styles.module.scss'
 import { MD5 } from '@/lib/utils/base'
+import { useFileStore } from '@/lib/store/fileStore'
+import { useUserStore } from '@/lib/store/userStore'
+import { useTaskStore } from '@/lib/store/taskStore'
 
 const Upload = forwardRef((_, ref) => {
   // 上传弹框是否显示
@@ -40,17 +33,9 @@ const Upload = forwardRef((_, ref) => {
   const fileTypesRef = useRef<string>()
   const taskListRef = useRef<Record<string, any>[]>()
 
-  const dispatch = useAppDispatch()
-
-  const { fileTypes, breadcrumbList, taskList, userInfo } = useAppSelector(
-    state => ({
-      fileTypes: state.file.fileType,
-      breadcrumbList: state.file.breadcrumbList,
-      taskList: state.task.taskList,
-      userInfo: state.user.userInfo
-    }),
-    shallowEqualApp
-  )
+  const { userInfo } = useUserStore()
+  const { fileType: fileTypes, breadcrumbList, getFileAction } = useFileStore()
+  const { taskList, addTaskAction, removeTaskAction, updateTaskProcessAction, updateTaskStatusAction } = useTaskStore()
 
   useEffect(() => {
     taskListRef.current = taskList
@@ -94,8 +79,6 @@ const Upload = forwardRef((_, ref) => {
     return taskListRef.current?.find(item => item.filename === name)
   }
 
-  const token = localCache.getCache(CacheEnum.USER_TOKEN)
-
   const fileOptions: UploaderOptions = {
     target: config.chunkUploadSwitch ? config.baseUrl + '/file/chunk-upload' : config.baseUrl + '/file/upload',
     singleFile: false,
@@ -109,7 +92,7 @@ const Upload = forwardRef((_, ref) => {
       }
     },
     headers: {
-      Authorization: token
+      Authorization: useUserStore.getState().token || ''
     }
   }
 
@@ -143,7 +126,7 @@ const Upload = forwardRef((_, ref) => {
           fileTypes: fileTypesRef.current
         }
         // 添加任务
-        dispatch(addTaskAction(taskItem))
+        addTaskAction(taskItem)
 
         // 设置 identifier
         MD5(task.file).then(async identifier => {
@@ -160,80 +143,72 @@ const Upload = forwardRef((_, ref) => {
             toast.success('文件：' + task.file.name + ' 上传完成')
             task.abort()
             const taskItem = findTaskItem(task.file.name) || {}
-            dispatch(removeTaskAction(task.file.name))
+            removeTaskAction(task.file.name)
             const { parentId, fileTypes } = taskItem
             if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
               // 刷新文件列表
-              dispatch(getFileAction({ parentId, fileTypes }))
+              getFileAction({ parentId, fileTypes })
             }
           } else {
             task.bootstrap()
-            dispatch(
-              updateTaskStatusAction({
-                filename: task.file.name,
-                status: fileStatus.WAITING.code,
-                statusText: fileStatus.WAITING.text
-              })
-            )
+
+            updateTaskStatusAction({
+              filename: task.file.name,
+              status: fileStatus.WAITING.code,
+              statusText: fileStatus.WAITING.text
+            })
           }
         })
       })
     } catch (e: any) {
       toast.error(e.message)
-      dispatch(clearTaskAction())
     }
     return true
   }
 
   const uploadProgress = currentTask => {
-    console.log(currentTask.status.text, currentTask)
     const taskItem = findTaskItem(currentTask.file.name)
     if (!taskItem) {
       return
     }
     if (currentTask.status.code === fileStatus.UPLOADING.code) {
       const progress = currentTask.progress
-      dispatch(
-        updateTaskProcessAction({
-          filename: currentTask.file.name,
-          speed: translateSpeed(progress.speed),
-          percentage: Math.floor(progress.percentage * 100),
-          uploadedSize: translateFileSize(progress.uploadedSize),
-          timeRemaining: translateTime(progress.timeRemaining)
-        })
-      )
+
+      updateTaskProcessAction({
+        filename: currentTask.file.name,
+        speed: translateSpeed(progress.speed),
+        percentage: Math.floor(progress.percentage * 100),
+        uploadedSize: translateFileSize(progress.uploadedSize),
+        timeRemaining: translateTime(progress.timeRemaining)
+      })
     }
     if (taskItem?.status !== currentTask.status.code) {
-      dispatch(
-        updateTaskStatusAction({
-          filename: currentTask.file.name,
-          status: currentTask.status.code,
-          statusText: currentTask.status.text
-        })
-      )
+      updateTaskStatusAction({
+        filename: currentTask.file.name,
+        status: currentTask.status.code,
+        statusText: currentTask.status.text
+      })
     }
   }
 
   const doMerge = async currentTask => {
     const taskItem = findTaskItem(currentTask.file.name) || {}
-    dispatch(
-      updateTaskStatusAction({
-        filename: currentTask.file.name,
-        status: fileStatus.MERGE.code,
-        statusText: fileStatus.MERGE.text
-      })
-    )
+
+    updateTaskStatusAction({
+      filename: currentTask.file.name,
+      status: fileStatus.MERGE.code,
+      statusText: fileStatus.MERGE.text
+    })
 
     const progress = currentTask.progress
-    dispatch(
-      updateTaskProcessAction({
-        filename: currentTask.file.name,
-        speed: translateSpeed(currentTask.file.speed),
-        percentage: 99,
-        uploadedSize: translateFileSize(progress.uploadedSize),
-        timeRemaining: translateTime(progress.timeRemaining)
-      })
-    )
+
+    updateTaskProcessAction({
+      filename: currentTask.file.name,
+      speed: translateSpeed(currentTask.file.speed),
+      percentage: 99,
+      uploadedSize: translateFileSize(progress.uploadedSize),
+      timeRemaining: translateTime(progress.timeRemaining)
+    })
 
     try {
       await mergeFileApi({
@@ -243,28 +218,26 @@ const Upload = forwardRef((_, ref) => {
         totalSize: taskItem.target.file.size
       })
       toast.success('文件：' + currentTask.file.name + ' 上传完成')
-      dispatch(
-        updateTaskStatusAction({
-          filename: currentTask.file.name,
-          status: fileStatus.SUCCESS.code,
-          statusText: fileStatus.SUCCESS.text
-        })
-      )
-      dispatch(removeTaskAction(currentTask.file.name))
+
+      updateTaskStatusAction({
+        filename: currentTask.file.name,
+        status: fileStatus.SUCCESS.code,
+        statusText: fileStatus.SUCCESS.text
+      })
+
+      removeTaskAction(currentTask.file.name)
       if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
         // 刷新文件列表
         const { parentId, fileTypes } = taskItem
-        dispatch(getFileAction({ parentId, fileTypes }))
+        getFileAction({ parentId, fileTypes })
       }
     } catch (e) {
       currentTask.pause()
-      dispatch(
-        updateTaskStatusAction({
-          filename: currentTask.file.name,
-          status: fileStatus.FAIL.code,
-          statusText: fileStatus.FAIL.text
-        })
-      )
+      updateTaskStatusAction({
+        filename: currentTask.file.name,
+        status: fileStatus.FAIL.code,
+        statusText: fileStatus.FAIL.text
+      })
     }
   }
 
@@ -281,52 +254,40 @@ const Upload = forwardRef((_, ref) => {
         toast.success('文件：' + currentTask.file.name + ' 上传完成')
 
         // 刷新文件列表
-        dispatch(
-          updateTaskStatusAction({
-            filename: currentTask.file.name,
-            status: fileStatus.SUCCESS.code,
-            statusText: fileStatus.SUCCESS.text
-          })
-        )
-        dispatch(removeTaskAction(currentTask.file.name))
+        updateTaskStatusAction({
+          filename: currentTask.file.name,
+          status: fileStatus.SUCCESS.code,
+          statusText: fileStatus.SUCCESS.text
+        })
+
+        removeTaskAction(currentTask.file.name)
+
         const taskItem = findTaskItem(currentTask.file.name) || {}
         if (taskItem.fileTypes === FileTypeEnum.ALL_FILE && taskItem.parentId === parentIdRef.current) {
           // 刷新文件列表
           const { parentId, fileTypes } = taskItem
-          dispatch(getFileAction({ parentId, fileTypes }))
+          getFileAction({ parentId, fileTypes })
         }
       }
     } else {
       currentTask.pause()
-      // dispatch(
-      //   updateTaskStatusAction({
-      //     filename: currentTask.file.name,
-      //     status: fileStatus.FAIL.code,
-      //     statusText: fileStatus.FAIL.text
-      //   })
-      // )
     }
   }
 
   const uploadError = (err: any, currentTask: any) => {
-    console.log(`upload error: `, err)
-    dispatch(
-      updateTaskStatusAction({
-        filename: currentTask.file.name,
-        status: fileStatus.FAIL.code,
-        statusText: fileStatus.FAIL.text
-      })
-    )
+    updateTaskStatusAction({
+      filename: currentTask.file.name,
+      status: fileStatus.FAIL.code,
+      statusText: fileStatus.FAIL.text
+    })
 
-    dispatch(
-      updateTaskProcessAction({
-        filename: currentTask.file.name,
-        speed: translateSpeed(0),
-        percentage: 0,
-        uploadedSize: translateFileSize(0),
-        timeRemaining: translateTime(Number.POSITIVE_INFINITY)
-      })
-    )
+    updateTaskProcessAction({
+      filename: currentTask.file.name,
+      speed: translateSpeed(0),
+      percentage: 0,
+      uploadedSize: translateFileSize(0),
+      timeRemaining: translateTime(Number.POSITIVE_INFINITY)
+    })
   }
 
   // 初始化 uploader

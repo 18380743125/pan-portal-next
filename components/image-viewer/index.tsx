@@ -3,6 +3,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import cs from 'classnames'
 
 import styles from './styles.module.scss'
+import Image from 'next/image'
 
 export type ImageType = {
   src: string
@@ -24,8 +25,6 @@ const ImageViewer: FC<ImageViewerProps> = ({
   showDownload = true,
   onClose
 }) => {
-  if (!images.length) return null
-
   const [currentIndex, setCurrentIndex] = useState(current)
   const [rotation, setRotation] = useState(0)
   const [scale, setScale] = useState(1)
@@ -119,6 +118,8 @@ const ImageViewer: FC<ImageViewerProps> = ({
     }
   }, [currentImage])
 
+  if (!images.length) return null
+
   return (
     <div className={styles.viewerContainer}>
       {/* 切换上一张 / 下一张 */}
@@ -151,9 +152,9 @@ const ImageViewer: FC<ImageViewerProps> = ({
       <div className={styles.viewerContent}>
         <div className={styles.imageContainer}>
           {imageBlobUrl && (
-            <img
+            <Image
               src={imageBlobUrl}
-              alt={currentImage.alt}
+              alt={currentImage.alt!}
               className={styles.mainImage}
               style={{
                 transform: `rotate(${rotation}deg) scale(${scale})`,
@@ -202,7 +203,7 @@ const ImageViewer: FC<ImageViewerProps> = ({
                 }}
                 data-index={index + 1}
               >
-                <img src={img.src} alt={img.alt} className={styles.thumbnailImage} />
+                <Image src={img.src} alt={img.alt!} className={styles.thumbnailImage} />
               </button>
             ))}
           </div>

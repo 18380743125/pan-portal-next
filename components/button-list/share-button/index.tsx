@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 
 import Share from './share'
 
-import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'
+import { useFileStore } from '@/lib/store/fileStore'
 import { type FileItem } from '@/types/file'
 
 import styles from './styles.module.scss'
@@ -15,12 +15,7 @@ import styles from './styles.module.scss'
 const ShareButton = () => {
   const shareRef = useRef<{ open: (rows: FileItem[]) => void }>(null)
 
-  const { selectFileList } = useAppSelector(
-    state => ({
-      selectFileList: state.file.selectFileList
-    }),
-    shallowEqualApp
-  )
+  const { selectFileList } = useFileStore()
 
   const onShare = () => {
     if (!selectFileList?.length) {

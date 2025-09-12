@@ -7,24 +7,15 @@ import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 
 import { toast } from 'sonner'
 
 import { copyFileApi, getFolderTreeApi } from '@/api/features/file'
-import { getFileAction } from '@/lib/store/features/fileSlice'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
-import { FileItem } from '@/types/file'
-
 import { PanEnum } from '@/lib/constants/base'
+import { useFileStore } from '@/lib/store/fileStore'
+import { FileItem } from '@/types/file'
 
 import styles from './styles.module.scss'
 
 const CopyFC = forwardRef((_, ref) => {
-  const dispatch = useAppDispatch()
+  const { breadcrumbList: pathList, fileType, getFileAction } = useFileStore()
 
-  const { pathList, fileType } = useAppSelector(
-    state => ({
-      fileType: state.file.fileType,
-      pathList: state.file.breadcrumbList
-    }),
-    shallowEqualApp
-  )
   const [visible, setVisible] = useState(false)
   const [rows, setRows] = useState<FileItem[]>()
   const [treeList, setTreeList] = useState<Record<string, any>[]>([])
@@ -83,7 +74,7 @@ const CopyFC = forwardRef((_, ref) => {
     const current = pathList[pathList.length - 1]
 
     // 刷新文件列表
-    dispatch(getFileAction({ parentId: current.id, fileType }))
+    getFileAction({ parentId: current.id, fileType })
     close()
   }
 

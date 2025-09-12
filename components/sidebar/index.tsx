@@ -5,16 +5,16 @@ import classNames from 'classnames'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import { setFileList } from '@/lib/store/features/fileSlice'
-import { useAppDispatch } from '@/lib/store/hooks'
+import { useFileStore } from '@/lib/store/fileStore'
 
 import styles from './styles.module.scss'
 
 const Sidebar = () => {
+  const { setFileList } = useFileStore()
+
   const [activeIndex, setActiveIndex] = useState(-1)
   const router = useRouter()
   const pathname = usePathname()
-  const dispatch = useAppDispatch()
 
   const navList = [
     {
@@ -61,7 +61,7 @@ const Sidebar = () => {
 
   const onNavItemClick = (index: number, path: string) => {
     setActiveIndex(index)
-    dispatch(setFileList([]))
+    setFileList([])
     router.push(path)
   }
 

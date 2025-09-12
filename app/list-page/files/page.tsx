@@ -8,21 +8,14 @@ import FileTable from '@/components/file-table'
 import Search from '@/components/search'
 
 import { FileTypeEnum } from '@/lib/constants/base'
-import { getFileAction, setBreadcrumbList, setFileTypes } from '@/lib/store/features/fileSlice'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { useFileStore } from '@/lib/store/fileStore'
+import { useUserStore } from '@/lib/store/userStore'
 
 import styles from './styles.module.scss'
 
 function Files() {
-  const dispatch = useAppDispatch()
-
-  const { userInfo } = useAppSelector(
-    state => ({
-      fileTypes: state.file.fileType,
-      userInfo: state.user.userInfo
-    }),
-    shallowEqualApp
-  )
+  const { userInfo } = useUserStore()
+  const { setFileTypes, setBreadcrumbList, getFileAction } = useFileStore()
 
   const firstLoadRef = useRef(true)
 
@@ -33,7 +26,7 @@ function Files() {
 
     firstLoadRef.current = false
 
-    dispatch(getFileAction({ parentId: userInfo.rootFileId, fileTypes: FileTypeEnum.ALL_FILE }))
+    getFileAction({ parentId: userInfo.rootFileId, fileTypes: FileTypeEnum.ALL_FILE })
     const initBreadcrumbList = [
       {
         id: userInfo.rootFileId,
@@ -41,11 +34,11 @@ function Files() {
         parentId: userInfo.rootFileId
       }
     ]
-    dispatch(setBreadcrumbList({ list: initBreadcrumbList }))
+    setBreadcrumbList(initBreadcrumbList)
   }, [userInfo])
 
   useEffect(() => {
-    dispatch(setFileTypes(FileTypeEnum.ALL_FILE))
+    setFileTypes(FileTypeEnum.ALL_FILE)
   }, [])
 
   return (

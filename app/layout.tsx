@@ -15,7 +15,6 @@ import 'normalize.css'
 import '@/styles/common.css'
 
 import AntdGlobal from '@/lib/AntdGlobal'
-import { StoreProvider } from './StoreProvider'
 
 library.add(fas)
 config.autoAddCss = false
@@ -45,15 +44,13 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body>
-        <StoreProvider>
-          <ConfigProvider locale={zhCN} theme={theme}>
-            <AntdApp>
-              <Toaster richColors closeButton />
-              <AntdGlobal />
-              <AntdRegistry>{children}</AntdRegistry>
-            </AntdApp>
-          </ConfigProvider>
-        </StoreProvider>
+        <ConfigProvider locale={zhCN} theme={theme}>
+          <AntdApp>
+            <Toaster richColors closeButton />
+            <AntdGlobal />
+            <AntdRegistry>{children}</AntdRegistry>
+          </AntdApp>
+        </ConfigProvider>
       </body>
     </html>
   )

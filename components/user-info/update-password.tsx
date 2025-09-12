@@ -4,8 +4,7 @@ import { forwardRef, useImperativeHandle, useState } from 'react'
 import { toast } from 'sonner'
 
 import { updatePasswordApi } from '@/api/features/user'
-import { clearUserAction } from '@/lib/store/features/userSlice'
-import { useAppDispatch } from '@/lib/store/hooks'
+import { useUserStore } from '@/lib/store/userStore'
 import { validatePassword } from '@/lib/utils/form-validate'
 
 type FieldType = {
@@ -19,7 +18,7 @@ const UpdatePasswordFC = forwardRef((_, ref) => {
   const [visible, setVisible] = useState(false)
   const [form] = Form.useForm()
 
-  const dispatch = useAppDispatch()
+  const { clearUserAction } = useUserStore()
 
   const open = () => {
     setVisible(true)
@@ -54,7 +53,7 @@ const UpdatePasswordFC = forwardRef((_, ref) => {
 
     setTimeout(() => {
       router.push('/login')
-      dispatch(clearUserAction())
+      clearUserAction()
     }, 2000)
   }
 

@@ -7,11 +7,10 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 import UpdatePassword from '@/components/user-info/update-password'
-import { clearUserAction, getUserAction } from '@/lib/store/features/userSlice'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
 
 import { logoutApi } from '@/api/features/user'
 import { modal } from '@/lib/AntdGlobal'
+import { useUserStore } from '@/lib/store/userStore'
 
 import styles from './styles.module.scss'
 
@@ -19,17 +18,11 @@ const UserInfoFC = () => {
   const router = useRouter()
   const updatePasswordRef = useRef<{ open: (flag: boolean) => void } | null>(null)
   const [isClient, setIsClient] = useState(false)
-  const { userInfo } = useAppSelector(
-    state => ({
-      userInfo: state.user.userInfo
-    }),
-    shallowEqualApp
-  )
 
-  const dispatch = useAppDispatch()
+  const { userInfo, getUserAction, clearUserAction } = useUserStore()
 
   useEffect(() => {
-    dispatch(getUserAction())
+    getUserAction()
     setIsClient(true)
   }, [])
 
@@ -42,7 +35,7 @@ const UserInfoFC = () => {
       async onOk() {
         await logoutApi()
         router.replace('/login')
-        dispatch(clearUserAction())
+        clearUserAction()
       },
       onCancel() {}
     })

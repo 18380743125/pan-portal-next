@@ -6,13 +6,12 @@ import FileButtonGroup from '@/components/file-button-group'
 import FileTable from '@/components/file-table'
 import Search from '@/components/search'
 import { FileTypeEnum, PanEnum } from '@/lib/constants/base'
-import { getFileAction, setFileTypes } from '@/lib/store/features/fileSlice'
-import { useAppDispatch } from '@/lib/store/hooks'
 
+import { useFileStore } from '@/lib/store/fileStore'
 import styles from './styles.module.scss'
 
 export default function DocsFC() {
-  const dispatch = useAppDispatch()
+  const { setFileTypes, getFileAction } = useFileStore()
   useEffect(() => {
     // 文档
     const fileTypes = [
@@ -23,8 +22,8 @@ export default function DocsFC() {
       FileTypeEnum.TXT_FILE,
       FileTypeEnum.SOURCE_CODE_FILE
     ].join(PanEnum.COMMON_SEPARATOR)
-    dispatch(setFileTypes(fileTypes))
-    dispatch(getFileAction({ parentId: '-1', fileTypes }))
+    setFileTypes(fileTypes)
+    getFileAction({ parentId: '-1', fileTypes })
   }, [])
 
   return (

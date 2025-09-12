@@ -14,7 +14,8 @@ export const config = {
  */
 export enum CacheEnum {
   USER_TOKEN = 'USER_TOKEN',
-  USER_INFO = 'USER_INFO'
+  USER_INFO = 'USER_INFO',
+  USER_STORE = 'user-store'
 }
 
 /**

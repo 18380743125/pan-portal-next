@@ -7,21 +7,11 @@ import type { FileItem } from '@/types/file'
 
 import { modal } from '@/lib/AntdGlobal'
 import { PanEnum } from '@/lib/constants/base'
-import { getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { useFileStore } from '@/lib/store/fileStore'
 import { download } from '@/lib/utils/base'
 
 const useFileHandler = () => {
-  const dispatch = useAppDispatch()
-
-  const { fileType, pathList, selectFileList } = useAppSelector(
-    state => ({
-      fileType: state.file.fileType,
-      pathList: state.file.breadcrumbList,
-      selectFileList: state.file.selectFileList
-    }),
-    shallowEqualApp
-  )
+  const { fileType, breadcrumbList: pathList, selectFileList, setSelectFileList, getFileAction } = useFileStore()
 
   // 下载
   const onDownload = async (row?: FileItem) => {
@@ -73,11 +63,11 @@ const useFileHandler = () => {
         const current = pathList[pathList.length - 1]
 
         // 刷新文件列表
-        dispatch(getFileAction({ parentId: current.id, fileType }))
+        getFileAction({ parentId: current.id, fileType })
 
         // 取消勾选已删除的文件
         const newSelectFileList = selectFileList.filter(item => !fileIds.includes(item.fileId))
-        dispatch(setSelectFileList(newSelectFileList))
+        setSelectFileList(newSelectFileList)
       }
     })
   }

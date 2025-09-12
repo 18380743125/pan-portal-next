@@ -2,15 +2,15 @@
 
 import { AlertCircle, Loader2, RefreshCw } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState, use } from 'react'
+import { use, useEffect, useState } from 'react'
 
 import { config } from '@/lib/constants/base'
-import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'
+import { useUserStore } from '@/lib/store/userStore'
 
 import styles from './styles.module.scss'
 
 export default function PdfPage({ params }) {
-  const { id } = use<{id: string}>(params)
+  const { id } = use<{ id: string }>(params)
 
   const searchParams = useSearchParams()
 
@@ -23,12 +23,7 @@ export default function PdfPage({ params }) {
   const [error, setError] = useState<string | null>(null)
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null)
 
-  const { token } = useAppSelector(
-    state => ({
-      token: state.user.token
-    }),
-    shallowEqualApp
-  )
+  const { token } = useUserStore()
 
   const fetchPdfStream = async () => {
     try {
@@ -102,7 +97,11 @@ export default function PdfPage({ params }) {
 
       {!loading && !error && pdfBlobUrl && (
         <div className={styles.pdfWrap}>
-          <iframe src={`/pdfjs-5.4.54-dist/web/viewer.html?file=${pdfBlobUrl}`} className={styles.pdfIframe} loading='lazy' />
+          <iframe
+            src={`/pdfjs-5.4.54-dist/web/viewer.html?file=${pdfBlobUrl}`}
+            className={styles.pdfIframe}
+            loading='lazy'
+          />
         </div>
       )}
 

@@ -9,8 +9,7 @@ import { toast } from 'sonner'
 import styles from './styles.module.scss'
 
 import { modal } from '@/lib/AntdGlobal'
-import { loginAction } from '@/lib/store/features/userSlice'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { useUserStore } from '@/lib/store/userStore'
 import { localCache } from '@/lib/utils/common/cache'
 import { validateUsernameAndPassword } from '@/lib/utils/form-validate'
 
@@ -22,13 +21,7 @@ function LoginPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const { token } = useAppSelector(
-    state => ({
-      token: state.user.token
-    }),
-    shallowEqualApp
-  )
-  const dispatch = useAppDispatch()
+  const { token, loginAction } = useUserStore()
 
   // 聚焦输入框
   useEffect(() => {
@@ -77,12 +70,10 @@ function LoginPage() {
     setLoading(true)
 
     try {
-      await dispatch(
-        loginAction({
-          username,
-          password
-        })
-      ).unwrap()
+      await loginAction({
+        username,
+        password
+      })
       toast.success('登录成功')
       setTimeout(() => {
         router.push('/')

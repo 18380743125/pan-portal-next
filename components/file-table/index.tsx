@@ -15,31 +15,19 @@ import Copy from '@/components/button-list/copy-button/copy'
 import Rename from '@/components/button-list/rename-button/rename'
 import Share from '@/components/button-list/share-button/share'
 import Transfer from '@/components/button-list/transfer-button/transfer'
+import ImageViewer, { type ImageType } from '../image-viewer'
 
 import useFileHandler from '@/hooks/useFileHandler'
 import useTableScrollHeight from '@/hooks/useTableScrollHeight'
 import { FileTypeEnum, PanEnum, previewPathMap } from '@/lib/constants/base'
-import { getBreadcrumbListAction, getFileAction, setSelectFileList } from '@/lib/store/features/fileSlice'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { useFileStore } from '@/lib/store/fileStore'
 import { getFileFontElement, getPreviewUrl } from '@/lib/utils/file-util'
 import type { FileItem } from '@/types/file'
 
 import styles from './styles.module.scss'
-import ImageViewer, { type ImageType } from '../image-viewer'
-import { useRouter } from 'next/navigation'
 
 const FileTable = () => {
-  const dispatch = useAppDispatch()
-
-  const router = useRouter()
-
-  const { fileList, selectFileList } = useAppSelector(
-    state => ({
-      fileList: state.file.fileList,
-      selectFileList: state.file.selectFileList
-    }),
-    shallowEqualApp
-  )
+  const { fileList, selectFileList, setSelectFileList, getFileAction, getBreadcrumbListAction } = useFileStore()
 
   const [viewerVisible, setViewerVisible] = useState(false)
   const [imgList, setImgList] = useState<ImageType[]>([])
@@ -59,15 +47,15 @@ const FileTable = () => {
   const { onDownload, onDelete } = useFileHandler()
 
   const onSelectChange = (_: React.Key[], rows: FileItem[]) => {
-    dispatch(setSelectFileList(rows))
+    setSelectFileList(rows)
   }
 
   const onFileNameClick = (row: FileItem) => {
     // 下一级目录
     if (row.folderFlag === PanEnum.FOLDER_FLAG) {
-      dispatch(getBreadcrumbListAction(row.fileId))
-      dispatch(getFileAction({ parentId: row.fileId, fileType: FileTypeEnum.ALL_FILE }))
-      dispatch(setSelectFileList([]))
+      getBreadcrumbListAction(row.fileId)
+      getFileAction({ parentId: row.fileId, fileType: FileTypeEnum.ALL_FILE })
+      setSelectFileList([])
     } else {
       // 文件预览
       if (row.fileType == FileTypeEnum.IMAGE_FILE) {

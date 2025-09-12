@@ -7,18 +7,13 @@ import { toast } from 'sonner'
 
 import Rename from './rename'
 
-import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'
+import { useFileStore } from '@/lib/store/fileStore'
 import { FileItem } from '@/types/file'
 
 import styles from './styles.module.scss'
 
 const RenameButton = () => {
-  const { selectFileList } = useAppSelector(
-    state => ({
-      selectFileList: state.file.selectFileList
-    }),
-    shallowEqualApp
-  )
+  const { selectFileList } = useFileStore()
 
   const renameRef = useRef<{ open: (row?: FileItem) => void }>(null)
 

@@ -4,7 +4,7 @@ import { SwapOutlined } from '@ant-design/icons'
 import { Badge, Popover } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 
-import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'
+import { useTaskStore } from '@/lib/store/taskStore'
 import TaskList from './task-list'
 
 import styles from './styles.module.scss'
@@ -12,12 +12,7 @@ import styles from './styles.module.scss'
 let toggleTaskList: any = null
 
 const Task = () => {
-  const { taskList } = useAppSelector(
-    state => ({
-      taskList: state.task.taskList
-    }),
-    shallowEqualApp
-  )
+  const { taskList } = useTaskStore()
 
   const [visible, setVisible] = useState(false)
 

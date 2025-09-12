@@ -7,18 +7,13 @@ import { toast } from 'sonner'
 
 import Transfer from './transfer'
 
-import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'
+import { useFileStore } from '@/lib/store/fileStore'
 import { type FileItem } from '@/types/file'
 
 const TransferButton = () => {
   const moveRef = useRef<{ open: (rows: FileItem[]) => void }>(null)
 
-  const { selectFileList } = useAppSelector(
-    state => ({
-      selectFileList: state.file.selectFileList
-    }),
-    shallowEqualApp
-  )
+  const { selectFileList } = useFileStore()
 
   const onTransfer = () => {
     if (!selectFileList?.length) {

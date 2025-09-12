@@ -14,37 +14,29 @@ import {
 } from '@ant-design/icons'
 import { Button, Popover, Progress, Table, TableColumnsType } from 'antd'
 
-import { cancelTaskAction, pauseTaskAction, resumeTaskAction, retryTaskAction } from '@/lib/store/features/taskSlice'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { useTaskStore } from '@/lib/store/taskStore'
 import { fileStatus } from '@/lib/utils/file-util'
 
 import styles from './styles.module.scss'
 
 const TaskList = () => {
-  const dispatch = useAppDispatch()
-  
-  const { taskList } = useAppSelector(
-    state => ({
-      taskList: state.task.taskList
-    }),
-    shallowEqualApp
-  )
+  const { taskList, cancelTaskAction, pauseTaskAction, resumeTaskAction, retryTaskAction } = useTaskStore()
 
   // 控制文件上传
   const onToggleTask = (action: string, row: Record<string, any>) => {
     const { filename } = row
     switch (action) {
       case 'pause':
-        dispatch(pauseTaskAction(filename))
+        pauseTaskAction(filename)
         break
       case 'resume':
-        dispatch(resumeTaskAction(filename))
+        resumeTaskAction(filename)
         break
       case 'cancel':
-        dispatch(cancelTaskAction(filename))
+        cancelTaskAction(filename)
         break
       case 'retry':
-        dispatch(retryTaskAction(filename))
+        retryTaskAction(filename)
         break
       default:
         break

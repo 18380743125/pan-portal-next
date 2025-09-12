@@ -4,14 +4,15 @@ import { BASE_URL, TIME_OUT } from './config'
 import type { Result } from '@/types/base'
 import { message } from '@/lib/AntdGlobal'
 import { localCache } from '@/lib/utils/common/cache'
-import { CacheEnum, ContentTypeEnum } from '@/lib/constants/base'
+import { ContentTypeEnum } from '@/lib/constants/base'
+import { useUserStore } from '@/lib/store/userStore'
 
 const request = new Request({
   timeout: TIME_OUT,
   baseURL: BASE_URL,
   interceptors: {
     requestSuccessFn(config) {
-      const token = localCache.getCache(CacheEnum.USER_TOKEN)
+      const { token } = useUserStore.getState()
       if (token) {
         config.headers['Authorization'] = token
       }

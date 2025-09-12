@@ -6,19 +6,11 @@ import { forwardRef, useImperativeHandle, useState } from 'react'
 import { toast } from 'sonner'
 
 import { createFolderApi } from '@/api/features/file'
-import { getFileAction } from '@/lib/store/features/fileSlice'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { useFileStore } from '@/lib/store/fileStore'
 
 const CreateFolder = forwardRef((_, ref) => {
-  const dispatch = useAppDispatch()
+  const { breadcrumbList: pathList, fileType, getFileAction } = useFileStore()
 
-  const { pathList, fileType } = useAppSelector(
-    state => ({
-      fileType: state.file.fileType,
-      pathList: state.file.breadcrumbList
-    }),
-    shallowEqualApp
-  )
   const [visible, setVisible] = useState(false)
   const [form] = useForm()
 
@@ -46,7 +38,7 @@ const CreateFolder = forwardRef((_, ref) => {
     const current = pathList[pathList.length - 1]
     await createFolderApi(current.id, data.folderName)
     toast.success('新建成功')
-    dispatch(getFileAction({ parentId: current.id, fileType }))
+    getFileAction({ parentId: current.id, fileType })
     close()
   }
 

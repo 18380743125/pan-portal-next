@@ -5,7 +5,7 @@ import { Button } from 'antd'
 import { useRef } from 'react'
 import { toast } from 'sonner'
 
-import { shallowEqualApp, useAppSelector } from '@/lib/store/hooks'
+import { useFileStore } from '@/lib/store/fileStore'
 import { FileItem } from '@/types/file'
 import Copy from './copy'
 
@@ -14,12 +14,7 @@ import styles from './styles.module.scss'
 const CopyButton = () => {
   const copyRef = useRef<{ open: (rows: FileItem[]) => void }>(null)
 
-  const { selectFileList } = useAppSelector(
-    state => ({
-      selectFileList: state.file.selectFileList
-    }),
-    shallowEqualApp
-  )
+  const { selectFileList } = useFileStore()
 
   const onCopy = () => {
     if (!selectFileList?.length) {

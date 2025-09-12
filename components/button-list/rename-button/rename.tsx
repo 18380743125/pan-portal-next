@@ -6,20 +6,11 @@ import { forwardRef, useImperativeHandle, useState } from 'react'
 import { toast } from 'sonner'
 
 import { renameApi } from '@/api/features/file'
-import { getFileAction } from '@/lib/store/features/fileSlice'
-import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/lib/store/hooks'
+import { useFileStore } from '@/lib/store/fileStore'
 import { FileItem } from '@/types/file'
 
 const RenameFC = forwardRef((_, ref) => {
-  const dispatch = useAppDispatch()
-
-  const { fileType, pathList } = useAppSelector(
-    state => ({
-      fileType: state.file.fileType,
-      pathList: state.file.breadcrumbList
-    }),
-    shallowEqualApp
-  )
+  const { fileType, breadcrumbList: pathList, getFileAction } = useFileStore()
 
   const [visible, setVisible] = useState(false)
   const [row, setRow] = useState<FileItem | null>(null)
@@ -56,7 +47,7 @@ const RenameFC = forwardRef((_, ref) => {
     toast.success('重命名成功')
     // 刷新列表
     const current = pathList[pathList.length - 1]
-    dispatch(getFileAction({ parentId: current.parentId, fileType }))
+    getFileAction({ parentId: current.parentId, fileType })
     close()
   }
 
@@ -71,6 +62,6 @@ const RenameFC = forwardRef((_, ref) => {
   )
 })
 
-RenameFC.displayName = 'RenameFC'
+RenameFC.displayName = 'Rename'
 
 export default RenameFC
