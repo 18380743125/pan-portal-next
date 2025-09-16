@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
+import Footer from '@/components/footer'
+
 import styles from './styles.module.scss'
 
 import { modal } from '@/lib/AntdGlobal'
@@ -85,63 +87,66 @@ function LoginPage() {
   }
 
   return (
-    <main className={styles.root}>
-      <article className={styles.content}>
-        {/* 表单区域 */}
-        <section className={styles.leftForm}>
-          <h2 className={styles.title}>登陆</h2>
-          <div className={styles.form}>
-            <label>
-              <span>用户名</span>
-              <Input
-                allowClear
-                style={{ position: 'relative', left: 3 }}
-                rootClassName={styles.input}
-                ref={inputRef}
-                size={'small'}
-                variant={'borderless'}
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-              />
-            </label>
-            <label>
-              <span>密码</span>
-              <Input.Password
-                style={{ position: 'relative', left: 3 }}
-                rootClassName={styles.input}
-                variant={'borderless'}
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            </label>
-            <nav className={styles.forgetPass} onClick={jumpForget}>
-              忘记密码？
-            </nav>
-            <Button
-              size={'large'}
-              type={'primary'}
-              shape={'round'}
-              style={{ width: 280, position: 'relative', left: 3 }}
-              onClick={onLogin}
-              loading={loading}
-            >
-              登 陆
-            </Button>
-          </div>
-        </section>
+    <>
+      <main className={styles.root}>
+        <article className={styles.content}>
+          {/* 表单区域 */}
+          <section className={styles.leftForm}>
+            <h2 className={styles.title}>登陆</h2>
+            <div className={styles.form}>
+              <label>
+                <span>用户名</span>
+                <Input
+                  allowClear
+                  style={{ position: 'relative', left: 3 }}
+                  rootClassName={styles.input}
+                  ref={inputRef}
+                  size={'small'}
+                  variant={'borderless'}
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                />
+              </label>
+              <label>
+                <span>密码</span>
+                <Input.Password
+                  style={{ position: 'relative', left: 3 }}
+                  rootClassName={styles.input}
+                  variant={'borderless'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </label>
+              <nav className={styles.forgetPass} onClick={jumpForget}>
+                忘记密码？
+              </nav>
+              <Button
+                size={'large'}
+                type={'primary'}
+                shape={'round'}
+                style={{ width: 280, position: 'relative', left: 3 }}
+                onClick={onLogin}
+                loading={loading}
+              >
+                登 陆
+              </Button>
+            </div>
+          </section>
 
-        {/* 右侧注册链接 */}
-        <section className={styles.rightRegister}>
-          <div className={styles.title}>
-            <h2>还未注册？</h2>
-            <div>立即注册，享受独有空间！</div>
-          </div>
-          <nav className={styles.link} onClick={jumpRegister}>
-            去注册
-          </nav>
-        </section>
-      </article>
-    </main>
+          {/* 右侧注册链接 */}
+          <section className={styles.rightRegister}>
+            <div className={styles.title}>
+              <h2>还未注册？</h2>
+              <div>立即注册，享受独有空间！</div>
+            </div>
+            <nav className={styles.link} onClick={jumpRegister}>
+              去注册
+            </nav>
+          </section>
+        </article>
+      </main>
+      <Footer />
+    </>
   )
 }
 
